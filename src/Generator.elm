@@ -1,39 +1,8 @@
-module Generator exposing (Grammar(..), ProdPart(..), Production(..), Rule(..), RuleError(..), addProduction, addRule, empty, generator, parseRule, prodParser)
+module Generator exposing (Grammar(..), ProdPart(..), Production(..), RuleError(..), addProduction, addRule, empty, makeParts, parseProduction, partPrint, prodPrint, splitProdParts, symbol)
 
 import Debug
 import Dict exposing (Dict)
-import Parser exposing (..)
 import Regex
-
-
-type Grammar
-    = Grammar (Dict String (List String))
-
-
-empty =
-    Grammar Dict.empty
-
-
-generator : Grammar -> String
-generator c =
-    ""
-
-
-addProduction : String -> Maybe (List String) -> Maybe (List String)
-addProduction new old =
-    case old of
-        Nothing ->
-            Just [ new ]
-
-        Just rules ->
-            Just <| new :: rules
-
-
-addRule : Grammar -> String -> String -> Grammar
-addRule gram prod rule =
-    case gram of
-        Grammar rules ->
-            Grammar <| Dict.update prod (addProduction rule) rules
 
 
 type ProdPart
@@ -46,30 +15,72 @@ type Production
     | NonTerminal (List ProdPart)
 
 
-type Rule
-    = Rule String (List Production)
+type Grammar
+    = Grammar (Dict String (List Production))
+
+
+empty =
+    Grammar Dict.empty
+
+
+partPrint : ProdPart -> String
+partPrint pp =
+    case pp of
+        Symbol p ->
+            "#" ++ p ++ "#"
+
+        Token p ->
+            p
+
+
+prodPrint : Production -> String
+prodPrint p =
+    case p of
+        Terminal pp ->
+            "T: " ++ (String.join " " <| List.map partPrint pp)
+
+        NonTerminal pp ->
+            "NT: " ++ (String.join " " <| List.map partPrint pp)
+
+
+
+-- generator : Grammar -> String
+-- generator c =
+--     ""
+
+
+addRule : Grammar -> String -> String -> Result RuleError Grammar
+addRule gram sym rProduction =
+    let
+        newProduction =
+            parseProduction rProduction
+    in
+    case gram of
+        Grammar rules ->
+            case newProduction of
+                Ok prod ->
+                    Ok <| Grammar <| Dict.update sym (addProduction prod) rules
+
+                Err error ->
+                    Err error
 
 
 type RuleError
     = Error
 
 
-parseRule : String -> String -> Rule
-parseRule sym prod =
-    let
-        newProd =
-            prodParser prod
-    in
-    case newProd of
-        Ok parsed ->
-            Rule sym [ parsed ]
+addProduction : Production -> Maybe (List Production) -> Maybe (List Production)
+addProduction new oldl =
+    case oldl of
+        Nothing ->
+            Just [ new ]
 
-        Err _ ->
-            Rule sym []
+        Just l ->
+            Just (new :: l)
 
 
-prodParser : String -> Result RuleError Production
-prodParser prod =
+parseProduction : String -> Result RuleError Production
+parseProduction prod =
     let
         prodParts : Result RuleError (List ProdPart)
         prodParts =
@@ -119,24 +130,3 @@ makeParts strPart done =
 
         Err x ->
             Err x
-
-
-
--- prodP : Parser (List ProdPart)
--- prodP =
---     loop [] prodParser
--- prodParser : List ProdPart -> Parser (Step (List ProdPart) (List ProdPart))
--- prodParser revPps =
---     oneOf
---         [ succeed (\pp -> Loop (Token pp :: revPps)) |= getChompedString (succeed () |. chompWhile (\c -> c /= '#'))
---         , succeed (\pp -> Loop (pp :: revPps)) |= prodSymbol
---         , succeed (Done (List.reverse revPps)) |. end
---         ]
--- prodSymbol : Parser ProdPart
--- prodSymbol =
---     succeed Symbol
---         |= (getChompedString <|
---                 succeed ()
---                     |. symbol "#"
---                     |. chompUntil "#"
---            )

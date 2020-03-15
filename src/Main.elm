@@ -15,7 +15,7 @@ type alias Model =
     { ntValue : String
     , prodValue : String
     , grammar : Grammar
-    , ph : String
+    , error : Maybe RuleError
     }
 
 
@@ -24,7 +24,7 @@ init =
     { ntValue = ""
     , prodValue = ""
     , grammar = Generator.empty
-    , ph = ""
+    , error = Nothing
     }
 
 
@@ -38,6 +38,7 @@ type Msg
     | Save
 
 
+update : Msg -> Model -> Model
 update msg model =
     case msg of
         NTermChange v ->
@@ -47,12 +48,15 @@ update msg model =
             { model | prodValue = v }
 
         Save ->
-            { model
-                | grammar = addRule model.grammar model.ntValue model.prodValue
-                , prodValue = ""
+            case addRule model.grammar model.ntValue model.prodValue of
+                Ok gram ->
+                    { model
+                        | grammar = gram
+                        , prodValue = ""
+                    }
 
-                -- , ph = Debug.log (Debug.toString (parseRule model.ntValue model.prodValue)) ""
-            }
+                Err error ->
+                    { model | error = Just error }
 
 
 
@@ -80,15 +84,15 @@ header =
         ]
 
 
-renderProduction : String -> String -> Element msg
+renderProduction : String -> Production -> Element msg
 renderProduction nt prod =
     Element.row rowStyle
         [ el [ width <| fillPortion 1, Background.color lblue ] (Element.text nt)
-        , el [ width <| fillPortion 5 ] (Element.text prod)
+        , el [ width <| fillPortion 5 ] (Element.text (prodPrint prod))
         ]
 
 
-renderProductions : String -> List String -> List (Element msg) -> List (Element msg)
+renderProductions : String -> List Production -> List (Element msg) -> List (Element msg)
 renderProductions nt prods acc =
     let
         first =
