@@ -1,8 +1,7 @@
-module Generator exposing (Grammar(..), ProdPart(..), Production(..), RuleError(..), addProduction, addRule, empty, makeParts, parseProduction, partPrint, prodPrint, splitProdParts, symbol)
+module Generator exposing (Grammar(..), ProdPart(..), Production(..), RuleError(..), addProduction, addRule, empty, makeParts, parseProduction, partPrint, prodPrint, splitProdParts, symbol, parseProd)
 
-import Debug
 import Dict exposing (Dict)
-import Regex
+import Parser exposing (..)
 
 
 type ProdPart
@@ -18,7 +17,7 @@ type Production
 type Grammar
     = Grammar (Dict String (List Production))
 
-
+empty : Grammar
 empty =
     Grammar Dict.empty
 
@@ -42,11 +41,6 @@ prodPrint p =
         NonTerminal pp ->
             "NT: " ++ (String.join " " <| List.map partPrint pp)
 
-
-
--- generator : Grammar -> String
--- generator c =
---     ""
 
 
 addRule : Grammar -> String -> String -> Result RuleError Grammar
@@ -88,7 +82,7 @@ parseProduction prod =
     in
     case prodParts of
         Ok parsed ->
-            if List.all symbol parsed then
+            if List.any symbol parsed then
                 Ok (NonTerminal (List.reverse parsed))
 
             else
@@ -110,7 +104,6 @@ symbol prodPart =
 
 splitProdParts : String -> Result RuleError (List ProdPart)
 splitProdParts prod =
-    -- List.foldl makeParts (Ok []) (Regex.split (Maybe.withDefault Regex.never (Regex.fromString "#(\\S+?)#")) prod)
     List.foldl makeParts (Ok []) (String.split "#" prod)
 
 
@@ -130,3 +123,40 @@ makeParts strPart done =
 
         Err x ->
             Err x
+
+parseProd : String -> Result (List DeadEnd) Production
+parseProd inp = 
+    let
+        parsed = run productionParser inp
+    in
+        case parsed of
+            Ok pps ->
+                Ok (NonTerminal pps)
+            Err errors ->
+                Err errors
+
+productionParser : Parser (List (ProdPart))
+productionParser =
+    succeed identity
+    |= loop [] productionHelper
+productionHelper : List ProdPart -> Parser (Step (List ProdPart) (List ProdPart))
+
+productionHelper parts =
+    oneOf
+    [ tokenParser |> map (\part -> Loop (part :: parts))
+    , loop "" symbolParser |> map (\part -> Loop (part :: parts))
+    , end |> (\_ -> succeed (Done (List.reverse parts))) 
+    ]
+
+tokenParser : Parser ProdPart
+tokenParser =
+    chompWhile (\c -> c /= '#')
+    |> getChompedString
+    |> map (\part -> Token part)
+
+symbolParser : String -> Parser (Step (String) ProdPart)
+symbolParser loopChunks =
+    oneOf [
+        token "#" |> map (\_ -> Done (Token loopChunks))
+        , chompWhile (\c -> c /= '#') |> getChompedString |> map (\chunk -> Loop (loopChunks ++ chunk))
+    ]
