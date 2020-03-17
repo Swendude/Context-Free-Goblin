@@ -1,4 +1,4 @@
-module Generator exposing (Grammar(..), ProdPart(..), Production(..), RuleError(..), addProduction, addRule, empty, makeParts, parseProduction, partPrint, prodPrint, splitProdParts, symbol, parseProd)
+module Generator exposing (..)
 
 import Dict exposing (Dict)
 import Parser exposing (..)
@@ -16,6 +16,7 @@ type Production
 
 type Grammar
     = Grammar (Dict String (List Production))
+
 
 empty : Grammar
 empty =
@@ -40,7 +41,6 @@ prodPrint p =
 
         NonTerminal pp ->
             "NT: " ++ (String.join " " <| List.map partPrint pp)
-
 
 
 addRule : Grammar -> String -> String -> Result RuleError Grammar
@@ -124,39 +124,67 @@ makeParts strPart done =
         Err x ->
             Err x
 
-parseProd : String -> Result (List DeadEnd) Production
-parseProd inp = 
-    let
-        parsed = run productionParser inp
-    in
-        case parsed of
-            Ok pps ->
-                Ok (NonTerminal pps)
-            Err errors ->
-                Err errors
 
-productionParser : Parser (List (ProdPart))
+parseProd : String -> Result (List DeadEnd) Production
+parseProd inp =
+    let
+        parsed =
+            run productionParser inp
+    in
+    case parsed of
+        Ok pps ->
+            Ok (NonTerminal pps)
+
+        Err errors ->
+            Err errors
+
+
+productionParser : Parser (List ProdPart)
 productionParser =
     succeed identity
-    |= loop [] productionHelper
-productionHelper : List ProdPart -> Parser (Step (List ProdPart) (List ProdPart))
+        |= loop [] productionHelper
 
+
+productionHelper : List ProdPart -> Parser (Step (List ProdPart) (List ProdPart))
 productionHelper parts =
     oneOf
-    [ tokenParser |> map (\part -> Loop (part :: parts))
-    , loop "" symbolParser |> map (\part -> Loop (part :: parts))
-    , end |> (\_ -> succeed (Done (List.reverse parts))) 
-    ]
+        [ symbolParser |> map (\part -> Loop (part :: parts))
+        , tokenParser |> map (\part -> Loop (part :: parts))
+        , end |> (\_ -> succeed (Done (List.reverse parts)))
+        ]
+
 
 tokenParser : Parser ProdPart
 tokenParser =
-    chompWhile (\c -> c /= '#')
-    |> getChompedString
-    |> map (\part -> Token part)
+    chompUntilEndOr "#"
+        |> getChompedString
+        |> andThen
+            (\part ->
+                if String.isEmpty part then
+                    problem "Expected at least one character"
 
-symbolParser : String -> Parser (Step (String) ProdPart)
-symbolParser loopChunks =
-    oneOf [
-        token "#" |> map (\_ -> Done (Token loopChunks))
-        , chompWhile (\c -> c /= '#') |> getChompedString |> map (\chunk -> Loop (loopChunks ++ chunk))
-    ]
+                else
+                    succeed (Token part)
+            )
+
+
+symbolParser : Parser ProdPart
+symbolParser =
+    Parser.token "#"
+        |. chompUntil "#"
+        |. Parser.token "#"
+        |> getChompedString 
+        |> andThen
+
+            (\part ->
+                let
+                    strippedPart = part |> String.dropLeft 1 |> String.dropRight 1
+                in
+                
+                if String.isEmpty strippedPart then
+                    problem "Expected at least one character"
+                else
+                    succeed (Symbol strippedPart)
+            )
+        
+
