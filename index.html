@@ -5165,20 +5165,20 @@ var $elm$core$Basics$LT = {$: 'LT'};
 var $elm$core$Basics$identity = function (x) {
 	return x;
 };
-var $author$project$Generator$Grammar = function (a) {
+var $author$project$Grammar$Grammar = function (a) {
 	return {$: 'Grammar', a: a};
 };
-var $author$project$Generator$NonTerminal = function (a) {
+var $author$project$Grammar$NonTerminal = function (a) {
 	return {$: 'NonTerminal', a: a};
 };
 var $elm$core$Maybe$Nothing = {$: 'Nothing'};
-var $author$project$Generator$Symbol = function (a) {
+var $author$project$Grammar$Symbol = function (a) {
 	return {$: 'Symbol', a: a};
 };
-var $author$project$Generator$Terminal = function (a) {
+var $author$project$Grammar$Terminal = function (a) {
 	return {$: 'Terminal', a: a};
 };
-var $author$project$Generator$Token = function (a) {
+var $author$project$Grammar$Token = function (a) {
 	return {$: 'Token', a: a};
 };
 var $elm$core$Basics$apL = F2(
@@ -5329,7 +5329,7 @@ var $elm$core$Dict$fromList = function (assocs) {
 };
 var $author$project$Main$init = {
 	error: $elm$core$Maybe$Nothing,
-	grammar: $author$project$Generator$Grammar(
+	grammar: $author$project$Grammar$Grammar(
 		$elm$core$Dict$fromList(
 			_List_fromArray(
 				[
@@ -5337,43 +5337,43 @@ var $author$project$Main$init = {
 					'Start',
 					_List_fromArray(
 						[
-							$author$project$Generator$NonTerminal(
+							$author$project$Grammar$NonTerminal(
 							_List_fromArray(
 								[
-									$author$project$Generator$Token('He saw a '),
-									$author$project$Generator$Symbol('animal'),
-									$author$project$Generator$Token('in a '),
-									$author$project$Generator$Symbol('location')
+									$author$project$Grammar$Token('He saw a '),
+									$author$project$Grammar$Symbol('animal'),
+									$author$project$Grammar$Token('in a '),
+									$author$project$Grammar$Symbol('location')
 								]))
 						])),
 					_Utils_Tuple2(
 					'animal',
 					_List_fromArray(
 						[
-							$author$project$Generator$Terminal(
+							$author$project$Grammar$Terminal(
 							_List_fromArray(
 								[
-									$author$project$Generator$Token('dog')
+									$author$project$Grammar$Token('dog')
 								])),
-							$author$project$Generator$Terminal(
+							$author$project$Grammar$Terminal(
 							_List_fromArray(
 								[
-									$author$project$Generator$Token('sheep')
+									$author$project$Grammar$Token('sheep')
 								]))
 						])),
 					_Utils_Tuple2(
 					'location',
 					_List_fromArray(
 						[
-							$author$project$Generator$Terminal(
+							$author$project$Grammar$Terminal(
 							_List_fromArray(
 								[
-									$author$project$Generator$Token('forest')
+									$author$project$Grammar$Token('forest')
 								])),
-							$author$project$Generator$Terminal(
+							$author$project$Grammar$Terminal(
 							_List_fromArray(
 								[
-									$author$project$Generator$Token('city')
+									$author$project$Grammar$Token('city')
 								]))
 						]))
 				]))),
@@ -10767,7 +10767,7 @@ var $elm$browser$Browser$sandbox = function (impl) {
 			view: impl.view
 		});
 };
-var $author$project$Generator$addProduction = F2(
+var $author$project$Grammar$addProduction = F2(
 	function (_new, oldl) {
 		if (oldl.$ === 'Nothing') {
 			return $elm$core$Maybe$Just(
@@ -11178,7 +11178,7 @@ var $elm$parser$Parser$token = function (str) {
 	return $elm$parser$Parser$Advanced$token(
 		$elm$parser$Parser$toToken(str));
 };
-var $author$project$Generator$symbolParser = A2(
+var $author$project$Grammar$symbolParser = A2(
 	$elm$parser$Parser$andThen,
 	function (part) {
 		var strippedPart = A2(
@@ -11186,7 +11186,7 @@ var $author$project$Generator$symbolParser = A2(
 			1,
 			A2($elm$core$String$dropLeft, 1, part));
 		return $elm$core$String$isEmpty(strippedPart) ? $elm$parser$Parser$problem('Expected at least one character') : $elm$parser$Parser$succeed(
-			$author$project$Generator$Symbol(strippedPart));
+			$author$project$Grammar$Symbol(strippedPart));
 	},
 	$elm$parser$Parser$getChompedString(
 		A2(
@@ -11212,15 +11212,15 @@ var $elm$parser$Parser$Advanced$chompUntilEndOr = function (str) {
 		});
 };
 var $elm$parser$Parser$chompUntilEndOr = $elm$parser$Parser$Advanced$chompUntilEndOr;
-var $author$project$Generator$tokenParser = A2(
+var $author$project$Grammar$tokenParser = A2(
 	$elm$parser$Parser$andThen,
 	function (part) {
 		return $elm$core$String$isEmpty(part) ? $elm$parser$Parser$problem('Expected at least one character') : $elm$parser$Parser$succeed(
-			$author$project$Generator$Token(part));
+			$author$project$Grammar$Token(part));
 	},
 	$elm$parser$Parser$getChompedString(
 		$elm$parser$Parser$chompUntilEndOr('#')));
-var $author$project$Generator$productionHelper = function (parts) {
+var $author$project$Grammar$productionHelper = function (parts) {
 	return $elm$parser$Parser$oneOf(
 		_List_fromArray(
 			[
@@ -11230,14 +11230,14 @@ var $author$project$Generator$productionHelper = function (parts) {
 					return $elm$parser$Parser$Loop(
 						A2($elm$core$List$cons, part, parts));
 				},
-				$author$project$Generator$symbolParser),
+				$author$project$Grammar$symbolParser),
 				A2(
 				$elm$parser$Parser$map,
 				function (part) {
 					return $elm$parser$Parser$Loop(
 						A2($elm$core$List$cons, part, parts));
 				},
-				$author$project$Generator$tokenParser),
+				$author$project$Grammar$tokenParser),
 				function (_v0) {
 				return $elm$parser$Parser$succeed(
 					$elm$parser$Parser$Done(
@@ -11245,10 +11245,10 @@ var $author$project$Generator$productionHelper = function (parts) {
 			}($elm$parser$Parser$end)
 			]));
 };
-var $author$project$Generator$productionParser = A2(
+var $author$project$Grammar$productionParser = A2(
 	$elm$parser$Parser$keeper,
 	$elm$parser$Parser$succeed($elm$core$Basics$identity),
-	A2($elm$parser$Parser$loop, _List_Nil, $author$project$Generator$productionHelper));
+	A2($elm$parser$Parser$loop, _List_Nil, $author$project$Grammar$productionHelper));
 var $elm$parser$Parser$DeadEnd = F3(
 	function (row, col, problem) {
 		return {col: col, problem: problem, row: row};
@@ -11308,37 +11308,37 @@ var $elm$parser$Parser$run = F2(
 				A2($elm$core$List$map, $elm$parser$Parser$problemToDeadEnd, problems));
 		}
 	});
-var $author$project$Generator$symbol = function (prodPart) {
+var $author$project$Grammar$symbol = function (prodPart) {
 	if (prodPart.$ === 'Symbol') {
 		return true;
 	} else {
 		return false;
 	}
 };
-var $author$project$Generator$parseProduction = function (prod) {
-	var prodParts = A2($elm$parser$Parser$run, $author$project$Generator$productionParser, prod);
+var $author$project$Grammar$parseProduction = function (prod) {
+	var prodParts = A2($elm$parser$Parser$run, $author$project$Grammar$productionParser, prod);
 	if (prodParts.$ === 'Ok') {
 		var parsed = prodParts.a;
-		return A2($elm$core$List$any, $author$project$Generator$symbol, parsed) ? $elm$core$Result$Ok(
-			$author$project$Generator$NonTerminal(parsed)) : $elm$core$Result$Ok(
-			$author$project$Generator$Terminal(parsed));
+		return A2($elm$core$List$any, $author$project$Grammar$symbol, parsed) ? $elm$core$Result$Ok(
+			$author$project$Grammar$NonTerminal(parsed)) : $elm$core$Result$Ok(
+			$author$project$Grammar$Terminal(parsed));
 	} else {
 		var x = prodParts.a;
 		return $elm$core$Result$Err(x);
 	}
 };
-var $author$project$Generator$addRule = F3(
+var $author$project$Grammar$addRule = F3(
 	function (gram, sym, rProduction) {
-		var newProduction = $author$project$Generator$parseProduction(rProduction);
+		var newProduction = $author$project$Grammar$parseProduction(rProduction);
 		var rules = gram.a;
 		if (newProduction.$ === 'Ok') {
 			var prod = newProduction.a;
 			return $elm$core$Result$Ok(
-				$author$project$Generator$Grammar(
+				$author$project$Grammar$Grammar(
 					A3(
 						$elm$core$Dict$update,
 						sym,
-						$author$project$Generator$addProduction(prod),
+						$author$project$Grammar$addProduction(prod),
 						rules)));
 		} else {
 			var error = newProduction.a;
@@ -11359,7 +11359,7 @@ var $author$project$Main$update = F2(
 					model,
 					{prodValue: v});
 			default:
-				var _v1 = A3($author$project$Generator$addRule, model.grammar, model.ntValue, model.prodValue);
+				var _v1 = A3($author$project$Grammar$addRule, model.grammar, model.ntValue, model.prodValue);
 				if (_v1.$ === 'Ok') {
 					var gram = _v1.a;
 					return _Utils_update(

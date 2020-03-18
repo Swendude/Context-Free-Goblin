@@ -1,4 +1,4 @@
-module Generator exposing (..)
+module Grammar exposing (..)
 
 import Dict exposing (Dict)
 import Parser exposing (..)

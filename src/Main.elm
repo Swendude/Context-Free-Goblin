@@ -8,7 +8,7 @@ import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
 import Element.Input as Input
-import Generator exposing (..)
+import Grammar exposing (..)
 import Parser exposing (run, DeadEnd)
 
 
@@ -25,9 +25,9 @@ init =
     { ntValue = ""
     , prodValue = ""
     , grammar =
-        Grammar <| Dict.fromList [("Start", [Generator.NonTerminal [Token "He saw a ", Symbol "animal", Token "in a ", Symbol "location"]])
-                                    ,("animal", [Generator.Terminal [Token "dog"], Generator.Terminal [Token "sheep"]])
-                                    ,("location", [Generator.Terminal [Token "forest"], Generator.Terminal [Token "city"]])]
+        Grammar <| Dict.fromList [("Start", [Grammar.NonTerminal [Token "He saw a ", Symbol "animal", Token "in a ", Symbol "location"]])
+                                    ,("animal", [Grammar.Terminal [Token "dog"], Grammar.Terminal [Token "sheep"]])
+                                    ,("location", [Grammar.Terminal [Token "forest"], Grammar.Terminal [Token "city"]])]
     , error = Nothing
     }
 

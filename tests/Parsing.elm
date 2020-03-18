@@ -2,7 +2,7 @@ module Parsing exposing (suite)
 
 import Expect exposing (Expectation, fail, pass)
 import Fuzz exposing (Fuzzer, int, list, string)
-import Generator exposing (..)
+import Grammar exposing (..)
 import Parser
 import Test exposing (..)
 
@@ -33,7 +33,7 @@ suite =
                     in
                     case res of
                         Ok prods ->
-                            Expect.equal (NonTerminal [ Token "He saw a ", Symbol "animal", Token "" ]) prods
+                            Expect.equal (NonTerminal [ Token "He saw a ", Symbol "animal" ]) prods
 
                         Err _ ->
                             fail "Parsing went wrong"
