@@ -1,4 +1,4 @@
-module Grammar exposing (Grammar(..), ProdPart(..), Production, RuleError(..), addProduction, addRule, empty, parseProduction, partPrint, prodPrint, productionHelper, productionParser, symbol, symbolParser, tokenParser)
+module Grammar exposing (Grammar(..), ProdPart(..), Production, RuleError(..), addProduction, addRule, empty, parseProduction, prodPartToString, prodToString, productionHelper, productionParser, symbol, symbolParser, tokenParser)
 
 import Dict exposing (Dict)
 import Parser exposing (..)
@@ -22,19 +22,19 @@ empty =
     Grammar Dict.empty
 
 
-partPrint : ProdPart -> String
-partPrint pp =
+prodPartToString : ProdPart -> String
+prodPartToString pp =
     case pp of
-        Symbol p ->
-            "#" ++ p ++ "#"
+        Symbol s ->
+            "#" ++ s ++ "#"
 
-        Token p ->
-            p
+        Token s ->
+            s
 
 
-prodPrint : Production -> String
-prodPrint p =
-    String.join " " <| List.map partPrint p
+prodToString : Production -> String
+prodToString prod =
+    List.map prodPartToString prod |> String.join ""
 
 
 addRule : Grammar -> String -> String -> Result (List DeadEnd) Grammar
