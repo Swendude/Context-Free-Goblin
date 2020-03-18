@@ -7,6 +7,8 @@ Toy project, developed using elm reactor.
 - Validate ruleset correctness []
 - Save grammars to cloud []
 
+
 # Whislist
-- Actual Parser []
+- Actual Parser [x]
 - Combine/import grammars []
+- Make sentences deterministic using seeds (efficient saving) []
