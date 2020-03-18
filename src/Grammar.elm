@@ -1,7 +1,11 @@
-module Grammar exposing (Grammar(..), ProdPart(..), Production, RuleError(..), addProduction, addRule, empty, parseProduction, prodPartToString, prodToString, productionHelper, productionParser, symbol, symbolParser, tokenParser)
+module Grammar exposing (GeneratorError(..), Grammar(..), ProdPart(..), Production, RuleError(..), addProduction, addRule, empty, generateSentence, isSymbol, parseProduction, pickRule, prodPartToString, prodToString, productionHelper, productionParser, replaceSymbols, resolveProdPart, symbolParser, tokenParser)
 
 import Dict exposing (Dict)
 import Parser exposing (..)
+import Random exposing (initialSeed, step)
+import Random.List exposing (shuffle)
+import Result.Extra exposing (combine)
+import Test exposing (..)
 
 
 type ProdPart
@@ -17,9 +21,17 @@ type Grammar
     = Grammar (Dict String (List Production))
 
 
+
+-- Construction
+
+
 empty : Grammar
 empty =
     Grammar Dict.empty
+
+
+
+-- Printing
 
 
 prodPartToString : ProdPart -> String
@@ -37,6 +49,10 @@ prodToString prod =
     List.map prodPartToString prod |> String.join ""
 
 
+
+-- UTILITY
+
+
 addRule : Grammar -> String -> String -> Result (List DeadEnd) Grammar
 addRule gram sym rProduction =
     let
@@ -51,6 +67,10 @@ addRule gram sym rProduction =
 
                 Err error ->
                     Err error
+
+
+
+-- PARSER
 
 
 type RuleError
@@ -72,8 +92,8 @@ parseProduction prod =
     Parser.run productionParser prod
 
 
-symbol : ProdPart -> Bool
-symbol prodPart =
+isSymbol : ProdPart -> Bool
+isSymbol prodPart =
     case prodPart of
         Symbol _ ->
             True
@@ -129,3 +149,82 @@ symbolParser =
                 else
                     succeed (Symbol strippedPart)
             )
+
+
+
+-- Generator
+
+
+type GeneratorError
+    = NoStartRule
+    | SymbolMissing String
+    | EmptyProduction
+    | RecursionError
+
+
+pickRule : Grammar -> String -> Result GeneratorError Production
+pickRule (Grammar rules) symbol =
+    case Dict.get symbol rules of
+        Just productions ->
+            let
+                choice =
+                    List.head <| Tuple.first <| step (shuffle productions) (initialSeed 42)
+            in
+            case choice of
+                Just prod ->
+                    Ok prod
+
+                Nothing ->
+                    Err EmptyProduction
+
+        Nothing ->
+            Err (SymbolMissing symbol)
+
+
+resolveProdPart : Grammar -> ProdPart -> Result GeneratorError Production
+resolveProdPart gram prodPart =
+    case prodPart of
+        Token str ->
+            Ok <| [ Token str ]
+
+        Symbol sym ->
+            pickRule gram sym
+
+
+replaceSymbols : Int -> Grammar -> Production -> Result GeneratorError Production
+replaceSymbols c gram cur =
+    let
+        replaced =
+            List.map (resolveProdPart gram) cur |> combine |> Result.map List.concat
+    in
+    case replaced of
+        Ok newprod ->
+            if c > 100 then
+                Err RecursionError
+
+            else if List.any isSymbol newprod then
+                replaceSymbols (c + 1) gram newprod
+
+            else
+                Ok newprod
+
+        Err err ->
+            Err err
+
+
+generateSentence : Grammar -> Result GeneratorError String
+generateSentence (Grammar rules) =
+    if Dict.member "START" rules then
+        let
+            first =
+                pickRule (Grammar rules) "START"
+        in
+        case first of
+            Ok prod ->
+                replaceSymbols 0 (Grammar rules) prod |> Result.map prodToString
+
+            Err err ->
+                Err err
+
+    else
+        Err NoStartRule
