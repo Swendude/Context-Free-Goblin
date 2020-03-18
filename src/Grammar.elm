@@ -1,4 +1,4 @@
-module Grammar exposing (..)
+module Grammar exposing (Grammar(..), ProdPart(..), Production, RuleError(..), addProduction, addRule, empty, parseProduction, partPrint, prodPrint, productionHelper, productionParser, symbol, symbolParser, tokenParser)
 
 import Dict exposing (Dict)
 import Parser exposing (..)
@@ -9,9 +9,8 @@ type ProdPart
     | Token String
 
 
-type Production
-    = Terminal (List ProdPart)
-    | NonTerminal (List ProdPart)
+type alias Production =
+    List ProdPart
 
 
 type Grammar
@@ -35,12 +34,7 @@ partPrint pp =
 
 prodPrint : Production -> String
 prodPrint p =
-    case p of
-        Terminal pp ->
-            "T: " ++ (String.join " " <| List.map partPrint pp)
-
-        NonTerminal pp ->
-            "NT: " ++ (String.join " " <| List.map partPrint pp)
+    String.join " " <| List.map partPrint p
 
 
 addRule : Grammar -> String -> String -> Result (List DeadEnd) Grammar
@@ -75,21 +69,7 @@ addProduction new oldl =
 
 parseProduction : String -> Result (List DeadEnd) Production
 parseProduction prod =
-    let
-        prodParts : Result (List DeadEnd) (List ProdPart)
-        prodParts =
-            Parser.run productionParser prod
-    in
-    case prodParts of
-        Ok parsed ->
-            if List.any symbol parsed then
-                Ok (NonTerminal parsed)
-
-            else
-                Ok (Terminal  parsed)
-
-        Err x ->
-            Err x
+    Parser.run productionParser prod
 
 
 symbol : ProdPart -> Bool
@@ -100,20 +80,6 @@ symbol prodPart =
 
         Token _ ->
             False
-
-
-parseProd : String -> Result (List DeadEnd) Production
-parseProd inp =
-    let
-        parsed =
-            run productionParser inp
-    in
-    case parsed of
-        Ok pps ->
-            Ok (NonTerminal pps)
-
-        Err errors ->
-            Err errors
 
 
 productionParser : Parser (List ProdPart)
@@ -150,18 +116,16 @@ symbolParser =
     Parser.token "#"
         |. chompUntil "#"
         |. Parser.token "#"
-        |> getChompedString 
+        |> getChompedString
         |> andThen
-
             (\part ->
                 let
-                    strippedPart = part |> String.dropLeft 1 |> String.dropRight 1
+                    strippedPart =
+                        part |> String.dropLeft 1 |> String.dropRight 1
                 in
-                
                 if String.isEmpty strippedPart then
                     problem "Expected at least one character"
+
                 else
                     succeed (Symbol strippedPart)
             )
-        
-

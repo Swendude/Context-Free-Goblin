@@ -19,7 +19,7 @@ suite =
                     in
                     case res of
                         Ok prods ->
-                            Expect.equal (Terminal [ Token "He saw a dog" ]) prods
+                            Expect.equal [ Token "He saw a dog" ] prods
 
                         Err _ ->
                             fail "Parsing went wrong"
@@ -33,7 +33,7 @@ suite =
                     in
                     case res of
                         Ok prods ->
-                            Expect.equal (NonTerminal [ Token "He saw a ", Symbol "animal" ]) prods
+                            Expect.equal [ Token "He saw a ", Symbol "animal" ] prods
 
                         Err _ ->
                             fail "Parsing went wrong"

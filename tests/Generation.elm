@@ -14,9 +14,9 @@ import Test exposing (..)
 unpackedTestGrammar : Dict String (List Production)
 unpackedTestGrammar =
     Dict.fromList
-        [ ( "START", [ Grammar.NonTerminal [ Token "He saw a ", Symbol "animal", Token "in a ", Symbol "location" ] ] )
-        , ( "animal", [ Grammar.Terminal [ Token "dog" ], Grammar.Terminal [ Token "sheep" ] ] )
-        , ( "location", [ Grammar.Terminal [ Token "forest" ], Grammar.Terminal [ Token "city" ] ] )
+        [ ( "START", [ [ Token "He saw a ", Symbol "animal", Token "in a ", Symbol "location" ] ] )
+        , ( "animal", [ [ Token "dog" ], [ Token "sheep" ] ] )
+        , ( "location", [ [ Token "forest" ], [ Token "city" ] ] )
         ]
 
 
@@ -32,7 +32,7 @@ testGrammarSentences =
 
 possibleAnimals : List Production
 possibleAnimals =
-    [ Grammar.Terminal [ Token "dog" ], Grammar.Terminal [ Token "sheep" ] ]
+    [ [ Token "dog" ], [ Token "sheep" ] ]
 
 
 type GeneratorError
@@ -95,6 +95,6 @@ suite =
                     Expect.ok <| pickRule unpackedTestGrammar "START"
             , test "Picking a rule results in a valid rule" <|
                 \_ ->
-                    Expect.true "picking from animal results in an animal choice" <| List.member (Result.withDefault (Grammar.Terminal []) <| pickRule unpackedTestGrammar "animal") possibleAnimals
+                    Expect.true "picking from animal results in an animal choice" <| List.member (Result.withDefault [] <| pickRule unpackedTestGrammar "animal") possibleAnimals
             ]
         ]
