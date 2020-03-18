@@ -43,7 +43,7 @@ prodPrint p =
             "NT: " ++ (String.join " " <| List.map partPrint pp)
 
 
-addRule : Grammar -> String -> String -> Result RuleError Grammar
+addRule : Grammar -> String -> String -> Result (List DeadEnd) Grammar
 addRule gram sym rProduction =
     let
         newProduction =
@@ -73,20 +73,20 @@ addProduction new oldl =
             Just (new :: l)
 
 
-parseProduction : String -> Result RuleError Production
+parseProduction : String -> Result (List DeadEnd) Production
 parseProduction prod =
     let
-        prodParts : Result RuleError (List ProdPart)
+        prodParts : Result (List DeadEnd) (List ProdPart)
         prodParts =
-            splitProdParts prod
+            Parser.run productionParser prod
     in
     case prodParts of
         Ok parsed ->
             if List.any symbol parsed then
-                Ok (NonTerminal (List.reverse parsed))
+                Ok (NonTerminal parsed)
 
             else
-                Ok (Terminal (List.reverse parsed))
+                Ok (Terminal  parsed)
 
         Err x ->
             Err x
@@ -100,29 +100,6 @@ symbol prodPart =
 
         Token _ ->
             False
-
-
-splitProdParts : String -> Result RuleError (List ProdPart)
-splitProdParts prod =
-    List.foldl makeParts (Ok []) (String.split "#" prod)
-
-
-makeParts : String -> Result RuleError (List ProdPart) -> Result RuleError (List ProdPart)
-makeParts strPart done =
-    case done of
-        Ok parsed ->
-            case modBy 2 (List.length parsed) of
-                0 ->
-                    Result.map (\l -> Token strPart :: l) done
-
-                1 ->
-                    Result.map (\l -> Symbol strPart :: l) done
-
-                _ ->
-                    Err Error
-
-        Err x ->
-            Err x
 
 
 parseProd : String -> Result (List DeadEnd) Production
