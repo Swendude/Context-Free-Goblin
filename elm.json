@@ -26,6 +26,7 @@
     },
     "test-dependencies": {
         "direct": {
+            "ktonon/elm-test-extra": "2.0.1",
             "elm-explorations/test": "1.2.2"
         },
         "indirect": {}
