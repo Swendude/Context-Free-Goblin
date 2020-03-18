@@ -3,11 +3,12 @@ module Main exposing (Model, Msg(..), blue, grammrows, header, init, inputRows, 
 import Browser
 import Debug
 import Dict exposing (Dict)
-import Element exposing (Element, alignRight, centerX, centerY, el, fill, fillPortion, padding, rgb255, row, spacing, text, width)
+import Element exposing (Element, alignRight, centerX, centerY, el, fill, fillPortion, height, padding, rgb255, row, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
 import Element.Input as Input
+import ExampleGrammars
 import Grammar exposing (..)
 import Parser exposing (DeadEnd, run)
 
@@ -17,6 +18,7 @@ type alias Model =
     , prodValue : String
     , grammar : Grammar
     , error : Maybe (List DeadEnd)
+    , output : String
     }
 
 
@@ -25,13 +27,9 @@ init =
     { ntValue = ""
     , prodValue = ""
     , grammar =
-        Grammar <|
-            Dict.fromList
-                [ ( "Start", [ [ Token "He saw a ", Symbol "animal", Token "in a ", Symbol "location" ] ] )
-                , ( "animal", [ [ Token "dog" ], [ Token "sheep" ] ] )
-                , ( "location", [ [ Token "forest" ], [ Token "city" ] ] )
-                ]
+        Grammar <| ExampleGrammars.deepGrammarRules
     , error = Nothing
+    , output = ""
     }
 
 
@@ -42,6 +40,7 @@ main =
 type Msg
     = NTermChange String
     | ProdChange String
+    | Generate
     | Save
 
 
@@ -55,15 +54,22 @@ update msg model =
             { model | prodValue = v }
 
         Save ->
-            case addRule model.grammar model.ntValue model.prodValue of
-                Ok gram ->
-                    { model
-                        | grammar = gram
-                        , prodValue = ""
-                    }
+            if model.ntValue /= "" || model.prodValue /= "" then
+                case addRule model.grammar model.ntValue model.prodValue of
+                    Ok gram ->
+                        { model
+                            | grammar = gram
+                            , prodValue = ""
+                        }
 
-                Err error ->
-                    { model | error = Just error }
+                    Err error ->
+                        { model | error = Just error }
+
+            else
+                model
+
+        Generate ->
+            { model | output = Result.withDefault "ERROR" (Grammar.generateSentence model.grammar) }
 
 
 
@@ -106,12 +112,16 @@ white =
     Element.rgba255 255 255 255 1
 
 
-header : Element msg
+underline : Element.Attribute msg
+underline =
+    Border.widthEach { bottom = 1, top = 0, left = 0, right = 0 }
+
+
+header : List (Element msg)
 header =
-    Element.row [ width fill, spacing 10, padding 10, Background.color black, Font.color white ]
-        [ el [ width <| fillPortion 1, padding 10 ] (Element.text "Symbol")
-        , el [ width <| fillPortion 5, padding 10 ] (Element.text "Rule")
-        ]
+    [ el [ width <| fillPortion 1, padding 10 ] (Element.text "Symbol")
+    , el [ width <| fillPortion 5, padding 10 ] (Element.text "Rule")
+    ]
 
 
 renderProdpart : ProdPart -> Element msg
@@ -129,34 +139,17 @@ renderSymbol sym =
     el [ Background.color grey, padding 10, Border.rounded 5, Font.color white ] (Element.text sym)
 
 
-renderProduction : String -> Int -> Production -> Element msg
-renderProduction nt i prod =
-    let
-        prodColStyle =
-            case modBy 2 i of
-                0 ->
-                    [ width <| fillPortion 1, Background.color white, padding 10 ]
-
-                _ ->
-                    [ width <| fillPortion 1, Background.color lgrey, padding 10 ]
-
-        ruleColStyle =
-            case modBy 2 i of
-                0 ->
-                    [ width <| fillPortion 5, Background.color white, padding 10 ]
-
-                _ ->
-                    [ width <| fillPortion 5, Background.color lgrey, padding 10 ]
-    in
+renderProduction : String -> Production -> Element msg
+renderProduction nt prod =
     Element.row [ width <| fill ]
-        [ el prodColStyle <| renderSymbol nt
-        , el ruleColStyle <| Element.row [] <| List.map renderProdpart prod
+        [ el [ width <| fillPortion 1, padding 10, underline ] <| renderSymbol nt
+        , el [ width <| fillPortion 5, padding 10, underline ] <| Element.row [] <| List.map renderProdpart prod
         ]
 
 
 renderProductions : String -> List Production -> List (Element msg) -> List (Element msg)
 renderProductions nt prods acc =
-    List.indexedMap (renderProduction nt) prods ++ acc
+    List.map (renderProduction nt) prods ++ acc
 
 
 grammrows : Grammar -> List (Element msg)
@@ -166,24 +159,105 @@ grammrows gram =
             Dict.foldl renderProductions [] rules
 
 
-inputRows : Model -> Element Msg
+inputRows : Model -> List (Element Msg)
 inputRows model =
-    Element.row [ width <| fill, spacing 5, padding 10 ]
-        [ Input.text [ width <| fillPortion 1 ]
-            { onChange = NTermChange
-            , label = Input.labelHidden "Symbol"
-            , placeholder = Just <| Input.placeholder [] (Element.text "Symbol")
-            , text = model.ntValue
-            }
-        , Input.text [ width <| fillPortion 4 ]
-            { onChange = ProdChange
-            , label = Input.labelHidden "Production"
-            , placeholder = Just <| Input.placeholder [] (Element.text "Production")
-            , text = model.prodValue
-            }
-        , Input.button [ width <| fillPortion 1 ] { onPress = Just Save, label = Element.text "Add Rule" }
+    [ Input.text [ width <| fillPortion 1 ]
+        { onChange = NTermChange
+        , label = Input.labelHidden "Symbol"
+        , placeholder = Just <| Input.placeholder [] (Element.text "Symbol")
+        , text = model.ntValue
+        }
+    , Input.text [ width <| fillPortion 3 ]
+        { onChange = ProdChange
+        , label = Input.labelHidden "Production"
+        , placeholder = Just <| Input.placeholder [] (Element.text "Production")
+        , text = model.prodValue
+        }
+    , Input.button
+        [ width <| fillPortion 1
+        , Background.color blue
+        , padding 10
+        , Border.rounded 5
+        , Border.solid
+        , Element.mouseOver
+            [ Background.color red ]
+        , Element.mouseDown
+            [ Background.color grey ]
+        , Font.color white
+        , Font.center
         ]
+        { onPress = Just Save, label = Element.text "+ Add Rule" }
+    , Input.button
+        [ width <| fillPortion 1
+        , Background.color blue
+        , padding 10
+        , Border.rounded 5
+        , Border.solid
+        , Element.mouseOver
+            [ Background.color red ]
+        , Element.mouseDown
+            [ Background.color grey ]
+        , Font.color white
+        , Font.center
+        ]
+        { onPress = Just Generate, label = Element.text "Generate > " }
+    ]
 
 
 view model =
-    Element.layout [] <| Element.column [ width fill ] <| header :: List.append (grammrows model.grammar) [ inputRows model ]
+    Element.layout [] <|
+        Element.column [ width fill, height fill ]
+            [ el
+                [ Font.center
+                , Font.light
+                , Font.color white
+                , width fill
+                , padding 10
+                , Font.size 24
+                , Background.color black
+                ]
+                (Element.text "OpenGen")
+            , Element.row
+                [ height <| Element.px 30
+                , width fill
+                , padding 10
+                , Background.color black
+                , Font.color white
+                ]
+                header
+            , Element.row [ width fill ] <|
+                [ Element.column
+                    [ Border.solid
+                    , Border.width 2
+                    , Background.color lgrey
+                    , height <| Element.px 500
+                    , Element.clipY
+                    , Element.scrollbarY
+                    , Element.width fill
+                    ]
+                    (grammrows model.grammar)
+                ]
+            , Element.row
+                [ Background.color black
+                , height <| Element.px 60
+                , width fill
+                , spacing 5
+                , padding 10
+                ]
+              <|
+                inputRows model
+            , el
+                [ Background.color black
+                , height <| Element.px 60
+                , width fill
+                , spacing 5
+                , padding 10
+                , Font.color white
+                , Font.italic
+                , Font.center
+                , Font.light
+                , Font.underline
+                ]
+              <|
+                Element.text model.output
+            ]
