@@ -6,6 +6,7 @@ Toy project, developed using elm reactor.
 - Generate strings from a correct ruleset [X]
 - Validate ruleset correctness [X]
 - Save grammars to cloud []
+- Error reporting []
 
 
 # Whislist

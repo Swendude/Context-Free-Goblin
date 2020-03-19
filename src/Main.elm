@@ -187,13 +187,13 @@ grammrows gram =
 
 inputRows : Model -> List (Element Msg)
 inputRows model =
-    [ Input.text [ width <| fillPortion 1 ]
+    [ Input.text [ width <| fillPortion 1, Border.rounded 0, Border.width 0 ]
         { onChange = NTermChange
         , label = Input.labelHidden "Symbol"
         , placeholder = Just <| Input.placeholder [] (Element.text "Symbol")
         , text = model.ntValue
         }
-    , Input.text [ width <| fillPortion 3 ]
+    , Input.text [ width <| fillPortion 3, Border.rounded 0, Border.width 0 ]
         { onChange = ProdChange
         , label = Input.labelHidden "Production"
         , placeholder = Just <| Input.placeholder [] (Element.text "Production")

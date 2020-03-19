@@ -1,0 +1,36 @@
+{
+    "rules": [
+        {
+            "symbol": "START",
+            "productions": [
+                [
+                    [
+                        {
+                            "token": "He saw a "
+                        },
+                        {
+                            "symbol": "animal"
+                        }
+                    ]
+                ]
+            ]
+        },
+        {
+            "symbol": "animal",
+            "productions": [
+                [
+                    [
+                        {
+                            "token": "dog"
+                        }
+                    ],
+                    [
+                        {
+                            "token": "sheep"
+                        }
+                    ]
+                ]
+            ]
+        }
+    ]
+}

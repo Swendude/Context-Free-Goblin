@@ -4,12 +4,13 @@ import ExampleGrammars exposing (..)
 import Expect exposing (ok, true)
 import Expect.Extra
 import Grammar exposing (Grammar(..), generateSentence, pickRule)
+import Random
 import Test exposing (Test, describe, test)
 
 
-seed : Int
+seed : Random.Seed
 seed =
-    42
+    Random.initialSeed 42
 
 
 suite : Test
@@ -29,10 +30,10 @@ suite =
         , describe "Rule picking works"
             [ test "Picking a rule works" <|
                 \_ ->
-                    Expect.ok <| pickRule seed (Grammar normalGrammarRules) "START"
+                    Expect.ok <| Tuple.second <| pickRule seed (Grammar normalGrammarRules) "START"
             , test "Picking a rule results in a valid rule" <|
                 \_ ->
-                    Expect.true "picking from animal results in an animal choice" <| List.member (Result.withDefault [] <| pickRule seed (Grammar normalGrammarRules) "animal") possibleAnimals
+                    Expect.true "picking from animal results in an animal choice" <| List.member (Result.withDefault [] <| Tuple.second <| pickRule seed (Grammar normalGrammarRules) "animal") possibleAnimals
             ]
         , describe "Recursive grammars do not crash"
             [ test "a random generated sentence from an invalid recursive grammar does not crash (1-deep, recursive)" <|
