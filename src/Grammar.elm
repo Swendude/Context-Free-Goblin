@@ -161,48 +161,74 @@ type GeneratorError
     | RecursionError
 
 
-pickRule : Grammar -> String -> Result GeneratorError Production
-pickRule (Grammar rules) symbol =
+pickRule : Random.Seed -> Grammar -> String -> ( Random.Seed, Result GeneratorError Production )
+pickRule seed (Grammar rules) symbol =
     case Dict.get symbol rules of
         Just productions ->
             let
+                seedAndChoice =
+                    step (shuffle productions) seed
+
                 choice =
-                    List.head <| Tuple.first <| step (shuffle productions) (initialSeed 42)
+                    List.head <| Tuple.first <| seedAndChoice
+
+                newseed =
+                    Tuple.second seedAndChoice
             in
             case choice of
                 Just prod ->
-                    Ok prod
+                    ( newseed, Ok prod )
 
                 Nothing ->
-                    Err EmptyProduction
+                    ( newseed, Err EmptyProduction )
 
         Nothing ->
-            Err (SymbolMissing symbol)
+            ( seed, Err (SymbolMissing symbol) )
 
 
-resolveProdPart : Grammar -> ProdPart -> Result GeneratorError Production
-resolveProdPart gram prodPart =
+
+-- resolveProdPart : Random.Seed -> Grammar -> ProdPart -> ( Random.Seed, Result GeneratorError Production )
+-- resolveProdPart seed gram prodPart =
+--     case prodPart of
+--         Token str ->
+--             ( seed, Ok <| [ Token str ] )
+--         Symbol sym ->
+--             pickRule seed gram sym
+-- -- (a -> b -> b) -> b -> List a -> b
+
+
+resolveProdPart : Grammar -> ProdPart -> ( Random.Seed, List (Result GeneratorError Production) ) -> ( Random.Seed, List (Result GeneratorError Production) )
+resolveProdPart gram prodPart ( seed, curProd ) =
     case prodPart of
         Token str ->
-            Ok <| [ Token str ]
+            ( seed, List.append [ Ok <| [ Token str ] ] curProd )
 
         Symbol sym ->
-            pickRule gram sym
+            let
+                ( new_seed, choice ) =
+                    pickRule seed gram sym
+            in
+            ( new_seed, List.append [ choice ] curProd )
 
 
-replaceSymbols : Int -> Grammar -> Production -> Result GeneratorError Production
-replaceSymbols c gram cur =
+
+-- prodPart -> (seed, List Prodparts)  -> (seed, List Prodparts)
+-- foldr List prodparts (seed , []) current
+
+
+replaceSymbols : Random.Seed -> Int -> Grammar -> Production -> Result GeneratorError Production
+replaceSymbols seed recursionCounter gram cur =
     let
         replaced =
-            List.map (resolveProdPart gram) cur |> combine |> Result.map List.concat
+            List.foldr (resolveProdPart gram) ( seed, [] ) cur |> Tuple.second |> combine |> Result.map List.concat
     in
     case replaced of
         Ok newprod ->
-            if c > 100 then
+            if recursionCounter > 100 then
                 Err RecursionError
 
             else if List.any isSymbol newprod then
-                replaceSymbols (c + 1) gram newprod
+                replaceSymbols seed (recursionCounter + 1) gram newprod
 
             else
                 Ok newprod
@@ -211,16 +237,16 @@ replaceSymbols c gram cur =
             Err err
 
 
-generateSentence : Grammar -> Result GeneratorError String
-generateSentence (Grammar rules) =
+generateSentence : Random.Seed -> Grammar -> Result GeneratorError String
+generateSentence seed (Grammar rules) =
     if Dict.member "START" rules then
         let
-            first =
-                pickRule (Grammar rules) "START"
+            choice =
+                Tuple.second <| pickRule seed (Grammar rules) "START"
         in
-        case first of
+        case choice of
             Ok prod ->
-                replaceSymbols 0 (Grammar rules) prod |> Result.map prodToString
+                replaceSymbols seed 0 (Grammar rules) prod |> Result.map prodToString
 
             Err err ->
                 Err err

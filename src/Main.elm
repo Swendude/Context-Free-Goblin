@@ -11,6 +11,7 @@ import Element.Input as Input
 import ExampleGrammars
 import Grammar exposing (..)
 import Parser exposing (DeadEnd, run)
+import Random
 
 
 type alias Model =
@@ -19,22 +20,36 @@ type alias Model =
     , grammar : Grammar
     , error : Maybe (List DeadEnd)
     , output : String
+    , seed : Int
     }
 
 
-init : Model
-init =
-    { ntValue = ""
-    , prodValue = ""
-    , grammar =
-        Grammar <| ExampleGrammars.deepGrammarRules
-    , error = Nothing
-    , output = ""
-    }
+init : () -> ( Model, Cmd Msg )
+init _ =
+    ( { ntValue = ""
+      , prodValue = ""
+      , grammar =
+            Grammar <| ExampleGrammars.deepGrammarRules
+      , error = Nothing
+      , output = ""
+      , seed = 42
+      }
+    , Cmd.none
+    )
 
 
 main =
-    Browser.sandbox { init = init, update = update, view = view }
+    Browser.element
+        { init = init
+        , update = update
+        , subscriptions = subscriptions
+        , view = view
+        }
+
+
+subscriptions : Model -> Sub Msg
+subscriptions model =
+    Sub.none
 
 
 type Msg
@@ -42,37 +57,48 @@ type Msg
     | ProdChange String
     | Generate
     | Save
+    | NewSeed Int
+    | ClearGrammar
 
 
-update : Msg -> Model -> Model
+update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         NTermChange v ->
-            { model | ntValue = v }
+            ( { model | ntValue = v }, Cmd.none )
 
         ProdChange v ->
-            { model | prodValue = v }
+            ( { model | prodValue = v }, Cmd.none )
 
         Save ->
             if model.ntValue /= "" || model.prodValue /= "" then
                 case addRule model.grammar model.ntValue model.prodValue of
                     Ok gram ->
-                        { model
+                        ( { model
                             | grammar = gram
                             , prodValue = ""
-                        }
+                          }
+                        , Cmd.none
+                        )
 
                     Err error ->
-                        { model | error = Just error }
+                        ( { model | error = Just error }, Cmd.none )
 
             else
-                model
+                ( model, Cmd.none )
+
+        NewSeed s ->
+            ( { model | seed = s, output = Result.withDefault "ERROR" (Grammar.generateSentence (Random.initialSeed s) model.grammar) }, Cmd.none )
 
         Generate ->
-            { model | output = Result.withDefault "ERROR" (Grammar.generateSentence model.grammar) }
+            ( model, Random.generate NewSeed <| Random.int Random.minInt Random.maxInt )
+
+        ClearGrammar ->
+            ( { model | grammar = Grammar.empty, ntValue = "START" }, Cmd.none )
 
 
 
+-- ( { model | output = Result.withDefault "ERROR" (Grammar.generateSentence 42 model.grammar) }, Cmd.none )
 -- VIEW
 
 
@@ -201,6 +227,20 @@ inputRows model =
         , Font.center
         ]
         { onPress = Just Generate, label = Element.text "Generate > " }
+    , Input.button
+        [ width <| fillPortion 1
+        , Background.color red
+        , padding 10
+        , Border.rounded 5
+        , Border.solid
+        , Element.mouseOver
+            [ Background.color black ]
+        , Element.mouseDown
+            [ Background.color grey ]
+        , Font.color white
+        , Font.center
+        ]
+        { onPress = Just ClearGrammar, label = Element.text "Clear X " }
     ]
 
 
@@ -256,7 +296,6 @@ view model =
                 , Font.italic
                 , Font.center
                 , Font.light
-                , Font.underline
                 ]
               <|
                 Element.text model.output

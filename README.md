@@ -3,8 +3,8 @@ Toy project, developed using elm reactor.
 
 # MVP
 - Input Rules as Strings [x]
-- Generate strings from a correct ruleset []
-- Validate ruleset correctness []
+- Generate strings from a correct ruleset [X]
+- Validate ruleset correctness [X]
 - Save grammars to cloud []
 
 
