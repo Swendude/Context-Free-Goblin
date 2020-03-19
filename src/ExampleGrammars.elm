@@ -1,7 +1,55 @@
-module ExampleGrammars exposing (deepGrammarRules, deepGrammarSentences, deterministicGrammarRules, normalGrammarRules, normalGrammarSentences, possibleAnimals, recursiveInvalidGrammarRules)
+module ExampleGrammars exposing (deepGrammarRules, deepGrammarSentences, deterministicGrammarRules, jsonGrammarRules, normalGrammarRules, normalGrammarSentences, possibleAnimals, recursiveInvalidGrammarRules, testJSONGrammar)
 
 import Dict exposing (Dict)
 import Grammar exposing (..)
+
+
+testJSONGrammar : String
+testJSONGrammar =
+    """{
+    "rules": [
+        {
+            "symbol": "START",
+            "productions": [
+                [
+                    {
+                        "type": "token",
+                        "str": "He saw a "
+                    },
+                    {
+                        "type": "symbol",
+                        "str": "animal"
+                    }
+                ]
+            ]
+        },
+        {
+            "symbol": "animal",
+            "productions": [
+                [
+                    {
+                        "type": "token",
+                        "str": "dog"
+                    }
+                ],
+                [
+                    {
+                        "type": "token",
+                        "str": "sheep"
+                    }
+                ]
+            ]
+        }
+    ]
+}"""
+
+
+jsonGrammarRules : Dict String (List Production)
+jsonGrammarRules =
+    Dict.fromList
+        [ ( "START", [ [ Token "He saw a ", Symbol "animal" ] ] )
+        , ( "animal", [ [ Token "dog" ], [ Token "sheep" ] ] )
+        ]
 
 
 normalGrammarRules : Dict String (List Production)
