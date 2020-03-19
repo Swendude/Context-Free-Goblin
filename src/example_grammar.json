@@ -4,14 +4,14 @@
             "symbol": "START",
             "productions": [
                 [
-                    [
-                        {
-                            "token": "He saw a "
-                        },
-                        {
-                            "symbol": "animal"
-                        }
-                    ]
+                    {
+                        "type": "token",
+                        "str": "He saw a "
+                    },
+                    {
+                        "type": "symbol",
+                        "str": "animal"
+                    }
                 ]
             ]
         },
@@ -19,16 +19,16 @@
             "symbol": "animal",
             "productions": [
                 [
-                    [
-                        {
-                            "token": "dog"
-                        }
-                    ],
-                    [
-                        {
-                            "token": "sheep"
-                        }
-                    ]
+                    {
+                        "type": "token",
+                        "str": "dog"
+                    }
+                ],
+                [
+                    {
+                        "type": "token",
+                        "str": "sheep"
+                    }
                 ]
             ]
         }
