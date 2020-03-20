@@ -61,13 +61,7 @@ insert_grammars fillInOptionals requiredArgs object_ =
 
 
 type alias UpdateGrammarsOptionalArguments =
-    { append_ : OptionalArgument Grammar.InputObject.Grammars_append_input
-    , delete_at_path_ : OptionalArgument Grammar.InputObject.Grammars_delete_at_path_input
-    , delete_elem_ : OptionalArgument Grammar.InputObject.Grammars_delete_elem_input
-    , delete_key_ : OptionalArgument Grammar.InputObject.Grammars_delete_key_input
-    , prepend_ : OptionalArgument Grammar.InputObject.Grammars_prepend_input
-    , set_ : OptionalArgument Grammar.InputObject.Grammars_set_input
-    }
+    { set_ : OptionalArgument Grammar.InputObject.Grammars_set_input }
 
 
 type alias UpdateGrammarsRequiredArguments =
@@ -76,11 +70,6 @@ type alias UpdateGrammarsRequiredArguments =
 
 {-| update data of the table: "grammars"
 
-  - append\_ - append existing jsonb value of filtered columns with new jsonb value
-  - delete\_at\_path\_ - delete the field or element with specified path (for JSON arrays, negative integers count from the end)
-  - delete\_elem\_ - delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array
-  - delete\_key\_ - delete key/value pair or string element. key/value pairs are matched based on their key value
-  - prepend\_ - prepend existing jsonb value of filtered columns with new jsonb value
   - set\_ - sets the columns of the filtered rows to the given values
   - where\_ - filter the rows which have to be updated
 
@@ -89,10 +78,10 @@ update_grammars : (UpdateGrammarsOptionalArguments -> UpdateGrammarsOptionalArgu
 update_grammars fillInOptionals requiredArgs object_ =
     let
         filledInOptionals =
-            fillInOptionals { append_ = Absent, delete_at_path_ = Absent, delete_elem_ = Absent, delete_key_ = Absent, prepend_ = Absent, set_ = Absent }
+            fillInOptionals { set_ = Absent }
 
         optionalArgs =
-            [ Argument.optional "_append" filledInOptionals.append_ Grammar.InputObject.encodeGrammars_append_input, Argument.optional "_delete_at_path" filledInOptionals.delete_at_path_ Grammar.InputObject.encodeGrammars_delete_at_path_input, Argument.optional "_delete_elem" filledInOptionals.delete_elem_ Grammar.InputObject.encodeGrammars_delete_elem_input, Argument.optional "_delete_key" filledInOptionals.delete_key_ Grammar.InputObject.encodeGrammars_delete_key_input, Argument.optional "_prepend" filledInOptionals.prepend_ Grammar.InputObject.encodeGrammars_prepend_input, Argument.optional "_set" filledInOptionals.set_ Grammar.InputObject.encodeGrammars_set_input ]
+            [ Argument.optional "_set" filledInOptionals.set_ Grammar.InputObject.encodeGrammars_set_input ]
                 |> List.filterMap identity
     in
     Object.selectionForCompositeField "update_grammars" (optionalArgs ++ [ Argument.required "where" requiredArgs.where_ Grammar.InputObject.encodeGrammars_bool_exp ]) object_ (identity >> Decode.nullable)

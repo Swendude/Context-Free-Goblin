@@ -19,38 +19,14 @@ import Graphql.SelectionSet exposing (SelectionSet)
 import Json.Decode as Decode
 
 
-desciption : SelectionSet (Maybe String) Grammar.Object.Grammars
-desciption =
-    Object.selectionForField "(Maybe String)" "desciption" [] (Decode.string |> Decode.nullable)
+description : SelectionSet (Maybe String) Grammar.Object.Grammars
+description =
+    Object.selectionForField "(Maybe String)" "description" [] (Decode.string |> Decode.nullable)
 
 
-type alias GrammarOptionalArguments =
-    { path : OptionalArgument String }
-
-
-{-|
-
-  - path - JSON select path
-
--}
-grammar : (GrammarOptionalArguments -> GrammarOptionalArguments) -> SelectionSet Grammar.ScalarCodecs.Jsonb Grammar.Object.Grammars
-grammar fillInOptionals =
-    let
-        filledInOptionals =
-            fillInOptionals { path = Absent }
-
-        optionalArgs =
-            [ Argument.optional "path" filledInOptionals.path Encode.string ]
-                |> List.filterMap identity
-    in
-    Object.selectionForField "ScalarCodecs.Jsonb" "grammar" optionalArgs (Grammar.ScalarCodecs.codecs |> Grammar.Scalar.unwrapCodecs |> .codecJsonb |> .decoder)
-
-
-{-| An object relationship
--}
-grammar_parent : SelectionSet decodesTo Grammar.Object.Grammars -> SelectionSet (Maybe decodesTo) Grammar.Object.Grammars
-grammar_parent object_ =
-    Object.selectionForCompositeField "grammar_parent" [] object_ (identity >> Decode.nullable)
+grammar : SelectionSet String Grammar.Object.Grammars
+grammar =
+    Object.selectionForField "String" "grammar" [] Decode.string
 
 
 id : SelectionSet Grammar.ScalarCodecs.Uuid Grammar.Object.Grammars
@@ -58,9 +34,9 @@ id =
     Object.selectionForField "ScalarCodecs.Uuid" "id" [] (Grammar.ScalarCodecs.codecs |> Grammar.Scalar.unwrapCodecs |> .codecUuid |> .decoder)
 
 
-name : SelectionSet (Maybe String) Grammar.Object.Grammars
+name : SelectionSet String Grammar.Object.Grammars
 name =
-    Object.selectionForField "(Maybe String)" "name" [] (Decode.string |> Decode.nullable)
+    Object.selectionForField "String" "name" [] Decode.string
 
 
 parent : SelectionSet Grammar.ScalarCodecs.Uuid Grammar.Object.Grammars

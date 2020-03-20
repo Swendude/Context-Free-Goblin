@@ -54,34 +54,6 @@ encodeGrammars_aggregate_order_by input =
         [ ( "count", Encode.enum Grammar.Enum.Order_by.toString |> Encode.optional input.count ), ( "max", encodeGrammars_max_order_by |> Encode.optional input.max ), ( "min", encodeGrammars_min_order_by |> Encode.optional input.min ) ]
 
 
-buildGrammars_append_input : (Grammars_append_inputOptionalFields -> Grammars_append_inputOptionalFields) -> Grammars_append_input
-buildGrammars_append_input fillOptionals =
-    let
-        optionals =
-            fillOptionals
-                { grammar = Absent }
-    in
-    { grammar = optionals.grammar }
-
-
-type alias Grammars_append_inputOptionalFields =
-    { grammar : OptionalArgument Grammar.ScalarCodecs.Jsonb }
-
-
-{-| Type for the Grammars\_append\_input input object.
--}
-type alias Grammars_append_input =
-    { grammar : OptionalArgument Grammar.ScalarCodecs.Jsonb }
-
-
-{-| Encode a Grammars\_append\_input into a value that can be used as an argument.
--}
-encodeGrammars_append_input : Grammars_append_input -> Value
-encodeGrammars_append_input input =
-    Encode.maybeObject
-        [ ( "grammar", (Grammar.ScalarCodecs.codecs |> Grammar.Scalar.unwrapEncoder .codecJsonb) |> Encode.optional input.grammar ) ]
-
-
 buildGrammars_arr_rel_insert_input : Grammars_arr_rel_insert_inputRequiredFields -> (Grammars_arr_rel_insert_inputOptionalFields -> Grammars_arr_rel_insert_inputOptionalFields) -> Grammars_arr_rel_insert_input
 buildGrammars_arr_rel_insert_input required fillOptionals =
     let
@@ -130,18 +102,17 @@ buildGrammars_bool_exp fillOptionals =
     let
         optionals =
             fillOptionals
-                { and_ = Absent, not_ = Absent, or_ = Absent, desciption = Absent, grammar = Absent, grammar_parent = Absent, id = Absent, name = Absent, parent = Absent }
+                { and_ = Absent, not_ = Absent, or_ = Absent, description = Absent, grammar = Absent, id = Absent, name = Absent, parent = Absent }
     in
-    Grammars_bool_exp { and_ = optionals.and_, not_ = optionals.not_, or_ = optionals.or_, desciption = optionals.desciption, grammar = optionals.grammar, grammar_parent = optionals.grammar_parent, id = optionals.id, name = optionals.name, parent = optionals.parent }
+    Grammars_bool_exp { and_ = optionals.and_, not_ = optionals.not_, or_ = optionals.or_, description = optionals.description, grammar = optionals.grammar, id = optionals.id, name = optionals.name, parent = optionals.parent }
 
 
 type alias Grammars_bool_expOptionalFields =
     { and_ : OptionalArgument (List (Maybe Grammars_bool_exp))
     , not_ : OptionalArgument Grammars_bool_exp
     , or_ : OptionalArgument (List (Maybe Grammars_bool_exp))
-    , desciption : OptionalArgument String_comparison_exp
-    , grammar : OptionalArgument Jsonb_comparison_exp
-    , grammar_parent : OptionalArgument Grammars_bool_exp
+    , description : OptionalArgument String_comparison_exp
+    , grammar : OptionalArgument String_comparison_exp
     , id : OptionalArgument Uuid_comparison_exp
     , name : OptionalArgument String_comparison_exp
     , parent : OptionalArgument Uuid_comparison_exp
@@ -157,9 +128,8 @@ type alias Grammars_bool_expRaw =
     { and_ : OptionalArgument (List (Maybe Grammars_bool_exp))
     , not_ : OptionalArgument Grammars_bool_exp
     , or_ : OptionalArgument (List (Maybe Grammars_bool_exp))
-    , desciption : OptionalArgument String_comparison_exp
-    , grammar : OptionalArgument Jsonb_comparison_exp
-    , grammar_parent : OptionalArgument Grammars_bool_exp
+    , description : OptionalArgument String_comparison_exp
+    , grammar : OptionalArgument String_comparison_exp
     , id : OptionalArgument Uuid_comparison_exp
     , name : OptionalArgument String_comparison_exp
     , parent : OptionalArgument Uuid_comparison_exp
@@ -177,91 +147,7 @@ type Grammars_bool_exp
 encodeGrammars_bool_exp : Grammars_bool_exp -> Value
 encodeGrammars_bool_exp (Grammars_bool_exp input) =
     Encode.maybeObject
-        [ ( "_and", (encodeGrammars_bool_exp |> Encode.maybe |> Encode.list) |> Encode.optional input.and_ ), ( "_not", encodeGrammars_bool_exp |> Encode.optional input.not_ ), ( "_or", (encodeGrammars_bool_exp |> Encode.maybe |> Encode.list) |> Encode.optional input.or_ ), ( "desciption", encodeString_comparison_exp |> Encode.optional input.desciption ), ( "grammar", encodeJsonb_comparison_exp |> Encode.optional input.grammar ), ( "grammar_parent", encodeGrammars_bool_exp |> Encode.optional input.grammar_parent ), ( "id", encodeUuid_comparison_exp |> Encode.optional input.id ), ( "name", encodeString_comparison_exp |> Encode.optional input.name ), ( "parent", encodeUuid_comparison_exp |> Encode.optional input.parent ) ]
-
-
-buildGrammars_delete_at_path_input : (Grammars_delete_at_path_inputOptionalFields -> Grammars_delete_at_path_inputOptionalFields) -> Grammars_delete_at_path_input
-buildGrammars_delete_at_path_input fillOptionals =
-    let
-        optionals =
-            fillOptionals
-                { grammar = Absent }
-    in
-    { grammar = optionals.grammar }
-
-
-type alias Grammars_delete_at_path_inputOptionalFields =
-    { grammar : OptionalArgument (List (Maybe String)) }
-
-
-{-| Type for the Grammars\_delete\_at\_path\_input input object.
--}
-type alias Grammars_delete_at_path_input =
-    { grammar : OptionalArgument (List (Maybe String)) }
-
-
-{-| Encode a Grammars\_delete\_at\_path\_input into a value that can be used as an argument.
--}
-encodeGrammars_delete_at_path_input : Grammars_delete_at_path_input -> Value
-encodeGrammars_delete_at_path_input input =
-    Encode.maybeObject
-        [ ( "grammar", (Encode.string |> Encode.maybe |> Encode.list) |> Encode.optional input.grammar ) ]
-
-
-buildGrammars_delete_elem_input : (Grammars_delete_elem_inputOptionalFields -> Grammars_delete_elem_inputOptionalFields) -> Grammars_delete_elem_input
-buildGrammars_delete_elem_input fillOptionals =
-    let
-        optionals =
-            fillOptionals
-                { grammar = Absent }
-    in
-    { grammar = optionals.grammar }
-
-
-type alias Grammars_delete_elem_inputOptionalFields =
-    { grammar : OptionalArgument Int }
-
-
-{-| Type for the Grammars\_delete\_elem\_input input object.
--}
-type alias Grammars_delete_elem_input =
-    { grammar : OptionalArgument Int }
-
-
-{-| Encode a Grammars\_delete\_elem\_input into a value that can be used as an argument.
--}
-encodeGrammars_delete_elem_input : Grammars_delete_elem_input -> Value
-encodeGrammars_delete_elem_input input =
-    Encode.maybeObject
-        [ ( "grammar", Encode.int |> Encode.optional input.grammar ) ]
-
-
-buildGrammars_delete_key_input : (Grammars_delete_key_inputOptionalFields -> Grammars_delete_key_inputOptionalFields) -> Grammars_delete_key_input
-buildGrammars_delete_key_input fillOptionals =
-    let
-        optionals =
-            fillOptionals
-                { grammar = Absent }
-    in
-    { grammar = optionals.grammar }
-
-
-type alias Grammars_delete_key_inputOptionalFields =
-    { grammar : OptionalArgument String }
-
-
-{-| Type for the Grammars\_delete\_key\_input input object.
--}
-type alias Grammars_delete_key_input =
-    { grammar : OptionalArgument String }
-
-
-{-| Encode a Grammars\_delete\_key\_input into a value that can be used as an argument.
--}
-encodeGrammars_delete_key_input : Grammars_delete_key_input -> Value
-encodeGrammars_delete_key_input input =
-    Encode.maybeObject
-        [ ( "grammar", Encode.string |> Encode.optional input.grammar ) ]
+        [ ( "_and", (encodeGrammars_bool_exp |> Encode.maybe |> Encode.list) |> Encode.optional input.and_ ), ( "_not", encodeGrammars_bool_exp |> Encode.optional input.not_ ), ( "_or", (encodeGrammars_bool_exp |> Encode.maybe |> Encode.list) |> Encode.optional input.or_ ), ( "description", encodeString_comparison_exp |> Encode.optional input.description ), ( "grammar", encodeString_comparison_exp |> Encode.optional input.grammar ), ( "id", encodeUuid_comparison_exp |> Encode.optional input.id ), ( "name", encodeString_comparison_exp |> Encode.optional input.name ), ( "parent", encodeUuid_comparison_exp |> Encode.optional input.parent ) ]
 
 
 buildGrammars_insert_input : (Grammars_insert_inputOptionalFields -> Grammars_insert_inputOptionalFields) -> Grammars_insert_input
@@ -269,30 +155,14 @@ buildGrammars_insert_input fillOptionals =
     let
         optionals =
             fillOptionals
-                { desciption = Absent, grammar = Absent, grammar_parent = Absent, id = Absent, name = Absent, parent = Absent }
+                { description = Absent, grammar = Absent, id = Absent, name = Absent, parent = Absent }
     in
-    Grammars_insert_input { desciption = optionals.desciption, grammar = optionals.grammar, grammar_parent = optionals.grammar_parent, id = optionals.id, name = optionals.name, parent = optionals.parent }
+    { description = optionals.description, grammar = optionals.grammar, id = optionals.id, name = optionals.name, parent = optionals.parent }
 
 
 type alias Grammars_insert_inputOptionalFields =
-    { desciption : OptionalArgument String
-    , grammar : OptionalArgument Grammar.ScalarCodecs.Jsonb
-    , grammar_parent : OptionalArgument Grammars_obj_rel_insert_input
-    , id : OptionalArgument Grammar.ScalarCodecs.Uuid
-    , name : OptionalArgument String
-    , parent : OptionalArgument Grammar.ScalarCodecs.Uuid
-    }
-
-
-{-| Type alias for the `Grammars_insert_input` attributes. Note that this type
-needs to use the `Grammars_insert_input` type (not just a plain type alias) because it has
-references to itself either directly (recursive) or indirectly (circular). See
-<https://github.com/dillonkearns/elm-graphql/issues/33>.
--}
-type alias Grammars_insert_inputRaw =
-    { desciption : OptionalArgument String
-    , grammar : OptionalArgument Grammar.ScalarCodecs.Jsonb
-    , grammar_parent : OptionalArgument Grammars_obj_rel_insert_input
+    { description : OptionalArgument String
+    , grammar : OptionalArgument String
     , id : OptionalArgument Grammar.ScalarCodecs.Uuid
     , name : OptionalArgument String
     , parent : OptionalArgument Grammar.ScalarCodecs.Uuid
@@ -301,16 +171,21 @@ type alias Grammars_insert_inputRaw =
 
 {-| Type for the Grammars\_insert\_input input object.
 -}
-type Grammars_insert_input
-    = Grammars_insert_input Grammars_insert_inputRaw
+type alias Grammars_insert_input =
+    { description : OptionalArgument String
+    , grammar : OptionalArgument String
+    , id : OptionalArgument Grammar.ScalarCodecs.Uuid
+    , name : OptionalArgument String
+    , parent : OptionalArgument Grammar.ScalarCodecs.Uuid
+    }
 
 
 {-| Encode a Grammars\_insert\_input into a value that can be used as an argument.
 -}
 encodeGrammars_insert_input : Grammars_insert_input -> Value
-encodeGrammars_insert_input (Grammars_insert_input input) =
+encodeGrammars_insert_input input =
     Encode.maybeObject
-        [ ( "desciption", Encode.string |> Encode.optional input.desciption ), ( "grammar", (Grammar.ScalarCodecs.codecs |> Grammar.Scalar.unwrapEncoder .codecJsonb) |> Encode.optional input.grammar ), ( "grammar_parent", encodeGrammars_obj_rel_insert_input |> Encode.optional input.grammar_parent ), ( "id", (Grammar.ScalarCodecs.codecs |> Grammar.Scalar.unwrapEncoder .codecUuid) |> Encode.optional input.id ), ( "name", Encode.string |> Encode.optional input.name ), ( "parent", (Grammar.ScalarCodecs.codecs |> Grammar.Scalar.unwrapEncoder .codecUuid) |> Encode.optional input.parent ) ]
+        [ ( "description", Encode.string |> Encode.optional input.description ), ( "grammar", Encode.string |> Encode.optional input.grammar ), ( "id", (Grammar.ScalarCodecs.codecs |> Grammar.Scalar.unwrapEncoder .codecUuid) |> Encode.optional input.id ), ( "name", Encode.string |> Encode.optional input.name ), ( "parent", (Grammar.ScalarCodecs.codecs |> Grammar.Scalar.unwrapEncoder .codecUuid) |> Encode.optional input.parent ) ]
 
 
 buildGrammars_max_order_by : (Grammars_max_order_byOptionalFields -> Grammars_max_order_byOptionalFields) -> Grammars_max_order_by
@@ -318,13 +193,14 @@ buildGrammars_max_order_by fillOptionals =
     let
         optionals =
             fillOptionals
-                { desciption = Absent, name = Absent }
+                { description = Absent, grammar = Absent, name = Absent }
     in
-    { desciption = optionals.desciption, name = optionals.name }
+    { description = optionals.description, grammar = optionals.grammar, name = optionals.name }
 
 
 type alias Grammars_max_order_byOptionalFields =
-    { desciption : OptionalArgument Grammar.Enum.Order_by.Order_by
+    { description : OptionalArgument Grammar.Enum.Order_by.Order_by
+    , grammar : OptionalArgument Grammar.Enum.Order_by.Order_by
     , name : OptionalArgument Grammar.Enum.Order_by.Order_by
     }
 
@@ -332,7 +208,8 @@ type alias Grammars_max_order_byOptionalFields =
 {-| Type for the Grammars\_max\_order\_by input object.
 -}
 type alias Grammars_max_order_by =
-    { desciption : OptionalArgument Grammar.Enum.Order_by.Order_by
+    { description : OptionalArgument Grammar.Enum.Order_by.Order_by
+    , grammar : OptionalArgument Grammar.Enum.Order_by.Order_by
     , name : OptionalArgument Grammar.Enum.Order_by.Order_by
     }
 
@@ -342,7 +219,7 @@ type alias Grammars_max_order_by =
 encodeGrammars_max_order_by : Grammars_max_order_by -> Value
 encodeGrammars_max_order_by input =
     Encode.maybeObject
-        [ ( "desciption", Encode.enum Grammar.Enum.Order_by.toString |> Encode.optional input.desciption ), ( "name", Encode.enum Grammar.Enum.Order_by.toString |> Encode.optional input.name ) ]
+        [ ( "description", Encode.enum Grammar.Enum.Order_by.toString |> Encode.optional input.description ), ( "grammar", Encode.enum Grammar.Enum.Order_by.toString |> Encode.optional input.grammar ), ( "name", Encode.enum Grammar.Enum.Order_by.toString |> Encode.optional input.name ) ]
 
 
 buildGrammars_min_order_by : (Grammars_min_order_byOptionalFields -> Grammars_min_order_byOptionalFields) -> Grammars_min_order_by
@@ -350,13 +227,14 @@ buildGrammars_min_order_by fillOptionals =
     let
         optionals =
             fillOptionals
-                { desciption = Absent, name = Absent }
+                { description = Absent, grammar = Absent, name = Absent }
     in
-    { desciption = optionals.desciption, name = optionals.name }
+    { description = optionals.description, grammar = optionals.grammar, name = optionals.name }
 
 
 type alias Grammars_min_order_byOptionalFields =
-    { desciption : OptionalArgument Grammar.Enum.Order_by.Order_by
+    { description : OptionalArgument Grammar.Enum.Order_by.Order_by
+    , grammar : OptionalArgument Grammar.Enum.Order_by.Order_by
     , name : OptionalArgument Grammar.Enum.Order_by.Order_by
     }
 
@@ -364,7 +242,8 @@ type alias Grammars_min_order_byOptionalFields =
 {-| Type for the Grammars\_min\_order\_by input object.
 -}
 type alias Grammars_min_order_by =
-    { desciption : OptionalArgument Grammar.Enum.Order_by.Order_by
+    { description : OptionalArgument Grammar.Enum.Order_by.Order_by
+    , grammar : OptionalArgument Grammar.Enum.Order_by.Order_by
     , name : OptionalArgument Grammar.Enum.Order_by.Order_by
     }
 
@@ -374,7 +253,7 @@ type alias Grammars_min_order_by =
 encodeGrammars_min_order_by : Grammars_min_order_by -> Value
 encodeGrammars_min_order_by input =
     Encode.maybeObject
-        [ ( "desciption", Encode.enum Grammar.Enum.Order_by.toString |> Encode.optional input.desciption ), ( "name", Encode.enum Grammar.Enum.Order_by.toString |> Encode.optional input.name ) ]
+        [ ( "description", Encode.enum Grammar.Enum.Order_by.toString |> Encode.optional input.description ), ( "grammar", Encode.enum Grammar.Enum.Order_by.toString |> Encode.optional input.grammar ), ( "name", Encode.enum Grammar.Enum.Order_by.toString |> Encode.optional input.name ) ]
 
 
 buildGrammars_obj_rel_insert_input : Grammars_obj_rel_insert_inputRequiredFields -> (Grammars_obj_rel_insert_inputOptionalFields -> Grammars_obj_rel_insert_inputOptionalFields) -> Grammars_obj_rel_insert_input
@@ -471,30 +350,14 @@ buildGrammars_order_by fillOptionals =
     let
         optionals =
             fillOptionals
-                { desciption = Absent, grammar = Absent, grammar_parent = Absent, id = Absent, name = Absent, parent = Absent }
+                { description = Absent, grammar = Absent, id = Absent, name = Absent, parent = Absent }
     in
-    Grammars_order_by { desciption = optionals.desciption, grammar = optionals.grammar, grammar_parent = optionals.grammar_parent, id = optionals.id, name = optionals.name, parent = optionals.parent }
+    { description = optionals.description, grammar = optionals.grammar, id = optionals.id, name = optionals.name, parent = optionals.parent }
 
 
 type alias Grammars_order_byOptionalFields =
-    { desciption : OptionalArgument Grammar.Enum.Order_by.Order_by
+    { description : OptionalArgument Grammar.Enum.Order_by.Order_by
     , grammar : OptionalArgument Grammar.Enum.Order_by.Order_by
-    , grammar_parent : OptionalArgument Grammars_order_by
-    , id : OptionalArgument Grammar.Enum.Order_by.Order_by
-    , name : OptionalArgument Grammar.Enum.Order_by.Order_by
-    , parent : OptionalArgument Grammar.Enum.Order_by.Order_by
-    }
-
-
-{-| Type alias for the `Grammars_order_by` attributes. Note that this type
-needs to use the `Grammars_order_by` type (not just a plain type alias) because it has
-references to itself either directly (recursive) or indirectly (circular). See
-<https://github.com/dillonkearns/elm-graphql/issues/33>.
--}
-type alias Grammars_order_byRaw =
-    { desciption : OptionalArgument Grammar.Enum.Order_by.Order_by
-    , grammar : OptionalArgument Grammar.Enum.Order_by.Order_by
-    , grammar_parent : OptionalArgument Grammars_order_by
     , id : OptionalArgument Grammar.Enum.Order_by.Order_by
     , name : OptionalArgument Grammar.Enum.Order_by.Order_by
     , parent : OptionalArgument Grammar.Enum.Order_by.Order_by
@@ -503,44 +366,21 @@ type alias Grammars_order_byRaw =
 
 {-| Type for the Grammars\_order\_by input object.
 -}
-type Grammars_order_by
-    = Grammars_order_by Grammars_order_byRaw
+type alias Grammars_order_by =
+    { description : OptionalArgument Grammar.Enum.Order_by.Order_by
+    , grammar : OptionalArgument Grammar.Enum.Order_by.Order_by
+    , id : OptionalArgument Grammar.Enum.Order_by.Order_by
+    , name : OptionalArgument Grammar.Enum.Order_by.Order_by
+    , parent : OptionalArgument Grammar.Enum.Order_by.Order_by
+    }
 
 
 {-| Encode a Grammars\_order\_by into a value that can be used as an argument.
 -}
 encodeGrammars_order_by : Grammars_order_by -> Value
-encodeGrammars_order_by (Grammars_order_by input) =
+encodeGrammars_order_by input =
     Encode.maybeObject
-        [ ( "desciption", Encode.enum Grammar.Enum.Order_by.toString |> Encode.optional input.desciption ), ( "grammar", Encode.enum Grammar.Enum.Order_by.toString |> Encode.optional input.grammar ), ( "grammar_parent", encodeGrammars_order_by |> Encode.optional input.grammar_parent ), ( "id", Encode.enum Grammar.Enum.Order_by.toString |> Encode.optional input.id ), ( "name", Encode.enum Grammar.Enum.Order_by.toString |> Encode.optional input.name ), ( "parent", Encode.enum Grammar.Enum.Order_by.toString |> Encode.optional input.parent ) ]
-
-
-buildGrammars_prepend_input : (Grammars_prepend_inputOptionalFields -> Grammars_prepend_inputOptionalFields) -> Grammars_prepend_input
-buildGrammars_prepend_input fillOptionals =
-    let
-        optionals =
-            fillOptionals
-                { grammar = Absent }
-    in
-    { grammar = optionals.grammar }
-
-
-type alias Grammars_prepend_inputOptionalFields =
-    { grammar : OptionalArgument Grammar.ScalarCodecs.Jsonb }
-
-
-{-| Type for the Grammars\_prepend\_input input object.
--}
-type alias Grammars_prepend_input =
-    { grammar : OptionalArgument Grammar.ScalarCodecs.Jsonb }
-
-
-{-| Encode a Grammars\_prepend\_input into a value that can be used as an argument.
--}
-encodeGrammars_prepend_input : Grammars_prepend_input -> Value
-encodeGrammars_prepend_input input =
-    Encode.maybeObject
-        [ ( "grammar", (Grammar.ScalarCodecs.codecs |> Grammar.Scalar.unwrapEncoder .codecJsonb) |> Encode.optional input.grammar ) ]
+        [ ( "description", Encode.enum Grammar.Enum.Order_by.toString |> Encode.optional input.description ), ( "grammar", Encode.enum Grammar.Enum.Order_by.toString |> Encode.optional input.grammar ), ( "id", Encode.enum Grammar.Enum.Order_by.toString |> Encode.optional input.id ), ( "name", Encode.enum Grammar.Enum.Order_by.toString |> Encode.optional input.name ), ( "parent", Encode.enum Grammar.Enum.Order_by.toString |> Encode.optional input.parent ) ]
 
 
 buildGrammars_set_input : (Grammars_set_inputOptionalFields -> Grammars_set_inputOptionalFields) -> Grammars_set_input
@@ -548,14 +388,14 @@ buildGrammars_set_input fillOptionals =
     let
         optionals =
             fillOptionals
-                { desciption = Absent, grammar = Absent, id = Absent, name = Absent, parent = Absent }
+                { description = Absent, grammar = Absent, id = Absent, name = Absent, parent = Absent }
     in
-    { desciption = optionals.desciption, grammar = optionals.grammar, id = optionals.id, name = optionals.name, parent = optionals.parent }
+    { description = optionals.description, grammar = optionals.grammar, id = optionals.id, name = optionals.name, parent = optionals.parent }
 
 
 type alias Grammars_set_inputOptionalFields =
-    { desciption : OptionalArgument String
-    , grammar : OptionalArgument Grammar.ScalarCodecs.Jsonb
+    { description : OptionalArgument String
+    , grammar : OptionalArgument String
     , id : OptionalArgument Grammar.ScalarCodecs.Uuid
     , name : OptionalArgument String
     , parent : OptionalArgument Grammar.ScalarCodecs.Uuid
@@ -565,8 +405,8 @@ type alias Grammars_set_inputOptionalFields =
 {-| Type for the Grammars\_set\_input input object.
 -}
 type alias Grammars_set_input =
-    { desciption : OptionalArgument String
-    , grammar : OptionalArgument Grammar.ScalarCodecs.Jsonb
+    { description : OptionalArgument String
+    , grammar : OptionalArgument String
     , id : OptionalArgument Grammar.ScalarCodecs.Uuid
     , name : OptionalArgument String
     , parent : OptionalArgument Grammar.ScalarCodecs.Uuid
@@ -578,63 +418,7 @@ type alias Grammars_set_input =
 encodeGrammars_set_input : Grammars_set_input -> Value
 encodeGrammars_set_input input =
     Encode.maybeObject
-        [ ( "desciption", Encode.string |> Encode.optional input.desciption ), ( "grammar", (Grammar.ScalarCodecs.codecs |> Grammar.Scalar.unwrapEncoder .codecJsonb) |> Encode.optional input.grammar ), ( "id", (Grammar.ScalarCodecs.codecs |> Grammar.Scalar.unwrapEncoder .codecUuid) |> Encode.optional input.id ), ( "name", Encode.string |> Encode.optional input.name ), ( "parent", (Grammar.ScalarCodecs.codecs |> Grammar.Scalar.unwrapEncoder .codecUuid) |> Encode.optional input.parent ) ]
-
-
-buildJsonb_comparison_exp : (Jsonb_comparison_expOptionalFields -> Jsonb_comparison_expOptionalFields) -> Jsonb_comparison_exp
-buildJsonb_comparison_exp fillOptionals =
-    let
-        optionals =
-            fillOptionals
-                { contained_in_ = Absent, contains_ = Absent, eq_ = Absent, gt_ = Absent, gte_ = Absent, has_key_ = Absent, has_keys_all_ = Absent, has_keys_any_ = Absent, in_ = Absent, is_null_ = Absent, lt_ = Absent, lte_ = Absent, neq_ = Absent, nin_ = Absent }
-    in
-    { contained_in_ = optionals.contained_in_, contains_ = optionals.contains_, eq_ = optionals.eq_, gt_ = optionals.gt_, gte_ = optionals.gte_, has_key_ = optionals.has_key_, has_keys_all_ = optionals.has_keys_all_, has_keys_any_ = optionals.has_keys_any_, in_ = optionals.in_, is_null_ = optionals.is_null_, lt_ = optionals.lt_, lte_ = optionals.lte_, neq_ = optionals.neq_, nin_ = optionals.nin_ }
-
-
-type alias Jsonb_comparison_expOptionalFields =
-    { contained_in_ : OptionalArgument Grammar.ScalarCodecs.Jsonb
-    , contains_ : OptionalArgument Grammar.ScalarCodecs.Jsonb
-    , eq_ : OptionalArgument Grammar.ScalarCodecs.Jsonb
-    , gt_ : OptionalArgument Grammar.ScalarCodecs.Jsonb
-    , gte_ : OptionalArgument Grammar.ScalarCodecs.Jsonb
-    , has_key_ : OptionalArgument String
-    , has_keys_all_ : OptionalArgument (List String)
-    , has_keys_any_ : OptionalArgument (List String)
-    , in_ : OptionalArgument (List Grammar.ScalarCodecs.Jsonb)
-    , is_null_ : OptionalArgument Bool
-    , lt_ : OptionalArgument Grammar.ScalarCodecs.Jsonb
-    , lte_ : OptionalArgument Grammar.ScalarCodecs.Jsonb
-    , neq_ : OptionalArgument Grammar.ScalarCodecs.Jsonb
-    , nin_ : OptionalArgument (List Grammar.ScalarCodecs.Jsonb)
-    }
-
-
-{-| Type for the Jsonb\_comparison\_exp input object.
--}
-type alias Jsonb_comparison_exp =
-    { contained_in_ : OptionalArgument Grammar.ScalarCodecs.Jsonb
-    , contains_ : OptionalArgument Grammar.ScalarCodecs.Jsonb
-    , eq_ : OptionalArgument Grammar.ScalarCodecs.Jsonb
-    , gt_ : OptionalArgument Grammar.ScalarCodecs.Jsonb
-    , gte_ : OptionalArgument Grammar.ScalarCodecs.Jsonb
-    , has_key_ : OptionalArgument String
-    , has_keys_all_ : OptionalArgument (List String)
-    , has_keys_any_ : OptionalArgument (List String)
-    , in_ : OptionalArgument (List Grammar.ScalarCodecs.Jsonb)
-    , is_null_ : OptionalArgument Bool
-    , lt_ : OptionalArgument Grammar.ScalarCodecs.Jsonb
-    , lte_ : OptionalArgument Grammar.ScalarCodecs.Jsonb
-    , neq_ : OptionalArgument Grammar.ScalarCodecs.Jsonb
-    , nin_ : OptionalArgument (List Grammar.ScalarCodecs.Jsonb)
-    }
-
-
-{-| Encode a Jsonb\_comparison\_exp into a value that can be used as an argument.
--}
-encodeJsonb_comparison_exp : Jsonb_comparison_exp -> Value
-encodeJsonb_comparison_exp input =
-    Encode.maybeObject
-        [ ( "_contained_in", (Grammar.ScalarCodecs.codecs |> Grammar.Scalar.unwrapEncoder .codecJsonb) |> Encode.optional input.contained_in_ ), ( "_contains", (Grammar.ScalarCodecs.codecs |> Grammar.Scalar.unwrapEncoder .codecJsonb) |> Encode.optional input.contains_ ), ( "_eq", (Grammar.ScalarCodecs.codecs |> Grammar.Scalar.unwrapEncoder .codecJsonb) |> Encode.optional input.eq_ ), ( "_gt", (Grammar.ScalarCodecs.codecs |> Grammar.Scalar.unwrapEncoder .codecJsonb) |> Encode.optional input.gt_ ), ( "_gte", (Grammar.ScalarCodecs.codecs |> Grammar.Scalar.unwrapEncoder .codecJsonb) |> Encode.optional input.gte_ ), ( "_has_key", Encode.string |> Encode.optional input.has_key_ ), ( "_has_keys_all", (Encode.string |> Encode.list) |> Encode.optional input.has_keys_all_ ), ( "_has_keys_any", (Encode.string |> Encode.list) |> Encode.optional input.has_keys_any_ ), ( "_in", ((Grammar.ScalarCodecs.codecs |> Grammar.Scalar.unwrapEncoder .codecJsonb) |> Encode.list) |> Encode.optional input.in_ ), ( "_is_null", Encode.bool |> Encode.optional input.is_null_ ), ( "_lt", (Grammar.ScalarCodecs.codecs |> Grammar.Scalar.unwrapEncoder .codecJsonb) |> Encode.optional input.lt_ ), ( "_lte", (Grammar.ScalarCodecs.codecs |> Grammar.Scalar.unwrapEncoder .codecJsonb) |> Encode.optional input.lte_ ), ( "_neq", (Grammar.ScalarCodecs.codecs |> Grammar.Scalar.unwrapEncoder .codecJsonb) |> Encode.optional input.neq_ ), ( "_nin", ((Grammar.ScalarCodecs.codecs |> Grammar.Scalar.unwrapEncoder .codecJsonb) |> Encode.list) |> Encode.optional input.nin_ ) ]
+        [ ( "description", Encode.string |> Encode.optional input.description ), ( "grammar", Encode.string |> Encode.optional input.grammar ), ( "id", (Grammar.ScalarCodecs.codecs |> Grammar.Scalar.unwrapEncoder .codecUuid) |> Encode.optional input.id ), ( "name", Encode.string |> Encode.optional input.name ), ( "parent", (Grammar.ScalarCodecs.codecs |> Grammar.Scalar.unwrapEncoder .codecUuid) |> Encode.optional input.parent ) ]
 
 
 buildString_comparison_exp : (String_comparison_expOptionalFields -> String_comparison_expOptionalFields) -> String_comparison_exp

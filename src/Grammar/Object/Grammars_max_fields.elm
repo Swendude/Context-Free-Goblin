@@ -19,9 +19,14 @@ import Graphql.SelectionSet exposing (SelectionSet)
 import Json.Decode as Decode
 
 
-desciption : SelectionSet (Maybe String) Grammar.Object.Grammars_max_fields
-desciption =
-    Object.selectionForField "(Maybe String)" "desciption" [] (Decode.string |> Decode.nullable)
+description : SelectionSet (Maybe String) Grammar.Object.Grammars_max_fields
+description =
+    Object.selectionForField "(Maybe String)" "description" [] (Decode.string |> Decode.nullable)
+
+
+grammar : SelectionSet (Maybe String) Grammar.Object.Grammars_max_fields
+grammar =
+    Object.selectionForField "(Maybe String)" "grammar" [] (Decode.string |> Decode.nullable)
 
 
 name : SelectionSet (Maybe String) Grammar.Object.Grammars_max_fields

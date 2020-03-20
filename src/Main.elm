@@ -1,6 +1,7 @@
 module Main exposing (Model, Msg(..), blue, grammrows, header, init, inputRows, lblue, main, renderProduction, renderProductions, update, view)
 
 import Browser
+import Codec exposing (grammarDecoder, grammarEncoder)
 import Debug
 import Dict exposing (Dict)
 import Element exposing (Element, alignRight, centerX, centerY, el, fill, fillPortion, height, padding, rgb255, row, spacing, text, width)
@@ -12,11 +13,14 @@ import ExampleGrammars
 import Grammar exposing (..)
 import Grammar.Object.Grammars as Grammars
 import Grammar.Query as Query
+import Grammar.Scalar exposing (Id(..), Uuid(..))
+import Graphql.Http as GqlHttp
 import Graphql.Operation exposing (RootQuery)
 import Graphql.OptionalArgument exposing (OptionalArgument(..))
 import Graphql.SelectionSet as SelectionSet exposing (SelectionSet)
-import Graphql.Http as GqlHttp
 import Html exposing (Html)
+import Json.Decode as JD
+import Json.Encode as JE
 import Parser exposing (DeadEnd, run)
 import Random
 
@@ -36,7 +40,7 @@ init _ =
     ( { ntValue = ""
       , prodValue = ""
       , grammar =
-            Grammar <| ExampleGrammars.deepGrammarRules
+            Grammar Dict.empty
       , error = Nothing
       , output = ""
       , seed = 42
@@ -66,7 +70,7 @@ type Msg
     | Save
     | NewSeed Int
     | ClearGrammar
-    | GotDefaultGrammar (Result (GqlHttp.Error (Maybe SavedGrammar)) (Maybe SavedGrammar) )
+    | GotDefaultGrammar (Result (GqlHttp.Error (Maybe SavedGrammar)) (Maybe SavedGrammar))
 
 
 
@@ -84,37 +88,34 @@ type Msg
 --     , description : String
 --     }
 
+
 requestDefaultGrammar : Cmd Msg
 requestDefaultGrammar =
-    defaultGrammar |>
-     GqlHttp.queryRequest "http://localhost:8080/v1/graphql" |>
-     GqlHttp.withOperationName "GetDefaultGrammar" |>
-     GqlHttp.send GotDefaultGrammar
+    defaultGrammar
+        |> GqlHttp.queryRequest "https://context-free-goblin.herokuapp.com/v1/graphql"
+        |> GqlHttp.withOperationName "GetDefaultGrammar"
+        |> GqlHttp.send GotDefaultGrammar
+
 
 type alias SavedGrammar =
     { name : String
+    , grammar : String
     }
-    
 
-makeSavedGrammars : List (Maybe String) -> Maybe SavedGrammar
-makeSavedGrammars res =
-    List.head res |> Maybe.andThen (Maybe.map SavedGrammar)
 
-{-
-id - uuid, primary key, unique, default: gen_random_uuid()
-name - text, nullable
-grammar - jsonb
-parent - uuid
-desciption - text, nullable
--}
 
-    
+-- makeSavedGrammars : String -> String -> Maybe SavedGrammar
+-- makeSavedGrammars =
+--     Maybe.map SavedGrammar
+
 
 defaultGrammar : SelectionSet (Maybe SavedGrammar) RootQuery
 defaultGrammar =
-    SelectionSet.map makeSavedGrammars <|
-        Query.grammars identity
-        Grammars.name
+    Query.grammars_by_pk { id = Uuid "00000000-0000-0000-0000-000000000000" } <|
+        SelectionSet.map2 SavedGrammar
+            Grammars.name
+            Grammars.grammar
+
 
 
 -- Query.grammars (\optionals -> { optionals | id = "00000000-0000-0000-0000-000000000000" }) <|
@@ -157,17 +158,34 @@ update msg model =
 
         ClearGrammar ->
             ( { model | grammar = Grammar.empty, ntValue = "START" }, Cmd.none )
-        
+
         GotDefaultGrammar res ->
             case res of
-                Ok something ->
-                    Debug.log ("OK " ++ (Debug.toString something)) (model, Cmd.none)
+                Ok grammarString ->
+                    case grammarString of
+                        Just gramString ->
+                            case JD.decodeString grammarDecoder gramString.grammar of
+                                Ok gram ->
+                                    ( { model | grammar = gram }, Cmd.none )
+
+                                Err err ->
+                                    Debug.log (Debug.toString "ENCODE ERROR") ( model, Cmd.none )
+
+                        Nothing ->
+                            Debug.log (Debug.toString "NO ROWS ERROR") ( model, Cmd.none )
+
                 Err error ->
                     case error of
                         GqlHttp.GraphqlError pd err ->
-                            Debug.log (Debug.toString pd) (model, Cmd.none)
+                            Debug.log (Debug.toString pd) ( model, Cmd.none )
+
                         GqlHttp.HttpError err ->
-                            Debug.log (Debug.toString err) (model, Cmd.none)
+                            case err of
+                                GqlHttp.BadPayload str ->
+                                    Debug.log (Debug.toString str) ( model, Cmd.none )
+
+                                _ ->
+                                    Debug.log (Debug.toString err) ( model, Cmd.none )
 
 
 
@@ -329,7 +347,7 @@ view model =
                 , Font.size 24
                 , Background.color black
                 ]
-                (Element.text "OpenGen")
+                (Element.text "Context Free Goblin")
             , Element.row
                 [ height <| Element.px 30
                 , width fill

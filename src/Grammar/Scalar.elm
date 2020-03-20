@@ -2,7 +2,7 @@
 -- https://github.com/dillonkearns/elm-graphql
 
 
-module Grammar.Scalar exposing (Codecs, Id(..), Jsonb(..), Uuid(..), defaultCodecs, defineCodecs, unwrapCodecs, unwrapEncoder)
+module Grammar.Scalar exposing (Codecs, Id(..), Uuid(..), defaultCodecs, defineCodecs, unwrapCodecs, unwrapEncoder)
 
 import Graphql.Codec exposing (Codec)
 import Graphql.Internal.Builder.Object as Object
@@ -15,29 +15,23 @@ type Id
     = Id String
 
 
-type Jsonb
-    = Jsonb String
-
-
 type Uuid
     = Uuid String
 
 
 defineCodecs :
     { codecId : Codec valueId
-    , codecJsonb : Codec valueJsonb
     , codecUuid : Codec valueUuid
     }
-    -> Codecs valueId valueJsonb valueUuid
+    -> Codecs valueId valueUuid
 defineCodecs definitions =
     Codecs definitions
 
 
 unwrapCodecs :
-    Codecs valueId valueJsonb valueUuid
+    Codecs valueId valueUuid
     ->
         { codecId : Codec valueId
-        , codecJsonb : Codec valueJsonb
         , codecUuid : Codec valueUuid
         }
 unwrapCodecs (Codecs unwrappedCodecs) =
@@ -48,26 +42,21 @@ unwrapEncoder getter (Codecs unwrappedCodecs) =
     (unwrappedCodecs |> getter |> .encoder) >> Graphql.Internal.Encode.fromJson
 
 
-type Codecs valueId valueJsonb valueUuid
-    = Codecs (RawCodecs valueId valueJsonb valueUuid)
+type Codecs valueId valueUuid
+    = Codecs (RawCodecs valueId valueUuid)
 
 
-type alias RawCodecs valueId valueJsonb valueUuid =
+type alias RawCodecs valueId valueUuid =
     { codecId : Codec valueId
-    , codecJsonb : Codec valueJsonb
     , codecUuid : Codec valueUuid
     }
 
 
-defaultCodecs : RawCodecs Id Jsonb Uuid
+defaultCodecs : RawCodecs Id Uuid
 defaultCodecs =
     { codecId =
         { encoder = \(Id raw) -> Encode.string raw
         , decoder = Object.scalarDecoder |> Decode.map Id
-        }
-    , codecJsonb =
-        { encoder = \(Jsonb raw) -> Encode.string raw
-        , decoder = Object.scalarDecoder |> Decode.map Jsonb
         }
     , codecUuid =
         { encoder = \(Uuid raw) -> Encode.string raw

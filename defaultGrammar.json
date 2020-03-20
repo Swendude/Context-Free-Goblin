@@ -1,0 +1,94 @@
+{
+    "rules": [
+        {
+            "symbol": "START",
+            "productions": [
+                [
+                    {
+                        "type": "token",
+                        "str": "You see a "
+                    },
+                    {
+                        "type": "symbol",
+                        "str": "goblin"
+                    }
+                ]
+            ]
+        },
+        {
+            "symbol": "goblin",
+            "productions": [
+                [
+                    {
+                        "type": "symbol",
+                        "str": "goblin-prop"
+                    },
+                    {
+                        "type": "token",
+                        "str": " goblin. It "
+                    },
+                    {
+                        "type": "symbol",
+                        "str": "activity"
+                    },
+                    {
+                        "type": "token",
+                        "str": "."
+                    }
+                ]
+            ]
+        },
+        {
+            "symbol": "goblin-prop",
+            "productions": [
+                [
+                    {
+                        "type": "token",
+                        "str": "smelly"
+                    }
+                ],
+                [
+                    {
+                        "type": "token",
+                        "str": "lonely"
+                    }
+                ],
+                [
+                    {
+                        "type": "token",
+                        "str": "drunken"
+                    }
+                ],
+                [
+                    {
+                        "type": "token",
+                        "str": "funny"
+                    }
+                ]
+            ]
+        },
+        {
+            "symbol": "activity",
+            "productions": [
+                [
+                    {
+                        "type": "token",
+                        "str": "cheers"
+                    }
+                ],
+                [
+                    {
+                        "type": "token",
+                        "str": "waves"
+                    }
+                ],
+                [
+                    {
+                        "type": "token",
+                        "str": "points it's stick"
+                    }
+                ]
+            ]
+        }
+    ]
+}

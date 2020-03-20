@@ -12,18 +12,13 @@ type alias Id =
     Grammar.Scalar.Id
 
 
-type alias Jsonb =
-    Grammar.Scalar.Jsonb
-
-
 type alias Uuid =
     Grammar.Scalar.Uuid
 
 
-codecs : Grammar.Scalar.Codecs Id Jsonb Uuid
+codecs : Grammar.Scalar.Codecs Id Uuid
 codecs =
     Grammar.Scalar.defineCodecs
         { codecId = defaultCodecs.codecId
-        , codecJsonb = defaultCodecs.codecJsonb
         , codecUuid = defaultCodecs.codecUuid
         }

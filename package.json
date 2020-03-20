@@ -11,8 +11,7 @@
     "@dillonkearns/elm-graphql": "^4.0.2"
   },
   "scripts": {
-    "test": "elm-test",
-    "api": "elm-graphql http://localhost:8080/v1/graphql --base Grammar"
+    "test": "elm-test"
   },
   "repository": {
     "type": "git",

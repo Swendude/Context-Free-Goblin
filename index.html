@@ -5667,674 +5667,23 @@ var $elm$browser$Browser$element = _Browser_element;
 var $author$project$Grammar$Grammar = function (a) {
 	return {$: 'Grammar', a: a};
 };
-var $author$project$Grammar$Symbol = function (a) {
-	return {$: 'Symbol', a: a};
-};
-var $author$project$Grammar$Token = function (a) {
-	return {$: 'Token', a: a};
-};
 var $elm$core$Dict$RBEmpty_elm_builtin = {$: 'RBEmpty_elm_builtin'};
 var $elm$core$Dict$empty = $elm$core$Dict$RBEmpty_elm_builtin;
-var $elm$core$Dict$Black = {$: 'Black'};
-var $elm$core$Dict$RBNode_elm_builtin = F5(
-	function (a, b, c, d, e) {
-		return {$: 'RBNode_elm_builtin', a: a, b: b, c: c, d: d, e: e};
-	});
-var $elm$core$Dict$Red = {$: 'Red'};
-var $elm$core$Dict$balance = F5(
-	function (color, key, value, left, right) {
-		if ((right.$ === 'RBNode_elm_builtin') && (right.a.$ === 'Red')) {
-			var _v1 = right.a;
-			var rK = right.b;
-			var rV = right.c;
-			var rLeft = right.d;
-			var rRight = right.e;
-			if ((left.$ === 'RBNode_elm_builtin') && (left.a.$ === 'Red')) {
-				var _v3 = left.a;
-				var lK = left.b;
-				var lV = left.c;
-				var lLeft = left.d;
-				var lRight = left.e;
-				return A5(
-					$elm$core$Dict$RBNode_elm_builtin,
-					$elm$core$Dict$Red,
-					key,
-					value,
-					A5($elm$core$Dict$RBNode_elm_builtin, $elm$core$Dict$Black, lK, lV, lLeft, lRight),
-					A5($elm$core$Dict$RBNode_elm_builtin, $elm$core$Dict$Black, rK, rV, rLeft, rRight));
-			} else {
-				return A5(
-					$elm$core$Dict$RBNode_elm_builtin,
-					color,
-					rK,
-					rV,
-					A5($elm$core$Dict$RBNode_elm_builtin, $elm$core$Dict$Red, key, value, left, rLeft),
-					rRight);
-			}
-		} else {
-			if ((((left.$ === 'RBNode_elm_builtin') && (left.a.$ === 'Red')) && (left.d.$ === 'RBNode_elm_builtin')) && (left.d.a.$ === 'Red')) {
-				var _v5 = left.a;
-				var lK = left.b;
-				var lV = left.c;
-				var _v6 = left.d;
-				var _v7 = _v6.a;
-				var llK = _v6.b;
-				var llV = _v6.c;
-				var llLeft = _v6.d;
-				var llRight = _v6.e;
-				var lRight = left.e;
-				return A5(
-					$elm$core$Dict$RBNode_elm_builtin,
-					$elm$core$Dict$Red,
-					lK,
-					lV,
-					A5($elm$core$Dict$RBNode_elm_builtin, $elm$core$Dict$Black, llK, llV, llLeft, llRight),
-					A5($elm$core$Dict$RBNode_elm_builtin, $elm$core$Dict$Black, key, value, lRight, right));
-			} else {
-				return A5($elm$core$Dict$RBNode_elm_builtin, color, key, value, left, right);
-			}
-		}
-	});
-var $elm$core$Basics$compare = _Utils_compare;
-var $elm$core$Dict$insertHelp = F3(
-	function (key, value, dict) {
-		if (dict.$ === 'RBEmpty_elm_builtin') {
-			return A5($elm$core$Dict$RBNode_elm_builtin, $elm$core$Dict$Red, key, value, $elm$core$Dict$RBEmpty_elm_builtin, $elm$core$Dict$RBEmpty_elm_builtin);
-		} else {
-			var nColor = dict.a;
-			var nKey = dict.b;
-			var nValue = dict.c;
-			var nLeft = dict.d;
-			var nRight = dict.e;
-			var _v1 = A2($elm$core$Basics$compare, key, nKey);
-			switch (_v1.$) {
-				case 'LT':
-					return A5(
-						$elm$core$Dict$balance,
-						nColor,
-						nKey,
-						nValue,
-						A3($elm$core$Dict$insertHelp, key, value, nLeft),
-						nRight);
-				case 'EQ':
-					return A5($elm$core$Dict$RBNode_elm_builtin, nColor, nKey, value, nLeft, nRight);
-				default:
-					return A5(
-						$elm$core$Dict$balance,
-						nColor,
-						nKey,
-						nValue,
-						nLeft,
-						A3($elm$core$Dict$insertHelp, key, value, nRight));
-			}
-		}
-	});
-var $elm$core$Dict$insert = F3(
-	function (key, value, dict) {
-		var _v0 = A3($elm$core$Dict$insertHelp, key, value, dict);
-		if ((_v0.$ === 'RBNode_elm_builtin') && (_v0.a.$ === 'Red')) {
-			var _v1 = _v0.a;
-			var k = _v0.b;
-			var v = _v0.c;
-			var l = _v0.d;
-			var r = _v0.e;
-			return A5($elm$core$Dict$RBNode_elm_builtin, $elm$core$Dict$Black, k, v, l, r);
-		} else {
-			var x = _v0;
-			return x;
-		}
-	});
-var $elm$core$Dict$fromList = function (assocs) {
-	return A3(
-		$elm$core$List$foldl,
-		F2(
-			function (_v0, dict) {
-				var key = _v0.a;
-				var value = _v0.b;
-				return A3($elm$core$Dict$insert, key, value, dict);
-			}),
-		$elm$core$Dict$empty,
-		assocs);
-};
-var $author$project$ExampleGrammars$deepGrammarRules = $elm$core$Dict$fromList(
-	_List_fromArray(
-		[
-			_Utils_Tuple2(
-			'START',
-			_List_fromArray(
-				[
-					_List_fromArray(
-					[
-						$author$project$Grammar$Token('He saw a '),
-						$author$project$Grammar$Symbol('moody_animal'),
-						$author$project$Grammar$Token(' in a '),
-						$author$project$Grammar$Symbol('special_location')
-					])
-				])),
-			_Utils_Tuple2(
-			'moody_animal',
-			_List_fromArray(
-				[
-					_List_fromArray(
-					[
-						$author$project$Grammar$Symbol('mood'),
-						$author$project$Grammar$Token(' '),
-						$author$project$Grammar$Symbol('animal')
-					])
-				])),
-			_Utils_Tuple2(
-			'animal',
-			_List_fromArray(
-				[
-					_List_fromArray(
-					[
-						$author$project$Grammar$Token('dog')
-					]),
-					_List_fromArray(
-					[
-						$author$project$Grammar$Token('sheep')
-					])
-				])),
-			_Utils_Tuple2(
-			'mood',
-			_List_fromArray(
-				[
-					_List_fromArray(
-					[
-						$author$project$Grammar$Token('angry')
-					]),
-					_List_fromArray(
-					[
-						$author$project$Grammar$Token('happy')
-					])
-				])),
-			_Utils_Tuple2(
-			'special_location',
-			_List_fromArray(
-				[
-					_List_fromArray(
-					[
-						$author$project$Grammar$Symbol('special'),
-						$author$project$Grammar$Token(' '),
-						$author$project$Grammar$Symbol('location')
-					])
-				])),
-			_Utils_Tuple2(
-			'location',
-			_List_fromArray(
-				[
-					_List_fromArray(
-					[
-						$author$project$Grammar$Token('forest')
-					]),
-					_List_fromArray(
-					[
-						$author$project$Grammar$Token('city')
-					])
-				])),
-			_Utils_Tuple2(
-			'special',
-			_List_fromArray(
-				[
-					_List_fromArray(
-					[
-						$author$project$Grammar$Token('abandoned')
-					]),
-					_List_fromArray(
-					[
-						$author$project$Grammar$Token('sun-lit')
-					])
-				]))
-		]));
 var $author$project$Main$GotDefaultGrammar = function (a) {
 	return {$: 'GotDefaultGrammar', a: a};
 };
-var $dillonkearns$elm_graphql$Graphql$OptionalArgument$Absent = {$: 'Absent'};
-var $elm$core$Basics$composeR = F3(
-	function (f, g, x) {
-		return g(
-			f(x));
+var $author$project$Main$SavedGrammar = F2(
+	function (name, grammar) {
+		return {grammar: grammar, name: name};
 	});
-var $dillonkearns$elm_graphql$Graphql$Internal$Encode$Json = function (a) {
-	return {$: 'Json', a: a};
-};
-var $elm$json$Json$Encode$bool = _Json_wrap;
-var $dillonkearns$elm_graphql$Graphql$Internal$Encode$bool = function (value) {
-	return $dillonkearns$elm_graphql$Graphql$Internal$Encode$Json(
-		$elm$json$Json$Encode$bool(value));
-};
-var $author$project$Grammar$Scalar$Id = function (a) {
-	return {$: 'Id', a: a};
-};
-var $author$project$Grammar$Scalar$Jsonb = function (a) {
-	return {$: 'Jsonb', a: a};
-};
 var $author$project$Grammar$Scalar$Uuid = function (a) {
 	return {$: 'Uuid', a: a};
 };
-var $elm$json$Json$Decode$bool = _Json_decodeBool;
-var $elm$json$Json$Decode$float = _Json_decodeFloat;
-var $elm$core$String$fromFloat = _String_fromNumber;
-var $elm$json$Json$Decode$int = _Json_decodeInt;
-var $elm$json$Json$Decode$oneOf = _Json_oneOf;
-var $elm$json$Json$Decode$string = _Json_decodeString;
-var $dillonkearns$elm_graphql$Graphql$Internal$Builder$Object$scalarDecoder = $elm$json$Json$Decode$oneOf(
-	_List_fromArray(
-		[
-			$elm$json$Json$Decode$string,
-			A2($elm$json$Json$Decode$map, $elm$core$String$fromFloat, $elm$json$Json$Decode$float),
-			A2($elm$json$Json$Decode$map, $elm$core$String$fromInt, $elm$json$Json$Decode$int),
-			A2(
-			$elm$json$Json$Decode$map,
-			function (bool) {
-				if (bool) {
-					return 'true';
-				} else {
-					return 'false';
-				}
-			},
-			$elm$json$Json$Decode$bool)
-		]));
-var $elm$json$Json$Encode$string = _Json_wrap;
-var $author$project$Grammar$Scalar$defaultCodecs = {
-	codecId: {
-		decoder: A2($elm$json$Json$Decode$map, $author$project$Grammar$Scalar$Id, $dillonkearns$elm_graphql$Graphql$Internal$Builder$Object$scalarDecoder),
-		encoder: function (_v0) {
-			var raw = _v0.a;
-			return $elm$json$Json$Encode$string(raw);
-		}
-	},
-	codecJsonb: {
-		decoder: A2($elm$json$Json$Decode$map, $author$project$Grammar$Scalar$Jsonb, $dillonkearns$elm_graphql$Graphql$Internal$Builder$Object$scalarDecoder),
-		encoder: function (_v1) {
-			var raw = _v1.a;
-			return $elm$json$Json$Encode$string(raw);
-		}
-	},
-	codecUuid: {
-		decoder: A2($elm$json$Json$Decode$map, $author$project$Grammar$Scalar$Uuid, $dillonkearns$elm_graphql$Graphql$Internal$Builder$Object$scalarDecoder),
-		encoder: function (_v2) {
-			var raw = _v2.a;
-			return $elm$json$Json$Encode$string(raw);
-		}
-	}
-};
-var $author$project$Grammar$Scalar$Codecs = function (a) {
-	return {$: 'Codecs', a: a};
-};
-var $author$project$Grammar$Scalar$defineCodecs = function (definitions) {
-	return $author$project$Grammar$Scalar$Codecs(definitions);
-};
-var $author$project$Grammar$ScalarCodecs$codecs = $author$project$Grammar$Scalar$defineCodecs(
-	{codecId: $author$project$Grammar$Scalar$defaultCodecs.codecId, codecJsonb: $author$project$Grammar$Scalar$defaultCodecs.codecJsonb, codecUuid: $author$project$Grammar$Scalar$defaultCodecs.codecUuid});
-var $dillonkearns$elm_graphql$Graphql$Internal$Encode$List = function (a) {
-	return {$: 'List', a: a};
-};
-var $dillonkearns$elm_graphql$Graphql$Internal$Encode$list = F2(
-	function (toValue, value) {
-		return $dillonkearns$elm_graphql$Graphql$Internal$Encode$List(
-			A2($elm$core$List$map, toValue, value));
+var $dillonkearns$elm_graphql$Graphql$SelectionSet$SelectionSet = F2(
+	function (a, b) {
+		return {$: 'SelectionSet', a: a, b: b};
 	});
-var $dillonkearns$elm_graphql$Graphql$Internal$Encode$Object = function (a) {
-	return {$: 'Object', a: a};
-};
-var $elm$core$List$maybeCons = F3(
-	function (f, mx, xs) {
-		var _v0 = f(mx);
-		if (_v0.$ === 'Just') {
-			var x = _v0.a;
-			return A2($elm$core$List$cons, x, xs);
-		} else {
-			return xs;
-		}
-	});
-var $elm$core$List$filterMap = F2(
-	function (f, xs) {
-		return A3(
-			$elm$core$List$foldr,
-			$elm$core$List$maybeCons(f),
-			_List_Nil,
-			xs);
-	});
-var $dillonkearns$elm_graphql$Graphql$Internal$Encode$maybeObject = function (maybeValues) {
-	return $dillonkearns$elm_graphql$Graphql$Internal$Encode$Object(
-		A2(
-			$elm$core$List$filterMap,
-			function (_v0) {
-				var key = _v0.a;
-				var value = _v0.b;
-				if (value.$ === 'Just') {
-					var actualValue = value.a;
-					return $elm$core$Maybe$Just(
-						_Utils_Tuple2(key, actualValue));
-				} else {
-					return $elm$core$Maybe$Nothing;
-				}
-			},
-			maybeValues));
-};
-var $elm$json$Json$Encode$null = _Json_encodeNull;
-var $dillonkearns$elm_graphql$Graphql$Internal$Encode$null = $dillonkearns$elm_graphql$Graphql$Internal$Encode$Json($elm$json$Json$Encode$null);
-var $dillonkearns$elm_graphql$Graphql$Internal$Encode$optional = F2(
-	function (optionalValue, toValue) {
-		switch (optionalValue.$) {
-			case 'Present':
-				var value = optionalValue.a;
-				return $elm$core$Maybe$Just(
-					toValue(value));
-			case 'Absent':
-				return $elm$core$Maybe$Nothing;
-			default:
-				return $elm$core$Maybe$Just($dillonkearns$elm_graphql$Graphql$Internal$Encode$null);
-		}
-	});
-var $dillonkearns$elm_graphql$Graphql$Internal$Encode$string = function (value) {
-	return $dillonkearns$elm_graphql$Graphql$Internal$Encode$Json(
-		$elm$json$Json$Encode$string(value));
-};
-var $dillonkearns$elm_graphql$Graphql$Internal$Encode$fromJson = function (jsonValue) {
-	return $dillonkearns$elm_graphql$Graphql$Internal$Encode$Json(jsonValue);
-};
-var $author$project$Grammar$Scalar$unwrapEncoder = F2(
-	function (getter, _v0) {
-		var unwrappedCodecs = _v0.a;
-		return A2(
-			$elm$core$Basics$composeR,
-			getter(unwrappedCodecs).encoder,
-			$dillonkearns$elm_graphql$Graphql$Internal$Encode$fromJson);
-	});
-var $author$project$Grammar$InputObject$encodeJsonb_comparison_exp = function (input) {
-	return $dillonkearns$elm_graphql$Graphql$Internal$Encode$maybeObject(
-		_List_fromArray(
-			[
-				_Utils_Tuple2(
-				'_contained_in',
-				A2(
-					$dillonkearns$elm_graphql$Graphql$Internal$Encode$optional,
-					input.contained_in_,
-					A2(
-						$author$project$Grammar$Scalar$unwrapEncoder,
-						function ($) {
-							return $.codecJsonb;
-						},
-						$author$project$Grammar$ScalarCodecs$codecs))),
-				_Utils_Tuple2(
-				'_contains',
-				A2(
-					$dillonkearns$elm_graphql$Graphql$Internal$Encode$optional,
-					input.contains_,
-					A2(
-						$author$project$Grammar$Scalar$unwrapEncoder,
-						function ($) {
-							return $.codecJsonb;
-						},
-						$author$project$Grammar$ScalarCodecs$codecs))),
-				_Utils_Tuple2(
-				'_eq',
-				A2(
-					$dillonkearns$elm_graphql$Graphql$Internal$Encode$optional,
-					input.eq_,
-					A2(
-						$author$project$Grammar$Scalar$unwrapEncoder,
-						function ($) {
-							return $.codecJsonb;
-						},
-						$author$project$Grammar$ScalarCodecs$codecs))),
-				_Utils_Tuple2(
-				'_gt',
-				A2(
-					$dillonkearns$elm_graphql$Graphql$Internal$Encode$optional,
-					input.gt_,
-					A2(
-						$author$project$Grammar$Scalar$unwrapEncoder,
-						function ($) {
-							return $.codecJsonb;
-						},
-						$author$project$Grammar$ScalarCodecs$codecs))),
-				_Utils_Tuple2(
-				'_gte',
-				A2(
-					$dillonkearns$elm_graphql$Graphql$Internal$Encode$optional,
-					input.gte_,
-					A2(
-						$author$project$Grammar$Scalar$unwrapEncoder,
-						function ($) {
-							return $.codecJsonb;
-						},
-						$author$project$Grammar$ScalarCodecs$codecs))),
-				_Utils_Tuple2(
-				'_has_key',
-				A2($dillonkearns$elm_graphql$Graphql$Internal$Encode$optional, input.has_key_, $dillonkearns$elm_graphql$Graphql$Internal$Encode$string)),
-				_Utils_Tuple2(
-				'_has_keys_all',
-				A2(
-					$dillonkearns$elm_graphql$Graphql$Internal$Encode$optional,
-					input.has_keys_all_,
-					$dillonkearns$elm_graphql$Graphql$Internal$Encode$list($dillonkearns$elm_graphql$Graphql$Internal$Encode$string))),
-				_Utils_Tuple2(
-				'_has_keys_any',
-				A2(
-					$dillonkearns$elm_graphql$Graphql$Internal$Encode$optional,
-					input.has_keys_any_,
-					$dillonkearns$elm_graphql$Graphql$Internal$Encode$list($dillonkearns$elm_graphql$Graphql$Internal$Encode$string))),
-				_Utils_Tuple2(
-				'_in',
-				A2(
-					$dillonkearns$elm_graphql$Graphql$Internal$Encode$optional,
-					input.in_,
-					$dillonkearns$elm_graphql$Graphql$Internal$Encode$list(
-						A2(
-							$author$project$Grammar$Scalar$unwrapEncoder,
-							function ($) {
-								return $.codecJsonb;
-							},
-							$author$project$Grammar$ScalarCodecs$codecs)))),
-				_Utils_Tuple2(
-				'_is_null',
-				A2($dillonkearns$elm_graphql$Graphql$Internal$Encode$optional, input.is_null_, $dillonkearns$elm_graphql$Graphql$Internal$Encode$bool)),
-				_Utils_Tuple2(
-				'_lt',
-				A2(
-					$dillonkearns$elm_graphql$Graphql$Internal$Encode$optional,
-					input.lt_,
-					A2(
-						$author$project$Grammar$Scalar$unwrapEncoder,
-						function ($) {
-							return $.codecJsonb;
-						},
-						$author$project$Grammar$ScalarCodecs$codecs))),
-				_Utils_Tuple2(
-				'_lte',
-				A2(
-					$dillonkearns$elm_graphql$Graphql$Internal$Encode$optional,
-					input.lte_,
-					A2(
-						$author$project$Grammar$Scalar$unwrapEncoder,
-						function ($) {
-							return $.codecJsonb;
-						},
-						$author$project$Grammar$ScalarCodecs$codecs))),
-				_Utils_Tuple2(
-				'_neq',
-				A2(
-					$dillonkearns$elm_graphql$Graphql$Internal$Encode$optional,
-					input.neq_,
-					A2(
-						$author$project$Grammar$Scalar$unwrapEncoder,
-						function ($) {
-							return $.codecJsonb;
-						},
-						$author$project$Grammar$ScalarCodecs$codecs))),
-				_Utils_Tuple2(
-				'_nin',
-				A2(
-					$dillonkearns$elm_graphql$Graphql$Internal$Encode$optional,
-					input.nin_,
-					$dillonkearns$elm_graphql$Graphql$Internal$Encode$list(
-						A2(
-							$author$project$Grammar$Scalar$unwrapEncoder,
-							function ($) {
-								return $.codecJsonb;
-							},
-							$author$project$Grammar$ScalarCodecs$codecs))))
-			]));
-};
-var $author$project$Grammar$InputObject$encodeString_comparison_exp = function (input) {
-	return $dillonkearns$elm_graphql$Graphql$Internal$Encode$maybeObject(
-		_List_fromArray(
-			[
-				_Utils_Tuple2(
-				'_eq',
-				A2($dillonkearns$elm_graphql$Graphql$Internal$Encode$optional, input.eq_, $dillonkearns$elm_graphql$Graphql$Internal$Encode$string)),
-				_Utils_Tuple2(
-				'_gt',
-				A2($dillonkearns$elm_graphql$Graphql$Internal$Encode$optional, input.gt_, $dillonkearns$elm_graphql$Graphql$Internal$Encode$string)),
-				_Utils_Tuple2(
-				'_gte',
-				A2($dillonkearns$elm_graphql$Graphql$Internal$Encode$optional, input.gte_, $dillonkearns$elm_graphql$Graphql$Internal$Encode$string)),
-				_Utils_Tuple2(
-				'_ilike',
-				A2($dillonkearns$elm_graphql$Graphql$Internal$Encode$optional, input.ilike_, $dillonkearns$elm_graphql$Graphql$Internal$Encode$string)),
-				_Utils_Tuple2(
-				'_in',
-				A2(
-					$dillonkearns$elm_graphql$Graphql$Internal$Encode$optional,
-					input.in_,
-					$dillonkearns$elm_graphql$Graphql$Internal$Encode$list($dillonkearns$elm_graphql$Graphql$Internal$Encode$string))),
-				_Utils_Tuple2(
-				'_is_null',
-				A2($dillonkearns$elm_graphql$Graphql$Internal$Encode$optional, input.is_null_, $dillonkearns$elm_graphql$Graphql$Internal$Encode$bool)),
-				_Utils_Tuple2(
-				'_like',
-				A2($dillonkearns$elm_graphql$Graphql$Internal$Encode$optional, input.like_, $dillonkearns$elm_graphql$Graphql$Internal$Encode$string)),
-				_Utils_Tuple2(
-				'_lt',
-				A2($dillonkearns$elm_graphql$Graphql$Internal$Encode$optional, input.lt_, $dillonkearns$elm_graphql$Graphql$Internal$Encode$string)),
-				_Utils_Tuple2(
-				'_lte',
-				A2($dillonkearns$elm_graphql$Graphql$Internal$Encode$optional, input.lte_, $dillonkearns$elm_graphql$Graphql$Internal$Encode$string)),
-				_Utils_Tuple2(
-				'_neq',
-				A2($dillonkearns$elm_graphql$Graphql$Internal$Encode$optional, input.neq_, $dillonkearns$elm_graphql$Graphql$Internal$Encode$string)),
-				_Utils_Tuple2(
-				'_nilike',
-				A2($dillonkearns$elm_graphql$Graphql$Internal$Encode$optional, input.nilike_, $dillonkearns$elm_graphql$Graphql$Internal$Encode$string)),
-				_Utils_Tuple2(
-				'_nin',
-				A2(
-					$dillonkearns$elm_graphql$Graphql$Internal$Encode$optional,
-					input.nin_,
-					$dillonkearns$elm_graphql$Graphql$Internal$Encode$list($dillonkearns$elm_graphql$Graphql$Internal$Encode$string))),
-				_Utils_Tuple2(
-				'_nlike',
-				A2($dillonkearns$elm_graphql$Graphql$Internal$Encode$optional, input.nlike_, $dillonkearns$elm_graphql$Graphql$Internal$Encode$string)),
-				_Utils_Tuple2(
-				'_nsimilar',
-				A2($dillonkearns$elm_graphql$Graphql$Internal$Encode$optional, input.nsimilar_, $dillonkearns$elm_graphql$Graphql$Internal$Encode$string)),
-				_Utils_Tuple2(
-				'_similar',
-				A2($dillonkearns$elm_graphql$Graphql$Internal$Encode$optional, input.similar_, $dillonkearns$elm_graphql$Graphql$Internal$Encode$string))
-			]));
-};
-var $author$project$Grammar$InputObject$encodeUuid_comparison_exp = function (input) {
-	return $dillonkearns$elm_graphql$Graphql$Internal$Encode$maybeObject(
-		_List_fromArray(
-			[
-				_Utils_Tuple2(
-				'_eq',
-				A2(
-					$dillonkearns$elm_graphql$Graphql$Internal$Encode$optional,
-					input.eq_,
-					A2(
-						$author$project$Grammar$Scalar$unwrapEncoder,
-						function ($) {
-							return $.codecUuid;
-						},
-						$author$project$Grammar$ScalarCodecs$codecs))),
-				_Utils_Tuple2(
-				'_gt',
-				A2(
-					$dillonkearns$elm_graphql$Graphql$Internal$Encode$optional,
-					input.gt_,
-					A2(
-						$author$project$Grammar$Scalar$unwrapEncoder,
-						function ($) {
-							return $.codecUuid;
-						},
-						$author$project$Grammar$ScalarCodecs$codecs))),
-				_Utils_Tuple2(
-				'_gte',
-				A2(
-					$dillonkearns$elm_graphql$Graphql$Internal$Encode$optional,
-					input.gte_,
-					A2(
-						$author$project$Grammar$Scalar$unwrapEncoder,
-						function ($) {
-							return $.codecUuid;
-						},
-						$author$project$Grammar$ScalarCodecs$codecs))),
-				_Utils_Tuple2(
-				'_in',
-				A2(
-					$dillonkearns$elm_graphql$Graphql$Internal$Encode$optional,
-					input.in_,
-					$dillonkearns$elm_graphql$Graphql$Internal$Encode$list(
-						A2(
-							$author$project$Grammar$Scalar$unwrapEncoder,
-							function ($) {
-								return $.codecUuid;
-							},
-							$author$project$Grammar$ScalarCodecs$codecs)))),
-				_Utils_Tuple2(
-				'_is_null',
-				A2($dillonkearns$elm_graphql$Graphql$Internal$Encode$optional, input.is_null_, $dillonkearns$elm_graphql$Graphql$Internal$Encode$bool)),
-				_Utils_Tuple2(
-				'_lt',
-				A2(
-					$dillonkearns$elm_graphql$Graphql$Internal$Encode$optional,
-					input.lt_,
-					A2(
-						$author$project$Grammar$Scalar$unwrapEncoder,
-						function ($) {
-							return $.codecUuid;
-						},
-						$author$project$Grammar$ScalarCodecs$codecs))),
-				_Utils_Tuple2(
-				'_lte',
-				A2(
-					$dillonkearns$elm_graphql$Graphql$Internal$Encode$optional,
-					input.lte_,
-					A2(
-						$author$project$Grammar$Scalar$unwrapEncoder,
-						function ($) {
-							return $.codecUuid;
-						},
-						$author$project$Grammar$ScalarCodecs$codecs))),
-				_Utils_Tuple2(
-				'_neq',
-				A2(
-					$dillonkearns$elm_graphql$Graphql$Internal$Encode$optional,
-					input.neq_,
-					A2(
-						$author$project$Grammar$Scalar$unwrapEncoder,
-						function ($) {
-							return $.codecUuid;
-						},
-						$author$project$Grammar$ScalarCodecs$codecs))),
-				_Utils_Tuple2(
-				'_nin',
-				A2(
-					$dillonkearns$elm_graphql$Graphql$Internal$Encode$optional,
-					input.nin_,
-					$dillonkearns$elm_graphql$Graphql$Internal$Encode$list(
-						A2(
-							$author$project$Grammar$Scalar$unwrapEncoder,
-							function ($) {
-								return $.codecUuid;
-							},
-							$author$project$Grammar$ScalarCodecs$codecs))))
-			]));
-};
+var $elm$json$Json$Decode$field = _Json_decodeField;
 var $elm$core$Maybe$map = F2(
 	function (f, maybe) {
 		if (maybe.$ === 'Just') {
@@ -6345,167 +5694,6 @@ var $elm$core$Maybe$map = F2(
 			return $elm$core$Maybe$Nothing;
 		}
 	});
-var $elm$core$Maybe$withDefault = F2(
-	function (_default, maybe) {
-		if (maybe.$ === 'Just') {
-			var value = maybe.a;
-			return value;
-		} else {
-			return _default;
-		}
-	});
-var $dillonkearns$elm_graphql$Graphql$Internal$Encode$maybe = function (encoder) {
-	return A2(
-		$elm$core$Basics$composeR,
-		$elm$core$Maybe$map(encoder),
-		$elm$core$Maybe$withDefault($dillonkearns$elm_graphql$Graphql$Internal$Encode$null));
-};
-var $author$project$Grammar$InputObject$encodeGrammars_bool_exp = function (_v0) {
-	var input = _v0.a;
-	return $dillonkearns$elm_graphql$Graphql$Internal$Encode$maybeObject(
-		_List_fromArray(
-			[
-				_Utils_Tuple2(
-				'_and',
-				A2(
-					$dillonkearns$elm_graphql$Graphql$Internal$Encode$optional,
-					input.and_,
-					$dillonkearns$elm_graphql$Graphql$Internal$Encode$list(
-						$dillonkearns$elm_graphql$Graphql$Internal$Encode$maybe($author$project$Grammar$InputObject$encodeGrammars_bool_exp)))),
-				_Utils_Tuple2(
-				'_not',
-				A2($dillonkearns$elm_graphql$Graphql$Internal$Encode$optional, input.not_, $author$project$Grammar$InputObject$encodeGrammars_bool_exp)),
-				_Utils_Tuple2(
-				'_or',
-				A2(
-					$dillonkearns$elm_graphql$Graphql$Internal$Encode$optional,
-					input.or_,
-					$dillonkearns$elm_graphql$Graphql$Internal$Encode$list(
-						$dillonkearns$elm_graphql$Graphql$Internal$Encode$maybe($author$project$Grammar$InputObject$encodeGrammars_bool_exp)))),
-				_Utils_Tuple2(
-				'desciption',
-				A2($dillonkearns$elm_graphql$Graphql$Internal$Encode$optional, input.desciption, $author$project$Grammar$InputObject$encodeString_comparison_exp)),
-				_Utils_Tuple2(
-				'grammar',
-				A2($dillonkearns$elm_graphql$Graphql$Internal$Encode$optional, input.grammar, $author$project$Grammar$InputObject$encodeJsonb_comparison_exp)),
-				_Utils_Tuple2(
-				'grammar_parent',
-				A2($dillonkearns$elm_graphql$Graphql$Internal$Encode$optional, input.grammar_parent, $author$project$Grammar$InputObject$encodeGrammars_bool_exp)),
-				_Utils_Tuple2(
-				'id',
-				A2($dillonkearns$elm_graphql$Graphql$Internal$Encode$optional, input.id, $author$project$Grammar$InputObject$encodeUuid_comparison_exp)),
-				_Utils_Tuple2(
-				'name',
-				A2($dillonkearns$elm_graphql$Graphql$Internal$Encode$optional, input.name, $author$project$Grammar$InputObject$encodeString_comparison_exp)),
-				_Utils_Tuple2(
-				'parent',
-				A2($dillonkearns$elm_graphql$Graphql$Internal$Encode$optional, input.parent, $author$project$Grammar$InputObject$encodeUuid_comparison_exp))
-			]));
-};
-var $dillonkearns$elm_graphql$Graphql$Internal$Encode$EnumValue = function (a) {
-	return {$: 'EnumValue', a: a};
-};
-var $dillonkearns$elm_graphql$Graphql$Internal$Encode$enum = F2(
-	function (enumToString, value) {
-		return $dillonkearns$elm_graphql$Graphql$Internal$Encode$EnumValue(
-			enumToString(value));
-	});
-var $author$project$Grammar$Enum$Order_by$toString = function (_enum) {
-	switch (_enum.$) {
-		case 'Asc':
-			return 'asc';
-		case 'Asc_nulls_first':
-			return 'asc_nulls_first';
-		case 'Asc_nulls_last':
-			return 'asc_nulls_last';
-		case 'Desc':
-			return 'desc';
-		case 'Desc_nulls_first':
-			return 'desc_nulls_first';
-		default:
-			return 'desc_nulls_last';
-	}
-};
-var $author$project$Grammar$InputObject$encodeGrammars_order_by = function (_v0) {
-	var input = _v0.a;
-	return $dillonkearns$elm_graphql$Graphql$Internal$Encode$maybeObject(
-		_List_fromArray(
-			[
-				_Utils_Tuple2(
-				'desciption',
-				A2(
-					$dillonkearns$elm_graphql$Graphql$Internal$Encode$optional,
-					input.desciption,
-					$dillonkearns$elm_graphql$Graphql$Internal$Encode$enum($author$project$Grammar$Enum$Order_by$toString))),
-				_Utils_Tuple2(
-				'grammar',
-				A2(
-					$dillonkearns$elm_graphql$Graphql$Internal$Encode$optional,
-					input.grammar,
-					$dillonkearns$elm_graphql$Graphql$Internal$Encode$enum($author$project$Grammar$Enum$Order_by$toString))),
-				_Utils_Tuple2(
-				'grammar_parent',
-				A2($dillonkearns$elm_graphql$Graphql$Internal$Encode$optional, input.grammar_parent, $author$project$Grammar$InputObject$encodeGrammars_order_by)),
-				_Utils_Tuple2(
-				'id',
-				A2(
-					$dillonkearns$elm_graphql$Graphql$Internal$Encode$optional,
-					input.id,
-					$dillonkearns$elm_graphql$Graphql$Internal$Encode$enum($author$project$Grammar$Enum$Order_by$toString))),
-				_Utils_Tuple2(
-				'name',
-				A2(
-					$dillonkearns$elm_graphql$Graphql$Internal$Encode$optional,
-					input.name,
-					$dillonkearns$elm_graphql$Graphql$Internal$Encode$enum($author$project$Grammar$Enum$Order_by$toString))),
-				_Utils_Tuple2(
-				'parent',
-				A2(
-					$dillonkearns$elm_graphql$Graphql$Internal$Encode$optional,
-					input.parent,
-					$dillonkearns$elm_graphql$Graphql$Internal$Encode$enum($author$project$Grammar$Enum$Order_by$toString)))
-			]));
-};
-var $elm$json$Json$Encode$int = _Json_wrap;
-var $dillonkearns$elm_graphql$Graphql$Internal$Encode$int = function (value) {
-	return $dillonkearns$elm_graphql$Graphql$Internal$Encode$Json(
-		$elm$json$Json$Encode$int(value));
-};
-var $elm$json$Json$Decode$list = _Json_decodeList;
-var $dillonkearns$elm_graphql$Graphql$Internal$Builder$Argument$Argument = F2(
-	function (a, b) {
-		return {$: 'Argument', a: a, b: b};
-	});
-var $dillonkearns$elm_graphql$Graphql$Internal$Builder$Argument$optional = F3(
-	function (fieldName, maybeValue, toValue) {
-		switch (maybeValue.$) {
-			case 'Present':
-				var value = maybeValue.a;
-				return $elm$core$Maybe$Just(
-					A2(
-						$dillonkearns$elm_graphql$Graphql$Internal$Builder$Argument$Argument,
-						fieldName,
-						toValue(value)));
-			case 'Absent':
-				return $elm$core$Maybe$Nothing;
-			default:
-				return $elm$core$Maybe$Just(
-					A2($dillonkearns$elm_graphql$Graphql$Internal$Builder$Argument$Argument, fieldName, $dillonkearns$elm_graphql$Graphql$Internal$Encode$null));
-		}
-	});
-var $dillonkearns$elm_graphql$Graphql$SelectionSet$SelectionSet = F2(
-	function (a, b) {
-		return {$: 'SelectionSet', a: a, b: b};
-	});
-var $dillonkearns$elm_graphql$Graphql$RawField$Composite = F3(
-	function (a, b, c) {
-		return {$: 'Composite', a: a, b: b, c: c};
-	});
-var $dillonkearns$elm_graphql$Graphql$Internal$Builder$Object$composite = F3(
-	function (fieldName, args, fields) {
-		return A3($dillonkearns$elm_graphql$Graphql$RawField$Composite, fieldName, args, fields);
-	});
-var $elm$json$Json$Decode$field = _Json_decodeField;
 var $elm$core$List$append = F2(
 	function (xs, ys) {
 		if (!ys.b) {
@@ -6696,117 +5884,20 @@ var $dillonkearns$elm_graphql$Graphql$Document$Field$alias = function (field) {
 		},
 		$dillonkearns$elm_graphql$Graphql$Document$Field$maybeAliasHash(field));
 };
+var $elm$core$Maybe$withDefault = F2(
+	function (_default, maybe) {
+		if (maybe.$ === 'Just') {
+			var value = maybe.a;
+			return value;
+		} else {
+			return _default;
+		}
+	});
 var $dillonkearns$elm_graphql$Graphql$Document$Field$hashedAliasName = function (field) {
 	return A2(
 		$elm$core$Maybe$withDefault,
 		$dillonkearns$elm_graphql$Graphql$RawField$name(field),
 		$dillonkearns$elm_graphql$Graphql$Document$Field$alias(field));
-};
-var $dillonkearns$elm_graphql$Graphql$Internal$Builder$Object$selectionForCompositeField = F4(
-	function (fieldName, args, _v0, decoderTransform) {
-		var fields = _v0.a;
-		var decoder = _v0.b;
-		return A2(
-			$dillonkearns$elm_graphql$Graphql$SelectionSet$SelectionSet,
-			_List_fromArray(
-				[
-					A3($dillonkearns$elm_graphql$Graphql$Internal$Builder$Object$composite, fieldName, args, fields)
-				]),
-			A2(
-				$elm$json$Json$Decode$field,
-				$dillonkearns$elm_graphql$Graphql$Document$Field$hashedAliasName(
-					A3($dillonkearns$elm_graphql$Graphql$Internal$Builder$Object$composite, fieldName, args, fields)),
-				decoderTransform(decoder)));
-	});
-var $author$project$Grammar$Enum$Grammars_select_column$toString = function (_enum) {
-	switch (_enum.$) {
-		case 'Desciption':
-			return 'desciption';
-		case 'Grammar':
-			return 'grammar';
-		case 'Id':
-			return 'id';
-		case 'Name':
-			return 'name';
-		default:
-			return 'parent';
-	}
-};
-var $author$project$Grammar$Query$grammars = F2(
-	function (fillInOptionals, object_) {
-		var filledInOptionals = fillInOptionals(
-			{distinct_on: $dillonkearns$elm_graphql$Graphql$OptionalArgument$Absent, limit: $dillonkearns$elm_graphql$Graphql$OptionalArgument$Absent, offset: $dillonkearns$elm_graphql$Graphql$OptionalArgument$Absent, order_by: $dillonkearns$elm_graphql$Graphql$OptionalArgument$Absent, where_: $dillonkearns$elm_graphql$Graphql$OptionalArgument$Absent});
-		var optionalArgs = A2(
-			$elm$core$List$filterMap,
-			$elm$core$Basics$identity,
-			_List_fromArray(
-				[
-					A3(
-					$dillonkearns$elm_graphql$Graphql$Internal$Builder$Argument$optional,
-					'distinct_on',
-					filledInOptionals.distinct_on,
-					$dillonkearns$elm_graphql$Graphql$Internal$Encode$list(
-						$dillonkearns$elm_graphql$Graphql$Internal$Encode$enum($author$project$Grammar$Enum$Grammars_select_column$toString))),
-					A3($dillonkearns$elm_graphql$Graphql$Internal$Builder$Argument$optional, 'limit', filledInOptionals.limit, $dillonkearns$elm_graphql$Graphql$Internal$Encode$int),
-					A3($dillonkearns$elm_graphql$Graphql$Internal$Builder$Argument$optional, 'offset', filledInOptionals.offset, $dillonkearns$elm_graphql$Graphql$Internal$Encode$int),
-					A3(
-					$dillonkearns$elm_graphql$Graphql$Internal$Builder$Argument$optional,
-					'order_by',
-					filledInOptionals.order_by,
-					$dillonkearns$elm_graphql$Graphql$Internal$Encode$list($author$project$Grammar$InputObject$encodeGrammars_order_by)),
-					A3($dillonkearns$elm_graphql$Graphql$Internal$Builder$Argument$optional, 'where', filledInOptionals.where_, $author$project$Grammar$InputObject$encodeGrammars_bool_exp)
-				]));
-		return A4(
-			$dillonkearns$elm_graphql$Graphql$Internal$Builder$Object$selectionForCompositeField,
-			'grammars',
-			optionalArgs,
-			object_,
-			A2($elm$core$Basics$composeR, $elm$core$Basics$identity, $elm$json$Json$Decode$list));
-	});
-var $author$project$Main$SavedGrammar = function (name) {
-	return {name: name};
-};
-var $elm$core$Maybe$andThen = F2(
-	function (callback, maybeValue) {
-		if (maybeValue.$ === 'Just') {
-			var value = maybeValue.a;
-			return callback(value);
-		} else {
-			return $elm$core$Maybe$Nothing;
-		}
-	});
-var $elm$core$List$head = function (list) {
-	if (list.b) {
-		var x = list.a;
-		var xs = list.b;
-		return $elm$core$Maybe$Just(x);
-	} else {
-		return $elm$core$Maybe$Nothing;
-	}
-};
-var $author$project$Main$makeSavedGrammars = function (res) {
-	return A2(
-		$elm$core$Maybe$andThen,
-		$elm$core$Maybe$map($author$project$Main$SavedGrammar),
-		$elm$core$List$head(res));
-};
-var $dillonkearns$elm_graphql$Graphql$SelectionSet$map = F2(
-	function (mapFunction, _v0) {
-		var selectionFields = _v0.a;
-		var selectionDecoder = _v0.b;
-		return A2(
-			$dillonkearns$elm_graphql$Graphql$SelectionSet$SelectionSet,
-			selectionFields,
-			A2($elm$json$Json$Decode$map, mapFunction, selectionDecoder));
-	});
-var $elm$json$Json$Decode$null = _Json_decodeNull;
-var $elm$json$Json$Decode$nullable = function (decoder) {
-	return $elm$json$Json$Decode$oneOf(
-		_List_fromArray(
-			[
-				$elm$json$Json$Decode$null($elm$core$Maybe$Nothing),
-				A2($elm$json$Json$Decode$map, $elm$core$Maybe$Just, decoder)
-			]));
 };
 var $dillonkearns$elm_graphql$Graphql$RawField$Leaf = F2(
 	function (a, b) {
@@ -6831,16 +5922,160 @@ var $dillonkearns$elm_graphql$Graphql$Internal$Builder$Object$selectionForField 
 				$dillonkearns$elm_graphql$Graphql$Document$Field$hashedAliasName(newLeaf),
 				decoder));
 	});
-var $author$project$Grammar$Object$Grammars$name = A4(
-	$dillonkearns$elm_graphql$Graphql$Internal$Builder$Object$selectionForField,
-	'(Maybe String)',
-	'name',
-	_List_Nil,
-	$elm$json$Json$Decode$nullable($elm$json$Json$Decode$string));
+var $elm$json$Json$Decode$string = _Json_decodeString;
+var $author$project$Grammar$Object$Grammars$grammar = A4($dillonkearns$elm_graphql$Graphql$Internal$Builder$Object$selectionForField, 'String', 'grammar', _List_Nil, $elm$json$Json$Decode$string);
+var $author$project$Grammar$Scalar$Id = function (a) {
+	return {$: 'Id', a: a};
+};
+var $elm$json$Json$Decode$bool = _Json_decodeBool;
+var $elm$json$Json$Decode$float = _Json_decodeFloat;
+var $elm$core$String$fromFloat = _String_fromNumber;
+var $elm$json$Json$Decode$int = _Json_decodeInt;
+var $elm$json$Json$Decode$oneOf = _Json_oneOf;
+var $dillonkearns$elm_graphql$Graphql$Internal$Builder$Object$scalarDecoder = $elm$json$Json$Decode$oneOf(
+	_List_fromArray(
+		[
+			$elm$json$Json$Decode$string,
+			A2($elm$json$Json$Decode$map, $elm$core$String$fromFloat, $elm$json$Json$Decode$float),
+			A2($elm$json$Json$Decode$map, $elm$core$String$fromInt, $elm$json$Json$Decode$int),
+			A2(
+			$elm$json$Json$Decode$map,
+			function (bool) {
+				if (bool) {
+					return 'true';
+				} else {
+					return 'false';
+				}
+			},
+			$elm$json$Json$Decode$bool)
+		]));
+var $elm$json$Json$Encode$string = _Json_wrap;
+var $author$project$Grammar$Scalar$defaultCodecs = {
+	codecId: {
+		decoder: A2($elm$json$Json$Decode$map, $author$project$Grammar$Scalar$Id, $dillonkearns$elm_graphql$Graphql$Internal$Builder$Object$scalarDecoder),
+		encoder: function (_v0) {
+			var raw = _v0.a;
+			return $elm$json$Json$Encode$string(raw);
+		}
+	},
+	codecUuid: {
+		decoder: A2($elm$json$Json$Decode$map, $author$project$Grammar$Scalar$Uuid, $dillonkearns$elm_graphql$Graphql$Internal$Builder$Object$scalarDecoder),
+		encoder: function (_v1) {
+			var raw = _v1.a;
+			return $elm$json$Json$Encode$string(raw);
+		}
+	}
+};
+var $author$project$Grammar$Scalar$Codecs = function (a) {
+	return {$: 'Codecs', a: a};
+};
+var $author$project$Grammar$Scalar$defineCodecs = function (definitions) {
+	return $author$project$Grammar$Scalar$Codecs(definitions);
+};
+var $author$project$Grammar$ScalarCodecs$codecs = $author$project$Grammar$Scalar$defineCodecs(
+	{codecId: $author$project$Grammar$Scalar$defaultCodecs.codecId, codecUuid: $author$project$Grammar$Scalar$defaultCodecs.codecUuid});
+var $elm$core$Basics$composeR = F3(
+	function (f, g, x) {
+		return g(
+			f(x));
+	});
+var $elm$json$Json$Decode$null = _Json_decodeNull;
+var $elm$json$Json$Decode$nullable = function (decoder) {
+	return $elm$json$Json$Decode$oneOf(
+		_List_fromArray(
+			[
+				$elm$json$Json$Decode$null($elm$core$Maybe$Nothing),
+				A2($elm$json$Json$Decode$map, $elm$core$Maybe$Just, decoder)
+			]));
+};
+var $dillonkearns$elm_graphql$Graphql$Internal$Builder$Argument$Argument = F2(
+	function (a, b) {
+		return {$: 'Argument', a: a, b: b};
+	});
+var $dillonkearns$elm_graphql$Graphql$Internal$Builder$Argument$required = F3(
+	function (fieldName, raw, encode) {
+		return A2(
+			$dillonkearns$elm_graphql$Graphql$Internal$Builder$Argument$Argument,
+			fieldName,
+			encode(raw));
+	});
+var $dillonkearns$elm_graphql$Graphql$RawField$Composite = F3(
+	function (a, b, c) {
+		return {$: 'Composite', a: a, b: b, c: c};
+	});
+var $dillonkearns$elm_graphql$Graphql$Internal$Builder$Object$composite = F3(
+	function (fieldName, args, fields) {
+		return A3($dillonkearns$elm_graphql$Graphql$RawField$Composite, fieldName, args, fields);
+	});
+var $dillonkearns$elm_graphql$Graphql$Internal$Builder$Object$selectionForCompositeField = F4(
+	function (fieldName, args, _v0, decoderTransform) {
+		var fields = _v0.a;
+		var decoder = _v0.b;
+		return A2(
+			$dillonkearns$elm_graphql$Graphql$SelectionSet$SelectionSet,
+			_List_fromArray(
+				[
+					A3($dillonkearns$elm_graphql$Graphql$Internal$Builder$Object$composite, fieldName, args, fields)
+				]),
+			A2(
+				$elm$json$Json$Decode$field,
+				$dillonkearns$elm_graphql$Graphql$Document$Field$hashedAliasName(
+					A3($dillonkearns$elm_graphql$Graphql$Internal$Builder$Object$composite, fieldName, args, fields)),
+				decoderTransform(decoder)));
+	});
+var $dillonkearns$elm_graphql$Graphql$Internal$Encode$Json = function (a) {
+	return {$: 'Json', a: a};
+};
+var $dillonkearns$elm_graphql$Graphql$Internal$Encode$fromJson = function (jsonValue) {
+	return $dillonkearns$elm_graphql$Graphql$Internal$Encode$Json(jsonValue);
+};
+var $author$project$Grammar$Scalar$unwrapEncoder = F2(
+	function (getter, _v0) {
+		var unwrappedCodecs = _v0.a;
+		return A2(
+			$elm$core$Basics$composeR,
+			getter(unwrappedCodecs).encoder,
+			$dillonkearns$elm_graphql$Graphql$Internal$Encode$fromJson);
+	});
+var $author$project$Grammar$Query$grammars_by_pk = F2(
+	function (requiredArgs, object_) {
+		return A4(
+			$dillonkearns$elm_graphql$Graphql$Internal$Builder$Object$selectionForCompositeField,
+			'grammars_by_pk',
+			_List_fromArray(
+				[
+					A3(
+					$dillonkearns$elm_graphql$Graphql$Internal$Builder$Argument$required,
+					'id',
+					requiredArgs.id,
+					A2(
+						$author$project$Grammar$Scalar$unwrapEncoder,
+						function ($) {
+							return $.codecUuid;
+						},
+						$author$project$Grammar$ScalarCodecs$codecs))
+				]),
+			object_,
+			A2($elm$core$Basics$composeR, $elm$core$Basics$identity, $elm$json$Json$Decode$nullable));
+	});
+var $dillonkearns$elm_graphql$Graphql$SelectionSet$map2 = F3(
+	function (combine, _v0, _v1) {
+		var selectionFields1 = _v0.a;
+		var selectionDecoder1 = _v0.b;
+		var selectionFields2 = _v1.a;
+		var selectionDecoder2 = _v1.b;
+		return A2(
+			$dillonkearns$elm_graphql$Graphql$SelectionSet$SelectionSet,
+			_Utils_ap(selectionFields1, selectionFields2),
+			A3($elm$json$Json$Decode$map2, combine, selectionDecoder1, selectionDecoder2));
+	});
+var $author$project$Grammar$Object$Grammars$name = A4($dillonkearns$elm_graphql$Graphql$Internal$Builder$Object$selectionForField, 'String', 'name', _List_Nil, $elm$json$Json$Decode$string);
 var $author$project$Main$defaultGrammar = A2(
-	$dillonkearns$elm_graphql$Graphql$SelectionSet$map,
-	$author$project$Main$makeSavedGrammars,
-	A2($author$project$Grammar$Query$grammars, $elm$core$Basics$identity, $author$project$Grammar$Object$Grammars$name));
+	$author$project$Grammar$Query$grammars_by_pk,
+	{
+		id: $author$project$Grammar$Scalar$Uuid('00000000-0000-0000-0000-000000000000')
+	},
+	A3($dillonkearns$elm_graphql$Graphql$SelectionSet$map2, $author$project$Main$SavedGrammar, $author$project$Grammar$Object$Grammars$name, $author$project$Grammar$Object$Grammars$grammar));
 var $dillonkearns$elm_graphql$Graphql$Http$Query = F2(
 	function (a, b) {
 		return {$: 'Query', a: a, b: b};
@@ -6903,6 +6138,7 @@ var $elm$core$Maybe$isJust = function (maybe) {
 	}
 };
 var $elm$core$Platform$sendToSelf = _Platform_sendToSelf;
+var $elm$core$Basics$compare = _Utils_compare;
 var $elm$core$Dict$get = F2(
 	function (targetKey, dict) {
 		get:
@@ -6932,6 +6168,114 @@ var $elm$core$Dict$get = F2(
 						continue get;
 				}
 			}
+		}
+	});
+var $elm$core$Dict$Black = {$: 'Black'};
+var $elm$core$Dict$RBNode_elm_builtin = F5(
+	function (a, b, c, d, e) {
+		return {$: 'RBNode_elm_builtin', a: a, b: b, c: c, d: d, e: e};
+	});
+var $elm$core$Dict$Red = {$: 'Red'};
+var $elm$core$Dict$balance = F5(
+	function (color, key, value, left, right) {
+		if ((right.$ === 'RBNode_elm_builtin') && (right.a.$ === 'Red')) {
+			var _v1 = right.a;
+			var rK = right.b;
+			var rV = right.c;
+			var rLeft = right.d;
+			var rRight = right.e;
+			if ((left.$ === 'RBNode_elm_builtin') && (left.a.$ === 'Red')) {
+				var _v3 = left.a;
+				var lK = left.b;
+				var lV = left.c;
+				var lLeft = left.d;
+				var lRight = left.e;
+				return A5(
+					$elm$core$Dict$RBNode_elm_builtin,
+					$elm$core$Dict$Red,
+					key,
+					value,
+					A5($elm$core$Dict$RBNode_elm_builtin, $elm$core$Dict$Black, lK, lV, lLeft, lRight),
+					A5($elm$core$Dict$RBNode_elm_builtin, $elm$core$Dict$Black, rK, rV, rLeft, rRight));
+			} else {
+				return A5(
+					$elm$core$Dict$RBNode_elm_builtin,
+					color,
+					rK,
+					rV,
+					A5($elm$core$Dict$RBNode_elm_builtin, $elm$core$Dict$Red, key, value, left, rLeft),
+					rRight);
+			}
+		} else {
+			if ((((left.$ === 'RBNode_elm_builtin') && (left.a.$ === 'Red')) && (left.d.$ === 'RBNode_elm_builtin')) && (left.d.a.$ === 'Red')) {
+				var _v5 = left.a;
+				var lK = left.b;
+				var lV = left.c;
+				var _v6 = left.d;
+				var _v7 = _v6.a;
+				var llK = _v6.b;
+				var llV = _v6.c;
+				var llLeft = _v6.d;
+				var llRight = _v6.e;
+				var lRight = left.e;
+				return A5(
+					$elm$core$Dict$RBNode_elm_builtin,
+					$elm$core$Dict$Red,
+					lK,
+					lV,
+					A5($elm$core$Dict$RBNode_elm_builtin, $elm$core$Dict$Black, llK, llV, llLeft, llRight),
+					A5($elm$core$Dict$RBNode_elm_builtin, $elm$core$Dict$Black, key, value, lRight, right));
+			} else {
+				return A5($elm$core$Dict$RBNode_elm_builtin, color, key, value, left, right);
+			}
+		}
+	});
+var $elm$core$Dict$insertHelp = F3(
+	function (key, value, dict) {
+		if (dict.$ === 'RBEmpty_elm_builtin') {
+			return A5($elm$core$Dict$RBNode_elm_builtin, $elm$core$Dict$Red, key, value, $elm$core$Dict$RBEmpty_elm_builtin, $elm$core$Dict$RBEmpty_elm_builtin);
+		} else {
+			var nColor = dict.a;
+			var nKey = dict.b;
+			var nValue = dict.c;
+			var nLeft = dict.d;
+			var nRight = dict.e;
+			var _v1 = A2($elm$core$Basics$compare, key, nKey);
+			switch (_v1.$) {
+				case 'LT':
+					return A5(
+						$elm$core$Dict$balance,
+						nColor,
+						nKey,
+						nValue,
+						A3($elm$core$Dict$insertHelp, key, value, nLeft),
+						nRight);
+				case 'EQ':
+					return A5($elm$core$Dict$RBNode_elm_builtin, nColor, nKey, value, nLeft, nRight);
+				default:
+					return A5(
+						$elm$core$Dict$balance,
+						nColor,
+						nKey,
+						nValue,
+						nLeft,
+						A3($elm$core$Dict$insertHelp, key, value, nRight));
+			}
+		}
+	});
+var $elm$core$Dict$insert = F3(
+	function (key, value, dict) {
+		var _v0 = A3($elm$core$Dict$insertHelp, key, value, dict);
+		if ((_v0.$ === 'RBNode_elm_builtin') && (_v0.a.$ === 'Red')) {
+			var _v1 = _v0.a;
+			var k = _v0.b;
+			var v = _v0.c;
+			var l = _v0.d;
+			var r = _v0.e;
+			return A5($elm$core$Dict$RBNode_elm_builtin, $elm$core$Dict$Black, k, v, l, r);
+		} else {
+			var x = _v0;
+			return x;
 		}
 	});
 var $elm$core$Dict$getMin = function (dict) {
@@ -7379,6 +6723,24 @@ var $elm$http$Http$onEffects = F4(
 			},
 			A3($elm$http$Http$updateReqs, router, cmds, state.reqs));
 	});
+var $elm$core$List$maybeCons = F3(
+	function (f, mx, xs) {
+		var _v0 = f(mx);
+		if (_v0.$ === 'Just') {
+			var x = _v0.a;
+			return A2($elm$core$List$cons, x, xs);
+		} else {
+			return xs;
+		}
+	});
+var $elm$core$List$filterMap = F2(
+	function (f, xs) {
+		return A3(
+			$elm$core$List$foldr,
+			$elm$core$List$maybeCons(f),
+			_List_Nil,
+			xs);
+	});
 var $elm$http$Http$maybeSend = F4(
 	function (router, desiredTracker, progress, _v0) {
 		var actualTracker = _v0.a;
@@ -7559,6 +6921,15 @@ var $elm$json$Json$Encode$object = function (pairs) {
 			_Json_emptyObject(_Utils_Tuple0),
 			pairs));
 };
+var $elm$core$Maybe$andThen = F2(
+	function (callback, maybeValue) {
+		if (maybeValue.$ === 'Just') {
+			var value = maybeValue.a;
+			return callback(value);
+		} else {
+			return $elm$core$Maybe$Nothing;
+		}
+	});
 var $elm$core$Basics$composeL = F3(
 	function (g, f, x) {
 		return g(
@@ -7920,6 +7291,18 @@ var $dillonkearns$elm_graphql$Graphql$Http$GraphqlError$GraphqlError = F3(
 	function (message, locations, details) {
 		return {details: details, locations: locations, message: message};
 	});
+var $elm$core$Dict$fromList = function (assocs) {
+	return A3(
+		$elm$core$List$foldl,
+		F2(
+			function (_v0, dict) {
+				var key = _v0.a;
+				var value = _v0.b;
+				return A3($elm$core$Dict$insert, key, value, dict);
+			}),
+		$elm$core$Dict$empty,
+		assocs);
+};
 var $elm$json$Json$Decode$keyValuePairs = _Json_decodeKeyValuePairs;
 var $elm$json$Json$Decode$dict = function (decoder) {
 	return A2(
@@ -7927,6 +7310,7 @@ var $elm$json$Json$Decode$dict = function (decoder) {
 		$elm$core$Dict$fromList,
 		$elm$json$Json$Decode$keyValuePairs(decoder));
 };
+var $elm$json$Json$Decode$list = _Json_decodeList;
 var $dillonkearns$elm_graphql$Graphql$Http$GraphqlError$Location = F2(
 	function (line, column) {
 		return {column: column, line: line};
@@ -8144,12 +7528,12 @@ var $author$project$Main$requestDefaultGrammar = A2(
 	A2(
 		$dillonkearns$elm_graphql$Graphql$Http$withOperationName,
 		'GetDefaultGrammar',
-		A2($dillonkearns$elm_graphql$Graphql$Http$queryRequest, 'http://localhost:8080/v1/graphql', $author$project$Main$defaultGrammar)));
+		A2($dillonkearns$elm_graphql$Graphql$Http$queryRequest, 'https://context-free-goblin.herokuapp.com/v1/graphql', $author$project$Main$defaultGrammar)));
 var $author$project$Main$init = function (_v0) {
 	return _Utils_Tuple2(
 		{
 			error: $elm$core$Maybe$Nothing,
-			grammar: $author$project$Grammar$Grammar($author$project$ExampleGrammars$deepGrammarRules),
+			grammar: $author$project$Grammar$Grammar($elm$core$Dict$empty),
 			ntValue: '',
 			output: '',
 			prodValue: '',
@@ -8401,6 +7785,9 @@ var $elm$parser$Parser$Advanced$succeed = function (a) {
 		});
 };
 var $elm$parser$Parser$succeed = $elm$parser$Parser$Advanced$succeed;
+var $author$project$Grammar$Symbol = function (a) {
+	return {$: 'Symbol', a: a};
+};
 var $elm$parser$Parser$Advanced$andThen = F2(
 	function (callback, _v0) {
 		var parseA = _v0.a;
@@ -8574,6 +7961,9 @@ var $author$project$Grammar$symbolParser = A2(
 				$elm$parser$Parser$token('#'),
 				$elm$parser$Parser$chompUntil('#')),
 			$elm$parser$Parser$token('#'))));
+var $author$project$Grammar$Token = function (a) {
+	return {$: 'Token', a: a};
+};
 var $elm$parser$Parser$Advanced$chompUntilEndOr = function (str) {
 	return $elm$parser$Parser$Advanced$Parser(
 		function (s) {
@@ -8838,6 +8228,15 @@ var $elm$core$Dict$member = F2(
 var $author$project$Grammar$EmptyProduction = {$: 'EmptyProduction'};
 var $author$project$Grammar$SymbolMissing = function (a) {
 	return {$: 'SymbolMissing', a: a};
+};
+var $elm$core$List$head = function (list) {
+	if (list.b) {
+		var x = list.a;
+		var xs = list.b;
+		return $elm$core$Maybe$Just(x);
+	} else {
+		return $elm$core$Maybe$Nothing;
+	}
 };
 var $elm$core$Tuple$second = function (_v0) {
 	var y = _v0.b;
@@ -9222,6 +8621,42 @@ var $author$project$Grammar$generateSentence = F2(
 			return $elm$core$Result$Err($author$project$Grammar$NoStartRule);
 		}
 	});
+var $elm$json$Json$Decode$fail = _Json_fail;
+var $author$project$Codec$symbolDecoder = A2(
+	$elm$json$Json$Decode$map,
+	$author$project$Grammar$Symbol,
+	A2($elm$json$Json$Decode$field, 'str', $elm$json$Json$Decode$string));
+var $author$project$Codec$tokenDecoder = A2(
+	$elm$json$Json$Decode$map,
+	$author$project$Grammar$Token,
+	A2($elm$json$Json$Decode$field, 'str', $elm$json$Json$Decode$string));
+var $author$project$Codec$prodPartFromType = function (str) {
+	switch (str) {
+		case 'symbol':
+			return $author$project$Codec$symbolDecoder;
+		case 'token':
+			return $author$project$Codec$tokenDecoder;
+		default:
+			return $elm$json$Json$Decode$fail('Invalid type: ' + str);
+	}
+};
+var $author$project$Codec$prodDecoder = $elm$json$Json$Decode$list(
+	A2(
+		$elm$json$Json$Decode$andThen,
+		$author$project$Codec$prodPartFromType,
+		A2($elm$json$Json$Decode$field, 'type', $elm$json$Json$Decode$string)));
+var $author$project$Codec$prodsDecoder = $elm$json$Json$Decode$list($author$project$Codec$prodDecoder);
+var $author$project$Codec$ruleDecoder = $elm$json$Json$Decode$list(
+	A3(
+		$elm$json$Json$Decode$map2,
+		$elm$core$Tuple$pair,
+		A2($elm$json$Json$Decode$field, 'symbol', $elm$json$Json$Decode$string),
+		A2($elm$json$Json$Decode$field, 'productions', $author$project$Codec$prodsDecoder)));
+var $author$project$Codec$rulesDecoder = A2($elm$json$Json$Decode$map, $elm$core$Dict$fromList, $author$project$Codec$ruleDecoder);
+var $author$project$Codec$grammarDecoder = A2(
+	$elm$json$Json$Decode$map,
+	$author$project$Grammar$Grammar,
+	A2($elm$json$Json$Decode$field, 'rules', $author$project$Codec$rulesDecoder));
 var $elm$core$Debug$log = _Debug_log;
 var $elm$random$Random$maxInt = 2147483647;
 var $elm$random$Random$minInt = -2147483648;
@@ -9309,11 +8744,30 @@ var $author$project$Main$update = F2(
 			default:
 				var res = msg.a;
 				if (res.$ === 'Ok') {
-					var something = res.a;
-					return A2(
-						$elm$core$Debug$log,
-						'OK ' + $elm$core$Debug$toString(something),
-						_Utils_Tuple2(model, $elm$core$Platform$Cmd$none));
+					var grammarString = res.a;
+					if (grammarString.$ === 'Just') {
+						var gramString = grammarString.a;
+						var _v4 = A2($elm$json$Json$Decode$decodeString, $author$project$Codec$grammarDecoder, gramString.grammar);
+						if (_v4.$ === 'Ok') {
+							var gram = _v4.a;
+							return _Utils_Tuple2(
+								_Utils_update(
+									model,
+									{grammar: gram}),
+								$elm$core$Platform$Cmd$none);
+						} else {
+							var err = _v4.a;
+							return A2(
+								$elm$core$Debug$log,
+								$elm$core$Debug$toString('ENCODE ERROR'),
+								_Utils_Tuple2(model, $elm$core$Platform$Cmd$none));
+						}
+					} else {
+						return A2(
+							$elm$core$Debug$log,
+							$elm$core$Debug$toString('NO ROWS ERROR'),
+							_Utils_Tuple2(model, $elm$core$Platform$Cmd$none));
+					}
 				} else {
 					var error = res.a;
 					if (error.$ === 'GraphqlError') {
@@ -9325,10 +8779,18 @@ var $author$project$Main$update = F2(
 							_Utils_Tuple2(model, $elm$core$Platform$Cmd$none));
 					} else {
 						var err = error.a;
-						return A2(
-							$elm$core$Debug$log,
-							$elm$core$Debug$toString(err),
-							_Utils_Tuple2(model, $elm$core$Platform$Cmd$none));
+						if (err.$ === 'BadPayload') {
+							var str = err.a;
+							return A2(
+								$elm$core$Debug$log,
+								$elm$core$Debug$toString(str),
+								_Utils_Tuple2(model, $elm$core$Platform$Cmd$none));
+						} else {
+							return A2(
+								$elm$core$Debug$log,
+								$elm$core$Debug$toString(err),
+								_Utils_Tuple2(model, $elm$core$Platform$Cmd$none));
+						}
 					}
 				}
 		}
@@ -14971,6 +14433,7 @@ var $mdgriffith$elm_ui$Internal$Model$Button = {$: 'Button'};
 var $mdgriffith$elm_ui$Internal$Model$Describe = function (a) {
 	return {$: 'Describe', a: a};
 };
+var $elm$json$Json$Encode$bool = _Json_wrap;
 var $elm$html$Html$Attributes$boolProperty = F2(
 	function (key, bool) {
 		return A2(
@@ -15011,7 +14474,6 @@ var $elm$html$Html$Events$onClick = function (msg) {
 };
 var $mdgriffith$elm_ui$Element$Events$onClick = A2($elm$core$Basics$composeL, $mdgriffith$elm_ui$Internal$Model$Attr, $elm$html$Html$Events$onClick);
 var $mdgriffith$elm_ui$Element$Input$enter = 'Enter';
-var $elm$json$Json$Decode$fail = _Json_fail;
 var $elm$virtual_dom$VirtualDom$MayPreventDefault = function (a) {
 	return {$: 'MayPreventDefault', a: a};
 };
@@ -16576,7 +16038,7 @@ var $author$project$Main$view = function (model) {
 							$mdgriffith$elm_ui$Element$Font$size(24),
 							$mdgriffith$elm_ui$Element$Background$color($author$project$Main$black)
 						]),
-					$mdgriffith$elm_ui$Element$text('OpenGen')),
+					$mdgriffith$elm_ui$Element$text('Context Free Goblin')),
 					A2(
 					$mdgriffith$elm_ui$Element$row,
 					_List_fromArray(

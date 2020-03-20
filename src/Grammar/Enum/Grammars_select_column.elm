@@ -9,7 +9,7 @@ import Json.Decode as Decode exposing (Decoder)
 
 {-| select columns of table "grammars"
 
-  - Desciption - column name
+  - Description - column name
   - Grammar - column name
   - Id - column name
   - Name - column name
@@ -17,7 +17,7 @@ import Json.Decode as Decode exposing (Decoder)
 
 -}
 type Grammars_select_column
-    = Desciption
+    = Description
     | Grammar
     | Id
     | Name
@@ -26,7 +26,7 @@ type Grammars_select_column
 
 list : List Grammars_select_column
 list =
-    [ Desciption, Grammar, Id, Name, Parent ]
+    [ Description, Grammar, Id, Name, Parent ]
 
 
 decoder : Decoder Grammars_select_column
@@ -35,8 +35,8 @@ decoder =
         |> Decode.andThen
             (\string ->
                 case string of
-                    "desciption" ->
-                        Decode.succeed Desciption
+                    "description" ->
+                        Decode.succeed Description
 
                     "grammar" ->
                         Decode.succeed Grammar
@@ -60,8 +60,8 @@ decoder =
 toString : Grammars_select_column -> String
 toString enum =
     case enum of
-        Desciption ->
-            "desciption"
+        Description ->
+            "description"
 
         Grammar ->
             "grammar"
@@ -90,8 +90,8 @@ This can be useful for generating Strings to use for <select> menus to check whi
 fromString : String -> Maybe Grammars_select_column
 fromString enumString =
     case enumString of
-        "desciption" ->
-            Just Desciption
+        "description" ->
+            Just Description
 
         "grammar" ->
             Just Grammar
