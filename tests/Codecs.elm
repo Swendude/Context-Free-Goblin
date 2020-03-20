@@ -27,8 +27,8 @@ suite =
             [ test "a Grammar gets encoded to json repr" <|
                 \_ ->
                     Expect.equal
-                        EG.testJSONGrammar
                         (JE.encode 4 (grammarEncoder (Grammar EG.jsonGrammarRules)))
+                        EG.testJSONGrammar
             ]
         , describe "check matching of total codec"
             [ test "encoding and then decoding results in the same Grammar" <|

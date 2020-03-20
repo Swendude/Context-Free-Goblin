@@ -1,0 +1,27 @@
+{
+  "name": "opengen",
+  "version": "1.0.0",
+  "description": "Toy project, developed using elm reactor.",
+  "main": "index.html",
+  "directories": {
+    "test": "tests"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@dillonkearns/elm-graphql": "^4.0.2"
+  },
+  "scripts": {
+    "test": "elm-test",
+    "api": "elm-graphql http://localhost:8080/v1/graphql --base Grammar"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Swendude/OpenGen.git"
+  },
+  "author": "Swen Mulderij (@Swendude)",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Swendude/OpenGen/issues"
+  },
+  "homepage": "https://github.com/Swendude/OpenGen#readme"
+}

@@ -10,7 +10,7 @@ testJSONGrammar =
     "rules": [
         {
             "symbol": "START",
-                "productions": [
+            "productions": [
                 [
                     {
                         "type": "token",

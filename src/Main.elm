@@ -10,6 +10,13 @@ import Element.Font as Font
 import Element.Input as Input
 import ExampleGrammars
 import Grammar exposing (..)
+import Grammar.Object.Grammars as Grammars
+import Grammar.Query as Query
+import Graphql.Operation exposing (RootQuery)
+import Graphql.OptionalArgument exposing (OptionalArgument(..))
+import Graphql.SelectionSet as SelectionSet exposing (SelectionSet)
+import Graphql.Http as GqlHttp
+import Html exposing (Html)
 import Parser exposing (DeadEnd, run)
 import Random
 
@@ -34,7 +41,7 @@ init _ =
       , output = ""
       , seed = 42
       }
-    , Cmd.none
+    , requestDefaultGrammar
     )
 
 
@@ -59,6 +66,61 @@ type Msg
     | Save
     | NewSeed Int
     | ClearGrammar
+    | GotDefaultGrammar (Result (GqlHttp.Error (Maybe SavedGrammar)) (Maybe SavedGrammar) )
+
+
+
+-- GraphQl
+{-
+   - Default -> Get the mother grammar
+   - Save grammar
+   - Load grammar
+-}
+-- type alias SavedGrammar =
+--     { id : String
+--     , name : String
+--     , json_grammar : String
+--     , parent : String
+--     , description : String
+--     }
+
+requestDefaultGrammar : Cmd Msg
+requestDefaultGrammar =
+    defaultGrammar |>
+     GqlHttp.queryRequest "http://localhost:8080/v1/graphql" |>
+     GqlHttp.withOperationName "GetDefaultGrammar" |>
+     GqlHttp.send GotDefaultGrammar
+
+type alias SavedGrammar =
+    { name : String
+    }
+    
+
+makeSavedGrammars : List (Maybe String) -> Maybe SavedGrammar
+makeSavedGrammars res =
+    List.head res |> Maybe.andThen (Maybe.map SavedGrammar)
+
+{-
+id - uuid, primary key, unique, default: gen_random_uuid()
+name - text, nullable
+grammar - jsonb
+parent - uuid
+desciption - text, nullable
+-}
+
+    
+
+defaultGrammar : SelectionSet (Maybe SavedGrammar) RootQuery
+defaultGrammar =
+    SelectionSet.map makeSavedGrammars <|
+        Query.grammars identity
+        Grammars.name
+
+
+-- Query.grammars (\optionals -> { optionals | id = "00000000-0000-0000-0000-000000000000" }) <|
+-- Query.grammars (\optionals -> { optionals | where_= Present 5 })
+-- {id = "00000000-0000-0000-0000-000000000000"} SavedGrammar
+-- Update
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -95,10 +157,20 @@ update msg model =
 
         ClearGrammar ->
             ( { model | grammar = Grammar.empty, ntValue = "START" }, Cmd.none )
+        
+        GotDefaultGrammar res ->
+            case res of
+                Ok something ->
+                    Debug.log ("OK " ++ (Debug.toString something)) (model, Cmd.none)
+                Err error ->
+                    case error of
+                        GqlHttp.GraphqlError pd err ->
+                            Debug.log (Debug.toString pd) (model, Cmd.none)
+                        GqlHttp.HttpError err ->
+                            Debug.log (Debug.toString err) (model, Cmd.none)
 
 
 
--- ( { model | output = Result.withDefault "ERROR" (Grammar.generateSentence 42 model.grammar) }, Cmd.none )
 -- VIEW
 
 
@@ -244,6 +316,7 @@ inputRows model =
     ]
 
 
+view : Model -> Html Msg
 view model =
     Element.layout [] <|
         Element.column [ width fill, height fill ]
