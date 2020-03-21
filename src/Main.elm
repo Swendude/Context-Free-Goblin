@@ -235,37 +235,45 @@ underline =
 
 header : List (Element msg)
 header =
-    [ el [ width <| fillPortion 1, padding 10 ] (Element.text "Symbol")
+    [ el [ width (Element.minimum 100 Element.shrink), padding 10 ] (Element.text "Symbol")
     , el [ width <| fillPortion 5, padding 10 ] (Element.text "Rule")
     ]
 
 
 renderProdpart : ProdPart -> Element msg
 renderProdpart pp =
+    let
+        ppPadding =
+            Element.paddingEach { bottom = 10, top = 10, left = 0, right = 0 }
+    in
     case pp of
         Symbol production ->
-            renderSymbol production
+            el [ ppPadding, Font.extraBold ] (Element.text production)
 
         Token production ->
-            el [ padding 10 ] (Element.text production)
+            el [ ppPadding ] (Element.text production)
 
 
 renderSymbol : String -> Element msg
 renderSymbol sym =
-    el [ Background.color grey, padding 10, Border.rounded 5, Font.color white ] (Element.text sym)
+    el [ Background.color grey, padding 5, Font.color white ] <| Element.paragraph [ Element.alignLeft ] <| List.map (\c -> String.fromChar c |> Element.text) (String.toList sym)
 
 
-renderProduction : String -> Production -> Element msg
-renderProduction nt prod =
-    Element.row [ width <| fill ]
-        [ el [ width <| fillPortion 1, padding 10, underline ] <| renderSymbol nt
-        , el [ width <| fillPortion 5, padding 10, underline ] <| Element.row [] <| List.map renderProdpart prod
-        ]
+renderProduction : Int -> Production -> Element msg
+renderProduction i prod =
+    -- if i == 0 then
+    Element.row [ Border.width 1, Border.rounded 5, Element.paddingEach { bottom = 2, top = 2, left = 10, right = 10 } ] <| List.map renderProdpart prod
 
 
 renderProductions : String -> List Production -> List (Element msg) -> List (Element msg)
 renderProductions nt prods acc =
-    List.map (renderProduction nt) prods ++ acc
+    row [ spacing 5 ]
+        ([ el [ width (Element.maximum 250 (Element.minimum 150 Element.shrink)), padding 10 ] <| renderSymbol nt
+         , el [ Font.center, width Element.shrink, padding 10 ] <| Element.text "->"
+         ]
+            ++ List.indexedMap renderProduction prods
+        )
+        :: acc
 
 
 grammrows : Grammar -> List (Element msg)
