@@ -1,4 +1,4 @@
-module Main exposing (Model, Msg(..), blue, grammrows, header, init, inputRows, lblue, main, renderProduction, renderProductions, update, view)
+module Main exposing (..)
 
 import Browser
 import Codec exposing (grammarDecoder, grammarEncoder)
@@ -7,6 +7,7 @@ import Dict exposing (Dict)
 import Element exposing (Element, alignRight, centerX, centerY, el, fill, fillPortion, height, padding, rgb255, row, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
+import Element.Events as Events
 import Element.Font as Font
 import Element.Input as Input
 import ExampleGrammars
@@ -32,6 +33,7 @@ type alias Model =
     , error : Maybe (List DeadEnd)
     , output : String
     , seed : Int
+    , hovered : Maybe String
     }
 
 
@@ -42,8 +44,9 @@ init _ =
       , grammar =
             Grammar Dict.empty
       , error = Nothing
-      , output = ""
+      , output = "Click 'generate' to generate some text!"
       , seed = 42
+      , hovered = Nothing
       }
     , requestDefaultGrammar
     )
@@ -71,22 +74,8 @@ type Msg
     | NewSeed Int
     | ClearGrammar
     | GotDefaultGrammar (Result (GqlHttp.Error (Maybe SavedGrammar)) (Maybe SavedGrammar))
-
-
-
--- GraphQl
-{-
-   - Default -> Get the mother grammar
-   - Save grammar
-   - Load grammar
--}
--- type alias SavedGrammar =
---     { id : String
---     , name : String
---     , json_grammar : String
---     , parent : String
---     , description : String
---     }
+    | SymbolHover String
+    | ExitHover
 
 
 requestDefaultGrammar : Cmd Msg
@@ -103,25 +92,12 @@ type alias SavedGrammar =
     }
 
 
-
--- makeSavedGrammars : String -> String -> Maybe SavedGrammar
--- makeSavedGrammars =
---     Maybe.map SavedGrammar
-
-
 defaultGrammar : SelectionSet (Maybe SavedGrammar) RootQuery
 defaultGrammar =
     Query.grammars_by_pk { id = Uuid "00000000-0000-0000-0000-000000000000" } <|
         SelectionSet.map2 SavedGrammar
             Grammars.name
             Grammars.grammar
-
-
-
--- Query.grammars (\optionals -> { optionals | id = "00000000-0000-0000-0000-000000000000" }) <|
--- Query.grammars (\optionals -> { optionals | where_= Present 5 })
--- {id = "00000000-0000-0000-0000-000000000000"} SavedGrammar
--- Update
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -187,6 +163,12 @@ update msg model =
                                 _ ->
                                     Debug.log (Debug.toString err) ( model, Cmd.none )
 
+        SymbolHover sym ->
+            ( { model | hovered = Just sym }, Cmd.none )
+
+        ExitHover ->
+            ( { model | hovered = Nothing }, Cmd.none )
+
 
 
 -- VIEW
@@ -212,12 +194,16 @@ black =
     Element.rgba255 49 62 80 1
 
 
+dblack =
+    Element.rgba255 45 45 45 1
+
+
 grey =
     Element.rgba255 129 141 146 1
 
 
 lgrey =
-    Element.rgba255 129 141 146 0.1
+    Element.rgba255 237 237 237 1
 
 
 brown =
@@ -228,77 +214,33 @@ white =
     Element.rgba255 255 255 255 1
 
 
-underline : Element.Attribute msg
-underline =
-    Border.widthEach { bottom = 1, top = 0, left = 0, right = 0 }
-
-
-header : List (Element msg)
-header =
-    [ el [ width (Element.minimum 100 Element.shrink), padding 10 ] (Element.text "Symbol")
-    , el [ width <| fillPortion 5, padding 10 ] (Element.text "Rule")
-    ]
-
-
-renderProdpart : ProdPart -> Element msg
-renderProdpart pp =
-    let
-        ppPadding =
-            Element.paddingEach { bottom = 10, top = 10, left = 0, right = 0 }
-    in
-    case pp of
-        Symbol production ->
-            el [ ppPadding, Font.extraBold ] (Element.text production)
-
-        Token production ->
-            el [ ppPadding ] (Element.text production)
-
-
-renderSymbol : String -> Element msg
-renderSymbol sym =
-    el [ Background.color grey, padding 5, Font.color white ] <| Element.paragraph [ Element.alignLeft ] <| List.map (\c -> String.fromChar c |> Element.text) (String.toList sym)
-
-
-renderProduction : Int -> Production -> Element msg
-renderProduction i prod =
-    -- if i == 0 then
-    Element.row [ Border.width 1, Border.rounded 5, Element.paddingEach { bottom = 2, top = 2, left = 10, right = 10 } ] <| List.map renderProdpart prod
-
-
-renderProductions : String -> List Production -> List (Element msg) -> List (Element msg)
-renderProductions nt prods acc =
-    row [ spacing 5 ]
-        ([ el [ width (Element.maximum 250 (Element.minimum 150 Element.shrink)), padding 10 ] <| renderSymbol nt
-         , el [ Font.center, width Element.shrink, padding 10 ] <| Element.text "->"
-         ]
-            ++ List.indexedMap renderProduction prods
-        )
-        :: acc
-
-
-grammrows : Grammar -> List (Element msg)
-grammrows gram =
-    case gram of
-        Grammar rules ->
-            Dict.foldl renderProductions [] rules
+mgrey =
+    Element.rgba255 185 186 184 1
 
 
 inputRows : Model -> List (Element Msg)
 inputRows model =
-    [ Input.text [ width <| fillPortion 1, Border.rounded 0, Border.width 0 ]
+    [ Input.text [ Element.alignTop, width <| fillPortion 1, Border.rounded 0, Border.width 0 ]
         { onChange = NTermChange
-        , label = Input.labelHidden "Symbol"
-        , placeholder = Just <| Input.placeholder [] (Element.text "Symbol")
+        , label =
+            Input.labelBelow [] <|
+                Element.paragraph [ Font.color white, Font.size 12 ] <|
+                    [ Element.text "Put a symbol here, there should always be a START symbol" ]
+        , placeholder = Just <| Input.placeholder [] (Element.text "START")
         , text = model.ntValue
         }
-    , Input.text [ width <| fillPortion 3, Border.rounded 0, Border.width 0 ]
+    , Input.text [ Element.alignTop, width <| fillPortion 3, Border.rounded 0, Border.width 0 ]
         { onChange = ProdChange
-        , label = Input.labelHidden "Production"
-        , placeholder = Just <| Input.placeholder [] (Element.text "Production")
+        , label =
+            Input.labelBelow [] <|
+                Element.paragraph [ Font.color white, Font.size 12 ] <|
+                    [ Element.text "Put some text here, use # to delimit symbols" ]
+        , placeholder = Just <| Input.placeholder [] (Element.text "You see a #monster#")
         , text = model.prodValue
         }
     , Input.button
-        [ width <| fillPortion 1
+        [ Element.alignTop
+        , width <| fillPortion 1
         , Background.color blue
         , padding 10
         , Border.rounded 5
@@ -312,7 +254,8 @@ inputRows model =
         ]
         { onPress = Just Save, label = Element.text "+ Add Rule" }
     , Input.button
-        [ width <| fillPortion 1
+        [ Element.alignTop
+        , width <| fillPortion 1
         , Background.color blue
         , padding 10
         , Border.rounded 5
@@ -326,7 +269,8 @@ inputRows model =
         ]
         { onPress = Just Generate, label = Element.text "Generate > " }
     , Input.button
-        [ width <| fillPortion 1
+        [ Element.alignTop
+        , width <| fillPortion 1
         , Background.color red
         , padding 10
         , Border.rounded 5
@@ -342,6 +286,192 @@ inputRows model =
     ]
 
 
+
+-- GRAMMAR VIEW
+
+
+type alias GrammarRecord =
+    { symbol : String
+    , productions : List Production
+    }
+
+
+grammarRecords : Grammar -> List GrammarRecord
+grammarRecords (Grammar rules) =
+    Dict.toList rules |> List.map (\( sym, prods ) -> GrammarRecord sym prods)
+
+
+grammarView : Grammar -> Maybe String -> Element Msg
+grammarView gram hovered =
+    let
+        ruleRecords =
+            grammarRecords gram
+    in
+    el
+        [ Background.color mgrey
+        , width fill
+        , height <| Element.maximum 500 <| fillPortion 5
+        , Element.clipY
+        , Element.scrollbarY
+        ]
+    <|
+        Element.indexedTable
+            [ Element.spacingXY 0 5
+            , width fill
+            ]
+            { data = ruleRecords
+            , columns =
+                [ { header = renderHeader "SYMBOL"
+                  , width = Element.fillPortion 1
+                  , view = \i rule -> renderSymbolCol hovered i rule.symbol
+                  }
+                , { header = renderHeader "RULES"
+                  , width = Element.fillPortion 5
+                  , view =
+                        \i rule -> renderProductionsCol hovered i rule.productions
+                  }
+                ]
+            }
+
+
+renderProdPart : Maybe String -> ProdPart -> Element Msg
+renderProdPart hovered part =
+    let
+        partPadding =
+            Element.paddingEach
+                { bottom = 10
+                , top = 10
+                , left = 0
+                , right = 0
+                }
+    in
+    case part of
+        Symbol production ->
+            let
+                defaultSymbolStyle =
+                    [ partPadding
+                    , Font.bold
+                    , Events.onMouseEnter (SymbolHover production)
+                    , Events.onMouseLeave ExitHover
+                    ]
+            in
+            case hovered of
+                Just sym ->
+                    if sym == production then
+                        el
+                            (defaultSymbolStyle
+                                ++ [ Font.underline
+                                   , Font.color grey
+                                   ]
+                            )
+                            (Element.text production)
+
+                    else
+                        el
+                            defaultSymbolStyle
+                            (Element.text production)
+
+                Nothing ->
+                    el defaultSymbolStyle (Element.text production)
+
+        Token production ->
+            el [ partPadding, Font.light ] (Element.text production)
+
+
+renderProduction : Maybe String -> Production -> Element Msg
+renderProduction hovered prod =
+    Element.row
+        [ Border.width 0
+        , Border.rounded 5
+        , Element.paddingEach { bottom = 0, top = 0, left = 10, right = 10 }
+        , Background.color dblack
+        , Font.color white
+        ]
+    <|
+        List.map (renderProdPart hovered) prod
+
+
+renderHeader : String -> Element Msg
+renderHeader label =
+    el
+        [ Background.color dblack
+        , height fill
+        , width Element.shrink
+        , Font.color white
+        , padding 10
+        ]
+    <|
+        Element.paragraph
+            [ centerX
+            , centerY
+            , Font.center
+            , Font.light
+            ]
+            [ Element.text label ]
+
+
+renderProductionsCol : Maybe String -> Int -> List Production -> Element Msg
+renderProductionsCol hovered i prods =
+    let
+        rowcolor =
+            Background.color <|
+                if modBy 2 i == 0 then
+                    mgrey
+
+                else
+                    lgrey
+    in
+    Element.wrappedRow
+        [ rowcolor
+        , Element.spacingXY 5 0
+        , padding 10
+        ]
+    <|
+        List.map (renderProduction hovered) prods
+
+
+renderSymbolCol : Maybe String -> Int -> String -> Element Msg
+renderSymbolCol hovered i sym =
+    let
+        rowcolor =
+            case hovered of
+                Nothing ->
+                    Background.color <|
+                        if modBy 2 i == 0 then
+                            mgrey
+
+                        else
+                            lgrey
+
+                Just hoveredSym ->
+                    if sym == hoveredSym then
+                        Background.color grey
+
+                    else
+                        Background.color <|
+                            if modBy 2 i == 0 then
+                                mgrey
+
+                            else
+                                lgrey
+    in
+    el
+        [ rowcolor
+        , height fill
+        , width Element.shrink
+        , Events.onMouseEnter (SymbolHover sym)
+        , Events.onMouseLeave ExitHover
+        ]
+    <|
+        Element.paragraph
+            [ centerX
+            , centerY
+            , Font.center
+            , Font.bold
+            ]
+            [ Element.text sym ]
+
+
 view : Model -> Html Msg
 view model =
     Element.layout [] <|
@@ -351,34 +481,15 @@ view model =
                 , Font.light
                 , Font.color white
                 , width fill
-                , padding 10
+                , padding 28
                 , Font.size 24
                 , Background.color black
                 ]
                 (Element.text "Context Free Goblin")
-            , Element.row
-                [ height <| Element.px 30
-                , width fill
-                , padding 10
-                , Background.color black
-                , Font.color white
-                ]
-                header
-            , Element.row [ width fill ] <|
-                [ Element.column
-                    [ Border.solid
-                    , Border.width 2
-                    , Background.color lgrey
-                    , height <| Element.px 500
-                    , Element.clipY
-                    , Element.scrollbarY
-                    , Element.width fill
-                    ]
-                    (grammrows model.grammar)
-                ]
+            , grammarView model.grammar model.hovered
             , Element.row
                 [ Background.color black
-                , height <| Element.px 60
+                , height <| fillPortion 1
                 , width fill
                 , spacing 5
                 , padding 10
@@ -387,7 +498,25 @@ view model =
                 inputRows model
             , el
                 [ Background.color black
-                , height <| Element.px 60
+                , width fill
+                , spacing 5
+                , padding 10
+                ]
+              <|
+                Element.paragraph
+                    [ Background.color white
+                    , Font.color black
+                    , width <| Element.px 500
+                    , padding 20
+                    , Font.italic
+                    , Font.center
+                    , Font.light
+                    , centerX
+                    ]
+                    [ Element.text model.output ]
+            , el
+                [ Background.color black
+                , height <| fillPortion 1
                 , width fill
                 , spacing 5
                 , padding 10
@@ -397,5 +526,7 @@ view model =
                 , Font.light
                 ]
               <|
-                Element.text model.output
+                Element.paragraph
+                    []
+                    []
             ]
