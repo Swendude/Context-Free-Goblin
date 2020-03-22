@@ -110,7 +110,7 @@ update msg model =
             ( { model | prodValue = v }, Cmd.none )
 
         Save ->
-            if model.ntValue /= "" || model.prodValue /= "" then
+            if model.ntValue /= "" && model.prodValue /= "" then
                 case addRule model.grammar model.ntValue model.prodValue of
                     Ok gram ->
                         ( { model
@@ -423,7 +423,7 @@ renderProductionsCol hovered i prods =
     in
     Element.wrappedRow
         [ rowcolor
-        , Element.spacingXY 5 0
+        , Element.spacingXY 5 5
         , padding 10
         ]
     <|

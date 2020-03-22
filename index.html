@@ -8691,7 +8691,7 @@ var $author$project$Main$update = F2(
 						{prodValue: v}),
 					$elm$core$Platform$Cmd$none);
 			case 'Save':
-				if ((model.ntValue !== '') || (model.prodValue !== '')) {
+				if ((model.ntValue !== '') && (model.prodValue !== '')) {
 					var _v1 = A3($author$project$Grammar$addRule, model.grammar, model.ntValue, model.prodValue);
 					if (_v1.$ === 'Ok') {
 						var gram = _v1.a;
@@ -14919,7 +14919,7 @@ var $author$project$Main$renderProductionsCol = F3(
 			_List_fromArray(
 				[
 					rowcolor,
-					A2($mdgriffith$elm_ui$Element$spacingXY, 5, 0),
+					A2($mdgriffith$elm_ui$Element$spacingXY, 5, 5),
 					$mdgriffith$elm_ui$Element$padding(10)
 				]),
 			A2(
