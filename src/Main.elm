@@ -1,16 +1,16 @@
 module Main exposing (..)
 
 import Browser
+import Browser.Events
 import Codec exposing (grammarDecoder, grammarEncoder)
 import Debug
 import Dict exposing (Dict)
-import Element exposing (Element, alignRight, centerX, centerY, el, fill, fillPortion, height, padding, rgb255, row, spacing, text, width)
+import Element exposing (Element, Orientation(..), alignRight, centerX, centerY, el, fill, fillPortion, height, padding, rgb255, row, spacing, text, width)
 import Element.Background as Background
 import Element.Border as Border
 import Element.Events as Events
 import Element.Font as Font
 import Element.Input as Input
-import ExampleGrammars
 import Grammar exposing (..)
 import Grammar.Object.Grammars as Grammars
 import Grammar.Query as Query
@@ -34,15 +34,17 @@ type alias Model =
     , output : String
     , seed : Int
     , hovered : Maybe String
+    , screen : Element.Device
     }
 
 
-init : () -> ( Model, Cmd Msg )
-init _ =
+init : { width : Int, height : Int } -> ( Model, Cmd Msg )
+init screenSize =
     ( { ntValue = ""
       , prodValue = ""
       , grammar =
             Grammar Dict.empty
+      , screen = Element.classifyDevice screenSize
       , error = Nothing
       , output = "Click 'generate' to generate some text!"
       , seed = 42
@@ -63,19 +65,7 @@ main =
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
-    Sub.none
-
-
-type Msg
-    = NTermChange String
-    | ProdChange String
-    | Generate
-    | Save
-    | NewSeed Int
-    | ClearGrammar
-    | GotDefaultGrammar (Result (GqlHttp.Error (Maybe SavedGrammar)) (Maybe SavedGrammar))
-    | SymbolHover String
-    | ExitHover
+    Browser.Events.onResize ScreenResize
 
 
 requestDefaultGrammar : Cmd Msg
@@ -98,6 +88,19 @@ defaultGrammar =
         SelectionSet.map2 SavedGrammar
             Grammars.name
             Grammars.grammar
+
+
+type Msg
+    = NTermChange String
+    | ProdChange String
+    | Generate
+    | Save
+    | NewSeed Int
+    | ClearGrammar
+    | GotDefaultGrammar (Result (GqlHttp.Error (Maybe SavedGrammar)) (Maybe SavedGrammar))
+    | SymbolHover String
+    | ExitHover
+    | ScreenResize Int Int
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -169,9 +172,111 @@ update msg model =
         ExitHover ->
             ( { model | hovered = Nothing }, Cmd.none )
 
+        ScreenResize w h ->
+            ( { model | screen = Element.classifyDevice { width = w, height = h } }, Cmd.none )
+
 
 
 -- VIEW
+
+
+view : Model -> Html Msg
+view model =
+    let
+        columnWidth =
+            case model.screen.orientation of
+                Portrait ->
+                    case Debug.log "Screen class" model.screen.class of
+                        Element.Phone ->
+                            600
+
+                        Element.Desktop ->
+                            1300
+
+                        _ ->
+                            800
+
+                Landscape ->
+                    case Debug.log "Screen class" model.screen.class of
+                        Element.Phone ->
+                            800
+
+                        Element.Desktop ->
+                            1000
+
+                        Element.BigDesktop ->
+                            1450
+
+                        _ ->
+                            800
+    in
+    Element.layout
+        [ Font.family
+            [ Font.typeface "Libre Baskerville"
+            ]
+        , Background.image """url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='4' viewBox='0 0 4 4'%3E%3Cpath fill='%239C92AC' fill-opacity='0.4' d='M1 3h1v1H1V3zm2-2h1v1H3V1z'%3E%3C/path%3E%3C/svg%3E");"""
+        ]
+    <|
+        Element.column [ width <| Element.px columnWidth, height fill, centerX ]
+            [ el
+                [ Font.center
+                , Font.heavy
+                -- , Font.color white
+                , width fill
+                , padding 28
+                , Font.size 24
+                -- , Background.color black
+                ]
+                (Element.text "Context Free Goblin")
+            , grammarView model.grammar model.hovered
+            , Element.row
+                [ Background.color black
+                , height <| fillPortion 1
+                , width fill
+                , spacing 5
+                , padding 10
+                ]
+              <|
+                inputRows model
+            , el
+                [ Background.color black
+                , width fill
+                , spacing 5
+                , padding 10
+                ]
+              <|
+                Element.paragraph
+                    [ Background.color white
+                    , Font.color black
+                    , width <| Element.px 500
+                    , padding 20
+                    , Font.italic
+                    , Font.center
+                    , Font.light
+                    , centerX
+                    ]
+                    [ Element.text model.output ]
+            , el
+                [ Background.color black
+                , height <| fillPortion 1
+                , width fill
+                , spacing 5
+                , padding 10
+                , Font.color white
+                , Font.italic
+                , Font.center
+                , Font.light
+                ]
+              <|
+                Element.paragraph
+                    []
+                    []
+            ]
+
+
+percentageOf : Int -> Int -> Int
+percentageOf per val =
+    val
 
 
 blue =
@@ -470,63 +575,3 @@ renderSymbolCol hovered i sym =
             , Font.bold
             ]
             [ Element.text sym ]
-
-
-view : Model -> Html Msg
-view model =
-    Element.layout [] <|
-        Element.column [ width fill, height fill ]
-            [ el
-                [ Font.center
-                , Font.light
-                , Font.color white
-                , width fill
-                , padding 28
-                , Font.size 24
-                , Background.color black
-                ]
-                (Element.text "Context Free Goblin")
-            , grammarView model.grammar model.hovered
-            , Element.row
-                [ Background.color black
-                , height <| fillPortion 1
-                , width fill
-                , spacing 5
-                , padding 10
-                ]
-              <|
-                inputRows model
-            , el
-                [ Background.color black
-                , width fill
-                , spacing 5
-                , padding 10
-                ]
-              <|
-                Element.paragraph
-                    [ Background.color white
-                    , Font.color black
-                    , width <| Element.px 500
-                    , padding 20
-                    , Font.italic
-                    , Font.center
-                    , Font.light
-                    , centerX
-                    ]
-                    [ Element.text model.output ]
-            , el
-                [ Background.color black
-                , height <| fillPortion 1
-                , width fill
-                , spacing 5
-                , padding 10
-                , Font.color white
-                , Font.italic
-                , Font.center
-                , Font.light
-                ]
-              <|
-                Element.paragraph
-                    []
-                    []
-            ]
