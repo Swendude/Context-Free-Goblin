@@ -1,4 +1,4 @@
-module Grammar exposing (GeneratorError(..), Grammar(..), ProdPart(..), Production, RuleError(..), addProduction, addRule, empty, generateSentence, isSymbol, parseProduction, pickRule, prodPartToString, prodToString, productionHelper, productionParser, replaceSymbols, resolveProdPart, symbolParser, tokenParser)
+module Grammar exposing (GeneratorError(..), Grammar(..), ProdPart(..), Production, RuleError(..), addProduction, addRule, empty, generateSentence, getSymbols, isSymbol, parseProduction, pickRule, prodPartToString, prodToString, productionHelper, productionParser, replaceSymbols, resolveProdPart, symbolParser, tokenParser)
 
 import Dict exposing (Dict)
 import Parser exposing (..)
@@ -66,6 +66,11 @@ addRule gram sym rProduction =
 
                 Err error ->
                     Err error
+
+
+getSymbols : Grammar -> List String
+getSymbols (Grammar rules) =
+    Dict.keys rules
 
 
 
@@ -186,17 +191,6 @@ pickRule seed (Grammar rules) symbol =
             ( seed, Err (SymbolMissing symbol) )
 
 
-
--- resolveProdPart : Random.Seed -> Grammar -> ProdPart -> ( Random.Seed, Result GeneratorError Production )
--- resolveProdPart seed gram prodPart =
---     case prodPart of
---         Token str ->
---             ( seed, Ok <| [ Token str ] )
---         Symbol sym ->
---             pickRule seed gram sym
--- -- (a -> b -> b) -> b -> List a -> b
-
-
 resolveProdPart : Grammar -> ProdPart -> ( Random.Seed, List (Result GeneratorError Production) ) -> ( Random.Seed, List (Result GeneratorError Production) )
 resolveProdPart gram prodPart ( seed, curProd ) =
     case prodPart of
@@ -209,11 +203,6 @@ resolveProdPart gram prodPart ( seed, curProd ) =
                     pickRule seed gram sym
             in
             ( new_seed, List.append [ choice ] curProd )
-
-
-
--- prodPart -> (seed, List Prodparts)  -> (seed, List Prodparts)
--- foldr List prodparts (seed , []) current
 
 
 replaceSymbols : Random.Seed -> Int -> Grammar -> Production -> Result GeneratorError Production

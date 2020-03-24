@@ -10,13 +10,13 @@
                     },
                     {
                         "type": "symbol",
-                        "str": "goblin"
+                        "str": "goblin-with-activity"
                     }
                 ]
             ]
         },
         {
-            "symbol": "goblin",
+            "symbol": "goblin-with-activity",
             "productions": [
                 [
                     {

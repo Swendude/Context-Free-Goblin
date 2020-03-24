@@ -35,6 +35,8 @@ type alias Model =
     , seed : Int
     , hovered : Maybe String
     , screen : Element.Device
+    , showHelp : Bool
+    , symbolFocused : Bool
     }
 
 
@@ -49,6 +51,8 @@ init screenSize =
       , output = "Click 'generate' to generate some text!"
       , seed = 42
       , hovered = Nothing
+      , showHelp = True
+      , symbolFocused = False
       }
     , requestDefaultGrammar
     )
@@ -101,6 +105,9 @@ type Msg
     | SymbolHover String
     | ExitHover
     | ScreenResize Int Int
+    | SymbolFocus
+    | SymbolLoseFocus
+    | SymbolSelected String
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -175,6 +182,15 @@ update msg model =
         ScreenResize w h ->
             ( { model | screen = Element.classifyDevice { width = w, height = h } }, Cmd.none )
 
+        SymbolFocus ->
+            ( { model | symbolFocused = True }, Cmd.none )
+
+        SymbolLoseFocus ->
+            ( { model | symbolFocused = False }, Cmd.none )
+
+        SymbolSelected sym ->
+            ( { model | ntValue = sym }, Cmd.none )
+
 
 
 -- VIEW
@@ -202,7 +218,7 @@ view model =
                             800
 
                         Element.Desktop ->
-                            750
+                            950
 
                         Element.BigDesktop ->
                             1450
@@ -215,81 +231,247 @@ view model =
             [ Font.typeface "Libre Baskerville"
             ]
         , width fill
+        , height fill
         ]
     <|
         Element.column
             [ width <| Element.px columnWidth
             , height fill
             , centerX
-            , Border.shadow { offset = ( 0, 4 ), size = 5, blur = 10, color = lgrey }
+            , Border.shadow { offset = ( 0, 0 ), size = 0, blur = 10, color = dblack }
             ]
             [ titleView
             , grammarView model.grammar model.hovered
-            , Element.row
-                [ Background.color white
-                , height <| fillPortion 1
-                , width fill
-                , spacing 5
-                , padding 10
-                ]
-              <|
-                inputRows model
+            , inputView model
+            , outputView model
             , el
-                [ Background.color black
-                , width fill
-                , spacing 5
-                , padding 10
-                ]
-              <|
-                Element.paragraph
-                    [ Background.color white
-                    , Font.color black
-                    , width <| Element.px 500
-                    , padding 20
-                    , Font.italic
-                    , Font.center
-                    , Font.light
-                    , centerX
-                    ]
-                    [ Element.text model.output ]
-            , el
-                [ Background.color black
-                , height <| fillPortion 1
-                , width fill
-                , spacing 5
+                [ width fill
                 , padding 10
                 , Font.color white
-                , Font.italic
                 , Font.center
-                , Font.light
+                , Font.size 10
+                , Background.color dblack
                 ]
               <|
                 Element.paragraph
-                    []
-                    []
+                    [ Element.alignBottom
+                    , Font.family
+                        [ Font.typeface "Cutive Mono"
+                        ]
+                    ]
+                    [ Element.text "Context Free Goblin is free open-source software. Made in Elm by @Swendude with <3" ]
             ]
 
 
 titleView : Element Msg
 titleView =
-    Element.row [ width fill, Background.color white ]
+    Element.column [ width fill, Background.color white ]
         [ el
-            [ Element.paddingXY 15 10
-            , Element.alignLeft
+            [ Element.padding 10
             , Font.bold
             , Font.size 24
+            , Font.center
+            , width fill
             ]
           <|
             Element.text "Context Free Goblin"
         , el
-            [ Element.paddingXY 0 10
+            [ Element.paddingEach { top = 0, left = 0, right = 0, bottom = 13 }
             , Background.color white
-            , Element.alignLeft
-            , Font.light
-            , Font.size 10
+            , width fill
             ]
           <|
-            Element.text "A tool for building and sharing random text generators"
+            Element.paragraph
+                [ Font.size 11
+                , Font.center
+                ]
+                [ Element.text "A tool for building and sharing random text generators." ]
+
+        -- , el [ width (fillPortion 4) ]
+        --     Element.none
+        ]
+
+
+textInputStyle : List (Element.Attribute Msg)
+textInputStyle =
+    [ Font.size 12
+    , Border.rounded 0
+    ]
+
+
+dropdown : Model -> Element Msg
+dropdown model =
+    let
+        row : String -> Element Msg
+        row =
+            \sym ->
+                el
+                    [ Border.width 1
+                    , Border.color dblack
+                    , width fill
+                    , padding 10
+                    , Element.mouseOver
+                        [ Background.color goblinGreen
+                        ]
+                    , Events.onMouseDown (SymbolSelected sym)
+                    , Events.onMouseEnter (SymbolHover sym)
+                    , Events.onMouseLeave ExitHover
+                    ]
+                <|
+                    Element.paragraph
+                        [ centerY
+                        , Font.size 14
+                        , Font.center
+                        , Font.family
+                            [ Font.typeface "Cutive Mono"
+                            ]
+                        , Element.pointer
+                        ]
+                        [ Element.text sym ]
+    in
+    Element.column
+        [ Background.color white
+        , width fill
+        , height fill
+        , Element.scrollbarX
+        ]
+    <|
+        List.map row (List.filter (\sym -> String.startsWith model.ntValue sym) (Grammar.getSymbols model.grammar))
+
+
+inputView : Model -> Element Msg
+inputView model =
+    let
+        belowSymbolInput =
+            if model.symbolFocused then
+                Element.below <|
+                    dropdown model
+
+            else
+                Element.below Element.none
+    in
+    Element.row
+        [ width fill
+        , Background.color dblack
+        , Element.paddingXY 10 10
+        , height fill
+        ]
+        [ el [ width <| fillPortion 3, Element.alignTop ] <|
+            Input.text
+                (textInputStyle
+                    ++ [ Events.onFocus SymbolFocus
+                       , Events.onLoseFocus SymbolLoseFocus
+                       , belowSymbolInput
+                       , Font.family
+                            [ Font.typeface "Cutive Mono"
+                            ]
+                       ]
+                )
+                { onChange = NTermChange
+                , label =
+                    if model.showHelp then
+                        Input.labelBelow [] <|
+                            Element.paragraph
+                                [ Font.color white
+                                , Font.size 10
+                                , Font.family
+                                    [ Font.typeface "Libre Baskerville"
+                                    ]
+                                ]
+                            <|
+                                [ Element.text "Put a symbol here, there should always be a START symbol" ]
+
+                    else
+                        Input.labelHidden "Put a symbol here, there should always be a START symbol"
+                , placeholder =
+                    Just <|
+                        Input.placeholder
+                            []
+                            (Element.text "START")
+                , text = model.ntValue
+                }
+        , el
+            [ width <| fillPortion 10
+            , Element.paddingEach { top = 0, left = 10, right = 0, bottom = 0 }
+            , Element.alignTop
+            ]
+          <|
+            Input.text
+                (textInputStyle
+                    ++ [ Font.family
+                            [ Font.typeface "Libre Baskerville"
+                            ]
+                       ]
+                )
+                { onChange = ProdChange
+                , label =
+                    if model.showHelp then
+                        Input.labelBelow [] <|
+                            Element.paragraph [ Font.color white, Font.size 10 ] <|
+                                [ Element.text "Put some text here, use # to mark symbols." ]
+
+                    else
+                        Input.labelHidden "Put some text here, use # to delimit symbols"
+                , placeholder = Just <| Input.placeholder [] (Element.text "You see a #monster#")
+                , text = model.prodValue
+                }
+        , el
+            [ width <| fillPortion 2
+            , Element.paddingEach { top = 0, left = 10, right = 0, bottom = 0 }
+            , Element.alignTop
+            ]
+          <|
+            Input.button
+                [ centerY
+                , Background.color dblack
+                , padding 7
+                , Border.color white
+                , Border.width 1
+                , Element.mouseDown
+                    [ Background.color goblinGreen ]
+                , Font.color white
+                , Font.center
+                ]
+                { onPress = Just Save, label = Element.text "+ Add Rule" }
+        ]
+
+
+outputView : Model -> Element Msg
+outputView model =
+    Element.column
+        [ width fill
+        , Background.color dblack
+        , Element.paddingXY 10 10
+        , height fill
+        , spacing 20
+        ]
+        [ el
+            [ width (Element.px 800)
+            , height fill
+            , centerX
+            , Element.clipX
+            , Element.scrollbarX
+            , Background.color white
+            ]
+          <|
+            Element.paragraph [ centerY, Font.center, padding 10 ]
+                [ Element.text model.output ]
+        , el
+            [ centerY
+            , centerX
+            ]
+          <|
+            Input.button
+                [ Background.color dblack
+                , padding 7
+                , Border.color white
+                , Border.width 1
+                , Element.mouseDown
+                    [ Background.color goblinGreen ]
+                , Font.color white
+                , Font.center
+                ]
+                { onPress = Just Generate, label = Element.text "GENERATE" }
         ]
 
 
@@ -390,41 +572,44 @@ grammarRecords (Grammar rules) =
     Dict.toList rules |> List.map (\( sym, prods ) -> GrammarRecord sym prods)
 
 
+grammarRow : Int -> Element Msg -> Element Msg -> Element Msg
+grammarRow i identifier objects =
+    Element.row
+        [ width fill
+        , Background.color <| rowColor i
+        ]
+        [ el
+            [ width <| fillPortion 1
+            , height fill
+            , Element.clipX
+            ]
+            identifier
+        , el
+            [ width <| fillPortion 5
+            , height fill
+            ]
+            objects
+        ]
+
+
 grammarView : Grammar -> Maybe String -> Element Msg
 grammarView gram hovered =
     let
         ruleRecords =
             grammarRecords gram
     in
-    el
-        [ Background.color white
+    Element.column
+        [ Background.color lgrey
         , width fill
-        , height <| Element.maximum 500 <| Element.shrink
+        , height <| Element.px 380
+        , Element.scrollbarY
         , Element.clipX
-        , Element.scrollbarX
         ]
     <|
-        Element.indexedTable
-            [ width fill
-            ]
-            { data = ruleRecords
-            , columns =
-                [ { header = renderHeader "Symbol"
-                  , width = Element.maximum 100 <| Element.fillPortion 1
-                  , view = \i rule -> renderSymbolCol hovered i rule.symbol
-                  }
-                , { header = renderHeader "Rules"
-                  , width = Element.fillPortion 5
-                  , view =
-                        \i rule -> renderProductionsCol hovered i rule.productions
-                  }
-                , { header = renderHeader "Actions"
-                  , width = Element.fillPortion 1
-                  , view =
-                        \i rule -> Element.text "hoi"
-                  }
-                ]
-            }
+        grammarRow 0 (renderHeader "Symbol") (renderHeader "Rules")
+            :: List.indexedMap
+                (\i gr -> grammarRow i (renderSymbolCol hovered gr.symbol) (renderProductionsCol hovered gr.productions))
+                ruleRecords
 
 
 renderProdPart : Maybe String -> ProdPart -> Element Msg
@@ -446,6 +631,10 @@ renderProdPart hovered part =
                     , Font.bold
                     , Events.onMouseEnter (SymbolHover production)
                     , Events.onMouseLeave ExitHover
+                    , Font.family
+                        [ Font.typeface "Cutive Mono"
+                        ]
+                    , Element.pointer
                     ]
             in
             case hovered of
@@ -453,9 +642,7 @@ renderProdPart hovered part =
                     if sym == production then
                         el
                             (defaultSymbolStyle
-                                ++ [ Font.underline
-                                   , Font.color grey
-                                   ]
+                                ++ hoveredSymbolStyle
                             )
                             (Element.text production)
 
@@ -474,11 +661,10 @@ renderProdPart hovered part =
 renderProduction : Maybe String -> Production -> Element Msg
 renderProduction hovered prod =
     Element.row
-        [ Border.width 0
-        , Border.rounded 5
-        , Element.paddingEach { bottom = 0, top = 0, left = 10, right = 10 }
+        [ Element.paddingXY 10 5
         , Background.color dblack
         , Font.color white
+        , Font.size 14
         ]
     <|
         List.map (renderProdPart hovered) prod
@@ -489,10 +675,10 @@ renderHeader label =
     el
         [ Background.color dblack
         , height fill
-        , width Element.shrink
+        , width fill
         , Font.color white
         , Font.size 12
-        , padding 10
+        , padding 15
         ]
     <|
         Element.paragraph
@@ -513,70 +699,65 @@ rowColor ix =
         lgrey
 
 
-renderProductionsCol : Maybe String -> Int -> List Production -> Element Msg
-renderProductionsCol hovered i prods =
+renderProductionsCol : Maybe String -> List Production -> Element Msg
+renderProductionsCol hovered prods =
     Element.wrappedRow
-        [ Background.color <| rowColor i
-        , Element.spacingXY 5 5
+        [ Element.spacingXY 5 5
         , padding 10
         ]
     <|
         List.map (renderProduction hovered) prods
 
 
-renderSymbolCol : Maybe String -> Int -> String -> Element Msg
-renderSymbolCol hovered i sym =
-    let
-        defaultBorder =
-            height fill
+hoveredSymbolStyle : List (Element.Attribute Msg)
+hoveredSymbolStyle =
+    [ Font.underline
+    , Background.color goblinGreen
+    , Font.color dblack
+    ]
 
+
+renderSymbolCol : Maybe String -> String -> Element Msg
+renderSymbolCol hovered sym =
+    let
         underlined =
             case hovered of
                 Nothing ->
-                    defaultBorder
+                    []
 
                 Just hoveredSym ->
                     if hoveredSym == sym then
-                        Font.underline
+                        hoveredSymbolStyle
 
                     else
-                        defaultBorder
+                        []
     in
     el
-        [ Background.color <| rowColor i
-        , height fill
-        , Events.onMouseEnter (SymbolHover sym)
-        , Events.onMouseLeave ExitHover
-        , underlined
-        ]
+        ([ width fill
+         , height fill
+         , Events.onMouseEnter (SymbolHover sym)
+         , Events.onMouseLeave ExitHover
+         ]
+            ++ underlined
+        )
     <|
         Element.paragraph
-            [ Font.bold
+            [ width fill
             , centerY
-            , Font.extraLight
-            , Element.paddingXY 10 0
-
-            -- , Element.explain Debug.todo
-            , height fill
+            , Font.size 14
+            , Font.center
+            , Element.paddingXY 5 0
+            , Font.family
+                [ Font.typeface "Cutive Mono"
+                ]
+            , Element.pointer
             ]
-        <|
-            List.map (\chars -> Element.text <| String.join "" chars) <|
-                splitN 3 <|
-                    String.split "" sym
-
-
-splitN : Int -> List a -> List (List a)
-splitN i list =
-    case List.take i list of
-        [] ->
-            []
-
-        listHead ->
-            listHead :: splitN i (List.drop i list)
+            [ Element.text sym ]
 
 
 
--- renderActionCol : Maybe St
+-- List.map (\chars -> Element.text <| chars) <|
+-- String.split "" sym
 
 
 blue : Element.Color
@@ -632,3 +813,8 @@ white =
 mgrey : Element.Color
 mgrey =
     Element.rgba255 185 186 184 1
+
+
+goblinGreen : Element.Color
+goblinGreen =
+    Element.rgba255 128 173 160 1
