@@ -14551,7 +14551,7 @@ var $mdgriffith$elm_ui$Internal$Model$Fill = function (a) {
 var $mdgriffith$elm_ui$Element$fill = $mdgriffith$elm_ui$Internal$Model$Fill(1);
 var $mdgriffith$elm_ui$Element$fillPortion = $mdgriffith$elm_ui$Internal$Model$Fill;
 var $mdgriffith$elm_ui$Internal$Flag$overflow = $mdgriffith$elm_ui$Internal$Flag$flag(20);
-var $mdgriffith$elm_ui$Element$clipY = A2($mdgriffith$elm_ui$Internal$Model$Class, $mdgriffith$elm_ui$Internal$Flag$overflow, $mdgriffith$elm_ui$Internal$Style$classes.clipY);
+var $mdgriffith$elm_ui$Element$clipX = A2($mdgriffith$elm_ui$Internal$Model$Class, $mdgriffith$elm_ui$Internal$Flag$overflow, $mdgriffith$elm_ui$Internal$Style$classes.clipX);
 var $author$project$Main$GrammarRecord = F2(
 	function (symbol, productions) {
 		return {productions: productions, symbol: symbol};
@@ -14804,7 +14804,7 @@ var $mdgriffith$elm_ui$Element$maximum = F2(
 	function (i, l) {
 		return A2($mdgriffith$elm_ui$Internal$Model$Max, i, l);
 	});
-var $author$project$Main$mgrey = A4($mdgriffith$elm_ui$Element$rgba255, 185, 186, 184, 1);
+var $mdgriffith$elm_ui$Element$Font$alignLeft = A2($mdgriffith$elm_ui$Internal$Model$Class, $mdgriffith$elm_ui$Internal$Flag$fontAlignment, $mdgriffith$elm_ui$Internal$Style$classes.textLeft);
 var $mdgriffith$elm_ui$Internal$Model$AlignY = function (a) {
 	return {$: 'AlignY', a: a};
 };
@@ -14871,6 +14871,16 @@ var $mdgriffith$elm_ui$Element$paragraph = F2(
 						attrs))),
 			$mdgriffith$elm_ui$Internal$Model$Unkeyed(children));
 	});
+var $mdgriffith$elm_ui$Internal$Model$FontSize = function (a) {
+	return {$: 'FontSize', a: a};
+};
+var $mdgriffith$elm_ui$Internal$Flag$fontSize = $mdgriffith$elm_ui$Internal$Flag$flag(4);
+var $mdgriffith$elm_ui$Element$Font$size = function (i) {
+	return A2(
+		$mdgriffith$elm_ui$Internal$Model$StyleClass,
+		$mdgriffith$elm_ui$Internal$Flag$fontSize,
+		$mdgriffith$elm_ui$Internal$Model$FontSize(i));
+};
 var $mdgriffith$elm_ui$Internal$Model$Text = function (a) {
 	return {$: 'Text', a: a};
 };
@@ -14887,18 +14897,18 @@ var $author$project$Main$renderHeader = function (label) {
 				$mdgriffith$elm_ui$Element$height($mdgriffith$elm_ui$Element$fill),
 				$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$shrink),
 				$mdgriffith$elm_ui$Element$Font$color($author$project$Main$white),
+				$mdgriffith$elm_ui$Element$Font$size(12),
 				$mdgriffith$elm_ui$Element$padding(10)
 			]),
 		A2(
 			$mdgriffith$elm_ui$Element$paragraph,
 			_List_fromArray(
-				[$mdgriffith$elm_ui$Element$centerX, $mdgriffith$elm_ui$Element$centerY, $mdgriffith$elm_ui$Element$Font$center, $mdgriffith$elm_ui$Element$Font$light]),
+				[$mdgriffith$elm_ui$Element$centerX, $mdgriffith$elm_ui$Element$centerY, $mdgriffith$elm_ui$Element$Font$alignLeft, $mdgriffith$elm_ui$Element$Font$light]),
 			_List_fromArray(
 				[
 					$mdgriffith$elm_ui$Element$text(label)
 				])));
 };
-var $author$project$Main$lgrey = A4($mdgriffith$elm_ui$Element$rgba255, 237, 237, 237, 1);
 var $mdgriffith$elm_ui$Internal$Model$paddingName = F4(
 	function (top, right, bottom, left) {
 		return 'pad-' + ($elm$core$String$fromInt(top) + ('-' + ($elm$core$String$fromInt(right) + ('-' + ($elm$core$String$fromInt(bottom) + ('-' + $elm$core$String$fromInt(left)))))));
@@ -15069,6 +15079,10 @@ var $author$project$Main$renderProduction = F2(
 				$author$project$Main$renderProdPart(hovered),
 				prod));
 	});
+var $author$project$Main$lgrey = A4($mdgriffith$elm_ui$Element$rgba255, 237, 237, 237, 1);
+var $author$project$Main$rowColor = function (ix) {
+	return (!A2($elm$core$Basics$modBy, 2, ix)) ? $author$project$Main$white : $author$project$Main$lgrey;
+};
 var $mdgriffith$elm_ui$Element$spacingXY = F2(
 	function (x, y) {
 		return A2(
@@ -15252,13 +15266,12 @@ var $mdgriffith$elm_ui$Element$wrappedRow = F2(
 	});
 var $author$project$Main$renderProductionsCol = F3(
 	function (hovered, i, prods) {
-		var rowcolor = $mdgriffith$elm_ui$Element$Background$color(
-			(!A2($elm$core$Basics$modBy, 2, i)) ? $author$project$Main$mgrey : $author$project$Main$lgrey);
 		return A2(
 			$mdgriffith$elm_ui$Element$wrappedRow,
 			_List_fromArray(
 				[
-					rowcolor,
+					$mdgriffith$elm_ui$Element$Background$color(
+					$author$project$Main$rowColor(i)),
 					A2($mdgriffith$elm_ui$Element$spacingXY, 5, 5),
 					$mdgriffith$elm_ui$Element$padding(10)
 				]),
@@ -15267,39 +15280,237 @@ var $author$project$Main$renderProductionsCol = F3(
 				$author$project$Main$renderProduction(hovered),
 				prods));
 	});
+var $mdgriffith$elm_ui$Element$Font$extraLight = A2($mdgriffith$elm_ui$Internal$Model$Class, $mdgriffith$elm_ui$Internal$Flag$fontWeight, $mdgriffith$elm_ui$Internal$Style$classes.textExtraLight);
+var $mdgriffith$elm_ui$Element$paddingXY = F2(
+	function (x, y) {
+		return _Utils_eq(x, y) ? A2(
+			$mdgriffith$elm_ui$Internal$Model$StyleClass,
+			$mdgriffith$elm_ui$Internal$Flag$padding,
+			A5(
+				$mdgriffith$elm_ui$Internal$Model$PaddingStyle,
+				'p-' + $elm$core$String$fromInt(x),
+				x,
+				x,
+				x,
+				x)) : A2(
+			$mdgriffith$elm_ui$Internal$Model$StyleClass,
+			$mdgriffith$elm_ui$Internal$Flag$padding,
+			A5(
+				$mdgriffith$elm_ui$Internal$Model$PaddingStyle,
+				'p-' + ($elm$core$String$fromInt(x) + ('-' + $elm$core$String$fromInt(y))),
+				y,
+				x,
+				y,
+				x));
+	});
+var $elm$core$List$drop = F2(
+	function (n, list) {
+		drop:
+		while (true) {
+			if (n <= 0) {
+				return list;
+			} else {
+				if (!list.b) {
+					return list;
+				} else {
+					var x = list.a;
+					var xs = list.b;
+					var $temp$n = n - 1,
+						$temp$list = xs;
+					n = $temp$n;
+					list = $temp$list;
+					continue drop;
+				}
+			}
+		}
+	});
+var $elm$core$List$takeReverse = F3(
+	function (n, list, kept) {
+		takeReverse:
+		while (true) {
+			if (n <= 0) {
+				return kept;
+			} else {
+				if (!list.b) {
+					return kept;
+				} else {
+					var x = list.a;
+					var xs = list.b;
+					var $temp$n = n - 1,
+						$temp$list = xs,
+						$temp$kept = A2($elm$core$List$cons, x, kept);
+					n = $temp$n;
+					list = $temp$list;
+					kept = $temp$kept;
+					continue takeReverse;
+				}
+			}
+		}
+	});
+var $elm$core$List$takeTailRec = F2(
+	function (n, list) {
+		return $elm$core$List$reverse(
+			A3($elm$core$List$takeReverse, n, list, _List_Nil));
+	});
+var $elm$core$List$takeFast = F3(
+	function (ctr, n, list) {
+		if (n <= 0) {
+			return _List_Nil;
+		} else {
+			var _v0 = _Utils_Tuple2(n, list);
+			_v0$1:
+			while (true) {
+				_v0$5:
+				while (true) {
+					if (!_v0.b.b) {
+						return list;
+					} else {
+						if (_v0.b.b.b) {
+							switch (_v0.a) {
+								case 1:
+									break _v0$1;
+								case 2:
+									var _v2 = _v0.b;
+									var x = _v2.a;
+									var _v3 = _v2.b;
+									var y = _v3.a;
+									return _List_fromArray(
+										[x, y]);
+								case 3:
+									if (_v0.b.b.b.b) {
+										var _v4 = _v0.b;
+										var x = _v4.a;
+										var _v5 = _v4.b;
+										var y = _v5.a;
+										var _v6 = _v5.b;
+										var z = _v6.a;
+										return _List_fromArray(
+											[x, y, z]);
+									} else {
+										break _v0$5;
+									}
+								default:
+									if (_v0.b.b.b.b && _v0.b.b.b.b.b) {
+										var _v7 = _v0.b;
+										var x = _v7.a;
+										var _v8 = _v7.b;
+										var y = _v8.a;
+										var _v9 = _v8.b;
+										var z = _v9.a;
+										var _v10 = _v9.b;
+										var w = _v10.a;
+										var tl = _v10.b;
+										return (ctr > 1000) ? A2(
+											$elm$core$List$cons,
+											x,
+											A2(
+												$elm$core$List$cons,
+												y,
+												A2(
+													$elm$core$List$cons,
+													z,
+													A2(
+														$elm$core$List$cons,
+														w,
+														A2($elm$core$List$takeTailRec, n - 4, tl))))) : A2(
+											$elm$core$List$cons,
+											x,
+											A2(
+												$elm$core$List$cons,
+												y,
+												A2(
+													$elm$core$List$cons,
+													z,
+													A2(
+														$elm$core$List$cons,
+														w,
+														A3($elm$core$List$takeFast, ctr + 1, n - 4, tl)))));
+									} else {
+										break _v0$5;
+									}
+							}
+						} else {
+							if (_v0.a === 1) {
+								break _v0$1;
+							} else {
+								break _v0$5;
+							}
+						}
+					}
+				}
+				return list;
+			}
+			var _v1 = _v0.b;
+			var x = _v1.a;
+			return _List_fromArray(
+				[x]);
+		}
+	});
+var $elm$core$List$take = F2(
+	function (n, list) {
+		return A3($elm$core$List$takeFast, 0, n, list);
+	});
+var $author$project$Main$splitN = F2(
+	function (i, list) {
+		var _v0 = A2($elm$core$List$take, i, list);
+		if (!_v0.b) {
+			return _List_Nil;
+		} else {
+			var listHead = _v0;
+			return A2(
+				$elm$core$List$cons,
+				listHead,
+				A2(
+					$author$project$Main$splitN,
+					i,
+					A2($elm$core$List$drop, i, list)));
+		}
+	});
 var $author$project$Main$renderSymbolCol = F3(
 	function (hovered, i, sym) {
-		var rowcolor = function () {
+		var defaultBorder = $mdgriffith$elm_ui$Element$height($mdgriffith$elm_ui$Element$fill);
+		var underlined = function () {
 			if (hovered.$ === 'Nothing') {
-				return $mdgriffith$elm_ui$Element$Background$color(
-					(!A2($elm$core$Basics$modBy, 2, i)) ? $author$project$Main$mgrey : $author$project$Main$lgrey);
+				return defaultBorder;
 			} else {
 				var hoveredSym = hovered.a;
-				return _Utils_eq(sym, hoveredSym) ? $mdgriffith$elm_ui$Element$Background$color($author$project$Main$grey) : $mdgriffith$elm_ui$Element$Background$color(
-					(!A2($elm$core$Basics$modBy, 2, i)) ? $author$project$Main$mgrey : $author$project$Main$lgrey);
+				return _Utils_eq(hoveredSym, sym) ? $mdgriffith$elm_ui$Element$Font$underline : defaultBorder;
 			}
 		}();
 		return A2(
 			$mdgriffith$elm_ui$Element$el,
 			_List_fromArray(
 				[
-					rowcolor,
+					$mdgriffith$elm_ui$Element$Background$color(
+					$author$project$Main$rowColor(i)),
 					$mdgriffith$elm_ui$Element$height($mdgriffith$elm_ui$Element$fill),
-					$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$shrink),
 					$mdgriffith$elm_ui$Element$Events$onMouseEnter(
 					$author$project$Main$SymbolHover(sym)),
-					$mdgriffith$elm_ui$Element$Events$onMouseLeave($author$project$Main$ExitHover)
+					$mdgriffith$elm_ui$Element$Events$onMouseLeave($author$project$Main$ExitHover),
+					underlined
 				]),
 			A2(
 				$mdgriffith$elm_ui$Element$paragraph,
 				_List_fromArray(
-					[$mdgriffith$elm_ui$Element$centerX, $mdgriffith$elm_ui$Element$centerY, $mdgriffith$elm_ui$Element$Font$center, $mdgriffith$elm_ui$Element$Font$bold]),
-				_List_fromArray(
 					[
-						$mdgriffith$elm_ui$Element$text(sym)
-					])));
+						$mdgriffith$elm_ui$Element$Font$bold,
+						$mdgriffith$elm_ui$Element$centerY,
+						$mdgriffith$elm_ui$Element$Font$extraLight,
+						A2($mdgriffith$elm_ui$Element$paddingXY, 10, 0),
+						$mdgriffith$elm_ui$Element$height($mdgriffith$elm_ui$Element$fill)
+					]),
+				A2(
+					$elm$core$List$map,
+					function (chars) {
+						return $mdgriffith$elm_ui$Element$text(
+							A2($elm$core$String$join, '', chars));
+					},
+					A2(
+						$author$project$Main$splitN,
+						3,
+						A2($elm$core$String$split, '', sym)))));
 	});
-var $mdgriffith$elm_ui$Element$scrollbarY = A2($mdgriffith$elm_ui$Internal$Model$Class, $mdgriffith$elm_ui$Internal$Flag$overflow, $mdgriffith$elm_ui$Internal$Style$classes.scrollbarsY);
+var $mdgriffith$elm_ui$Element$scrollbarX = A2($mdgriffith$elm_ui$Internal$Model$Class, $mdgriffith$elm_ui$Internal$Flag$overflow, $mdgriffith$elm_ui$Internal$Style$classes.scrollbarsX);
 var $author$project$Main$grammarView = F2(
 	function (gram, hovered) {
 		var ruleRecords = $author$project$Main$grammarRecords(gram);
@@ -15307,51 +15518,53 @@ var $author$project$Main$grammarView = F2(
 			$mdgriffith$elm_ui$Element$el,
 			_List_fromArray(
 				[
-					$mdgriffith$elm_ui$Element$Background$color($author$project$Main$mgrey),
+					$mdgriffith$elm_ui$Element$Background$color($author$project$Main$white),
 					$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill),
 					$mdgriffith$elm_ui$Element$height(
-					A2(
-						$mdgriffith$elm_ui$Element$maximum,
-						500,
-						$mdgriffith$elm_ui$Element$fillPortion(5))),
-					$mdgriffith$elm_ui$Element$clipY,
-					$mdgriffith$elm_ui$Element$scrollbarY
+					A2($mdgriffith$elm_ui$Element$maximum, 500, $mdgriffith$elm_ui$Element$shrink)),
+					$mdgriffith$elm_ui$Element$clipX,
+					$mdgriffith$elm_ui$Element$scrollbarX
 				]),
 			A2(
 				$mdgriffith$elm_ui$Element$indexedTable,
 				_List_fromArray(
 					[
-						A2($mdgriffith$elm_ui$Element$spacingXY, 0, 5),
 						$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill)
 					]),
 				{
 					columns: _List_fromArray(
 						[
 							{
-							header: $author$project$Main$renderHeader('SYMBOL'),
+							header: $author$project$Main$renderHeader('Symbol'),
 							view: F2(
 								function (i, rule) {
 									return A3($author$project$Main$renderSymbolCol, hovered, i, rule.symbol);
 								}),
-							width: $mdgriffith$elm_ui$Element$fillPortion(1)
+							width: A2(
+								$mdgriffith$elm_ui$Element$maximum,
+								100,
+								$mdgriffith$elm_ui$Element$fillPortion(1))
 						},
 							{
-							header: $author$project$Main$renderHeader('RULES'),
+							header: $author$project$Main$renderHeader('Rules'),
 							view: F2(
 								function (i, rule) {
 									return A3($author$project$Main$renderProductionsCol, hovered, i, rule.productions);
 								}),
 							width: $mdgriffith$elm_ui$Element$fillPortion(5)
+						},
+							{
+							header: $author$project$Main$renderHeader('Actions'),
+							view: F2(
+								function (i, rule) {
+									return $mdgriffith$elm_ui$Element$text('hoi');
+								}),
+							width: $mdgriffith$elm_ui$Element$fillPortion(1)
 						}
 						]),
 					data: ruleRecords
 				}));
 	});
-var $mdgriffith$elm_ui$Element$Font$heavy = A2($mdgriffith$elm_ui$Internal$Model$Class, $mdgriffith$elm_ui$Internal$Flag$fontWeight, $mdgriffith$elm_ui$Internal$Style$classes.textHeavy);
-var $mdgriffith$elm_ui$Element$Background$image = function (src) {
-	return $mdgriffith$elm_ui$Internal$Model$Attr(
-		A2($elm$virtual_dom$VirtualDom$style, 'background', 'url(\"' + (src + '\") center / cover no-repeat')));
-};
 var $author$project$Main$ClearGrammar = {$: 'ClearGrammar'};
 var $author$project$Main$Generate = {$: 'Generate'};
 var $author$project$Main$NTermChange = function (a) {
@@ -15652,16 +15865,6 @@ var $mdgriffith$elm_ui$Element$Input$Placeholder = F2(
 	});
 var $mdgriffith$elm_ui$Element$Input$placeholder = $mdgriffith$elm_ui$Element$Input$Placeholder;
 var $author$project$Main$red = A4($mdgriffith$elm_ui$Element$rgba255, 208, 0, 0, 1);
-var $mdgriffith$elm_ui$Internal$Model$FontSize = function (a) {
-	return {$: 'FontSize', a: a};
-};
-var $mdgriffith$elm_ui$Internal$Flag$fontSize = $mdgriffith$elm_ui$Internal$Flag$flag(4);
-var $mdgriffith$elm_ui$Element$Font$size = function (i) {
-	return A2(
-		$mdgriffith$elm_ui$Internal$Model$StyleClass,
-		$mdgriffith$elm_ui$Internal$Flag$fontSize,
-		$mdgriffith$elm_ui$Internal$Model$FontSize(i));
-};
 var $mdgriffith$elm_ui$Internal$Flag$borderStyle = $mdgriffith$elm_ui$Internal$Flag$flag(11);
 var $mdgriffith$elm_ui$Element$Border$solid = A2($mdgriffith$elm_ui$Internal$Model$Class, $mdgriffith$elm_ui$Internal$Flag$borderStyle, $mdgriffith$elm_ui$Internal$Style$classes.borderSolid);
 var $mdgriffith$elm_ui$Element$Input$TextInputNode = function (a) {
@@ -15799,28 +16002,6 @@ var $mdgriffith$elm_ui$Element$Border$color = function (clr) {
 			clr));
 };
 var $mdgriffith$elm_ui$Element$Input$darkGrey = A3($mdgriffith$elm_ui$Element$rgb, 186 / 255, 189 / 255, 182 / 255);
-var $mdgriffith$elm_ui$Element$paddingXY = F2(
-	function (x, y) {
-		return _Utils_eq(x, y) ? A2(
-			$mdgriffith$elm_ui$Internal$Model$StyleClass,
-			$mdgriffith$elm_ui$Internal$Flag$padding,
-			A5(
-				$mdgriffith$elm_ui$Internal$Model$PaddingStyle,
-				'p-' + $elm$core$String$fromInt(x),
-				x,
-				x,
-				x,
-				x)) : A2(
-			$mdgriffith$elm_ui$Internal$Model$StyleClass,
-			$mdgriffith$elm_ui$Internal$Flag$padding,
-			A5(
-				$mdgriffith$elm_ui$Internal$Model$PaddingStyle,
-				'p-' + ($elm$core$String$fromInt(x) + ('-' + $elm$core$String$fromInt(y))),
-				y,
-				x,
-				y,
-				x));
-	});
 var $mdgriffith$elm_ui$Element$Input$defaultTextPadding = A2($mdgriffith$elm_ui$Element$paddingXY, 12, 12);
 var $mdgriffith$elm_ui$Element$Input$white = A3($mdgriffith$elm_ui$Element$rgb, 1, 1, 1);
 var $mdgriffith$elm_ui$Element$Input$defaultTextBoxStyle = _List_fromArray(
@@ -16240,6 +16421,7 @@ var $mdgriffith$elm_ui$Element$Input$renderPlaceholder = F3(
 					placeholderAttrs)),
 			placeholderEl);
 	});
+var $mdgriffith$elm_ui$Element$scrollbarY = A2($mdgriffith$elm_ui$Internal$Model$Class, $mdgriffith$elm_ui$Internal$Flag$overflow, $mdgriffith$elm_ui$Internal$Style$classes.scrollbarsY);
 var $elm$html$Html$span = _VirtualDom_node('span');
 var $elm$html$Html$Attributes$spellcheck = $elm$html$Html$Attributes$boolProperty('spellcheck');
 var $mdgriffith$elm_ui$Element$Input$spellcheck = A2($elm$core$Basics$composeL, $mdgriffith$elm_ui$Internal$Model$Attr, $elm$html$Html$Attributes$spellcheck);
@@ -16507,9 +16689,9 @@ var $author$project$Main$inputRows = function (model) {
 				[
 					$mdgriffith$elm_ui$Element$alignTop,
 					$mdgriffith$elm_ui$Element$width(
-					$mdgriffith$elm_ui$Element$fillPortion(1)),
-					$mdgriffith$elm_ui$Element$Border$rounded(0),
-					$mdgriffith$elm_ui$Element$Border$width(0)
+					$mdgriffith$elm_ui$Element$fillPortion(2)),
+					$mdgriffith$elm_ui$Element$Border$rounded(3),
+					$mdgriffith$elm_ui$Element$Border$width(1)
 				]),
 			{
 				label: A2(
@@ -16519,8 +16701,8 @@ var $author$project$Main$inputRows = function (model) {
 						$mdgriffith$elm_ui$Element$paragraph,
 						_List_fromArray(
 							[
-								$mdgriffith$elm_ui$Element$Font$color($author$project$Main$white),
-								$mdgriffith$elm_ui$Element$Font$size(12)
+								$mdgriffith$elm_ui$Element$Font$color($author$project$Main$black),
+								$mdgriffith$elm_ui$Element$Font$size(10)
 							]),
 						_List_fromArray(
 							[
@@ -16541,8 +16723,8 @@ var $author$project$Main$inputRows = function (model) {
 					$mdgriffith$elm_ui$Element$alignTop,
 					$mdgriffith$elm_ui$Element$width(
 					$mdgriffith$elm_ui$Element$fillPortion(3)),
-					$mdgriffith$elm_ui$Element$Border$rounded(0),
-					$mdgriffith$elm_ui$Element$Border$width(0)
+					$mdgriffith$elm_ui$Element$Border$rounded(3),
+					$mdgriffith$elm_ui$Element$Border$width(1)
 				]),
 			{
 				label: A2(
@@ -16862,6 +17044,63 @@ var $mdgriffith$elm_ui$Element$layoutWith = F3(
 	});
 var $mdgriffith$elm_ui$Element$layout = $mdgriffith$elm_ui$Element$layoutWith(
 	{options: _List_Nil});
+var $mdgriffith$elm_ui$Internal$Model$boxShadowClass = function (shadow) {
+	return $elm$core$String$concat(
+		_List_fromArray(
+			[
+				shadow.inset ? 'box-inset' : 'box-',
+				$mdgriffith$elm_ui$Internal$Model$floatClass(shadow.offset.a) + 'px',
+				$mdgriffith$elm_ui$Internal$Model$floatClass(shadow.offset.b) + 'px',
+				$mdgriffith$elm_ui$Internal$Model$floatClass(shadow.blur) + 'px',
+				$mdgriffith$elm_ui$Internal$Model$floatClass(shadow.size) + 'px',
+				$mdgriffith$elm_ui$Internal$Model$formatColorClass(shadow.color)
+			]));
+};
+var $mdgriffith$elm_ui$Internal$Flag$shadows = $mdgriffith$elm_ui$Internal$Flag$flag(19);
+var $mdgriffith$elm_ui$Element$Border$shadow = function (almostShade) {
+	var shade = {blur: almostShade.blur, color: almostShade.color, inset: false, offset: almostShade.offset, size: almostShade.size};
+	return A2(
+		$mdgriffith$elm_ui$Internal$Model$StyleClass,
+		$mdgriffith$elm_ui$Internal$Flag$shadows,
+		A3(
+			$mdgriffith$elm_ui$Internal$Model$Single,
+			$mdgriffith$elm_ui$Internal$Model$boxShadowClass(shade),
+			'box-shadow',
+			$mdgriffith$elm_ui$Internal$Model$formatBoxShadow(shade)));
+};
+var $mdgriffith$elm_ui$Internal$Model$Left = {$: 'Left'};
+var $mdgriffith$elm_ui$Element$alignLeft = $mdgriffith$elm_ui$Internal$Model$AlignX($mdgriffith$elm_ui$Internal$Model$Left);
+var $author$project$Main$titleView = A2(
+	$mdgriffith$elm_ui$Element$row,
+	_List_fromArray(
+		[
+			$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill),
+			$mdgriffith$elm_ui$Element$Background$color($author$project$Main$white)
+		]),
+	_List_fromArray(
+		[
+			A2(
+			$mdgriffith$elm_ui$Element$el,
+			_List_fromArray(
+				[
+					A2($mdgriffith$elm_ui$Element$paddingXY, 15, 10),
+					$mdgriffith$elm_ui$Element$alignLeft,
+					$mdgriffith$elm_ui$Element$Font$bold,
+					$mdgriffith$elm_ui$Element$Font$size(24)
+				]),
+			$mdgriffith$elm_ui$Element$text('Context Free Goblin')),
+			A2(
+			$mdgriffith$elm_ui$Element$el,
+			_List_fromArray(
+				[
+					A2($mdgriffith$elm_ui$Element$paddingXY, 0, 10),
+					$mdgriffith$elm_ui$Element$Background$color($author$project$Main$white),
+					$mdgriffith$elm_ui$Element$alignLeft,
+					$mdgriffith$elm_ui$Element$Font$light,
+					$mdgriffith$elm_ui$Element$Font$size(10)
+				]),
+			$mdgriffith$elm_ui$Element$text('A tool for building and sharing random text generators'))
+		]));
 var $mdgriffith$elm_ui$Element$Font$typeface = $mdgriffith$elm_ui$Internal$Model$Typeface;
 var $author$project$Main$view = function (model) {
 	var columnWidth = function () {
@@ -16882,7 +17121,7 @@ var $author$project$Main$view = function (model) {
 				case 'Phone':
 					return 800;
 				case 'Desktop':
-					return 1000;
+					return 750;
 				case 'BigDesktop':
 					return 1450;
 				default:
@@ -16899,7 +17138,7 @@ var $author$project$Main$view = function (model) {
 					[
 						$mdgriffith$elm_ui$Element$Font$typeface('Libre Baskerville')
 					])),
-				$mdgriffith$elm_ui$Element$Background$image('url("data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'4\' height=\'4\' viewBox=\'0 0 4 4\'%3E%3Cpath fill=\'%239C92AC\' fill-opacity=\'0.4\' d=\'M1 3h1v1H1V3zm2-2h1v1H3V1z\'%3E%3C/path%3E%3C/svg%3E");')
+				$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill)
 			]),
 		A2(
 			$mdgriffith$elm_ui$Element$column,
@@ -16908,27 +17147,24 @@ var $author$project$Main$view = function (model) {
 					$mdgriffith$elm_ui$Element$width(
 					$mdgriffith$elm_ui$Element$px(columnWidth)),
 					$mdgriffith$elm_ui$Element$height($mdgriffith$elm_ui$Element$fill),
-					$mdgriffith$elm_ui$Element$centerX
+					$mdgriffith$elm_ui$Element$centerX,
+					$mdgriffith$elm_ui$Element$Border$shadow(
+					{
+						blur: 10,
+						color: $author$project$Main$lgrey,
+						offset: _Utils_Tuple2(0, 4),
+						size: 5
+					})
 				]),
 			_List_fromArray(
 				[
-					A2(
-					$mdgriffith$elm_ui$Element$el,
-					_List_fromArray(
-						[
-							$mdgriffith$elm_ui$Element$Font$center,
-							$mdgriffith$elm_ui$Element$Font$heavy,
-							$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill),
-							$mdgriffith$elm_ui$Element$padding(28),
-							$mdgriffith$elm_ui$Element$Font$size(24)
-						]),
-					$mdgriffith$elm_ui$Element$text('Context Free Goblin')),
+					$author$project$Main$titleView,
 					A2($author$project$Main$grammarView, model.grammar, model.hovered),
 					A2(
 					$mdgriffith$elm_ui$Element$row,
 					_List_fromArray(
 						[
-							$mdgriffith$elm_ui$Element$Background$color($author$project$Main$black),
+							$mdgriffith$elm_ui$Element$Background$color($author$project$Main$white),
 							$mdgriffith$elm_ui$Element$height(
 							$mdgriffith$elm_ui$Element$fillPortion(1)),
 							$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill),
@@ -16995,4 +17231,544 @@ _Platform_export({'Main':{'init':$author$project$Main$main(
 				},
 				A2($elm$json$Json$Decode$field, 'height', $elm$json$Json$Decode$int));
 		},
-		A2($elm$json$Json$Decode$field, 'width', $elm$json$Json$Decode$int)))(0)}});}(this));
+		A2($elm$json$Json$Decode$field, 'width', $elm$json$Json$Decode$int)))(0)}});
+
+//////////////////// HMR BEGIN ////////////////////
+
+/*
+  MIT License http://www.opensource.org/licenses/mit-license.php
+  Original Author: Flux Xu @fluxxu
+*/
+
+/*
+    A note about the environment that this code runs in...
+
+    assumed globals:
+        - `module` (from Node.js module system and webpack)
+
+    assumed in scope after injection into the Elm IIFE:
+        - `scope` (has an 'Elm' property which contains the public Elm API)
+        - various functions defined by Elm which we have to hook such as `_Platform_initialize` and `_Scheduler_binding`
+ */
+
+if (module.hot) {
+    (function () {
+        "use strict";
+
+        //polyfill for IE: https://github.com/fluxxu/elm-hot-loader/issues/16
+        if (typeof Object.assign != 'function') {
+            Object.assign = function (target) {
+                'use strict';
+                if (target == null) {
+                    throw new TypeError('Cannot convert undefined or null to object');
+                }
+
+                target = Object(target);
+                for (var index = 1; index < arguments.length; index++) {
+                    var source = arguments[index];
+                    if (source != null) {
+                        for (var key in source) {
+                            if (Object.prototype.hasOwnProperty.call(source, key)) {
+                                target[key] = source[key];
+                            }
+                        }
+                    }
+                }
+                return target;
+            };
+        }
+
+        // Elm 0.19.1 introduced a '$' prefix at the beginning of the symbols it emits,
+        // and we check for `List.map` because we expect it to be present in all Elm programs.
+        var elmVersion;
+        if (typeof elm$core$List$map !== 'undefined')
+            elmVersion = '0.19.0';
+        else if (typeof $elm$core$List$map !== 'undefined')
+            elmVersion = '0.19.1';
+        else
+            throw new Error("Could not determine Elm version");
+
+        function elmSymbol(symbol) {
+            try {
+                switch (elmVersion) {
+                    case '0.19.0':
+                        return eval(symbol);
+                    case '0.19.1':
+                        return eval('$' + symbol);
+                    default:
+                        throw new Error('Cannot resolve ' + symbol + '. Elm version unknown!')
+                }
+            } catch (e) {
+                if (e instanceof ReferenceError) {
+                    return undefined;
+                } else {
+                    throw e;
+                }
+            }
+        }
+
+        var instances = module.hot.data
+            ? module.hot.data.instances || {}
+            : {};
+        var uid = module.hot.data
+            ? module.hot.data.uid || 0
+            : 0;
+
+        if (Object.keys(instances).length === 0) {
+            log("[elm-hot] Enabled");
+        }
+
+        var cancellers = [];
+
+        // These 2 variables act as dynamically-scoped variables which are set only when the
+        // Elm module's hooked init function is called.
+        var initializingInstance = null;
+        var swappingInstance = null;
+
+        module.hot.accept();
+        module.hot.dispose(function (data) {
+            data.instances = instances;
+            data.uid = uid;
+
+            // Cleanup pending async tasks
+
+            // First, make sure that no new tasks can be started until we finish replacing the code
+            _Scheduler_binding = function () {
+                return _Scheduler_fail(new Error('[elm-hot] Inactive Elm instance.'))
+            };
+
+            // Second, kill pending tasks belonging to the old instance
+            if (cancellers.length) {
+                log('[elm-hot] Killing ' + cancellers.length + ' running processes...');
+                try {
+                    cancellers.forEach(function (cancel) {
+                        cancel();
+                    });
+                } catch (e) {
+                    console.warn('[elm-hot] Kill process error: ' + e.message);
+                }
+            }
+        });
+
+        function log(message) {
+            if (module.hot.verbose) {
+                console.log(message)
+            }
+        }
+
+        function getId() {
+            return ++uid;
+        }
+
+        function findPublicModules(parent, path) {
+            var modules = [];
+            for (var key in parent) {
+                var child = parent[key];
+                var currentPath = path ? path + '.' + key : key;
+                if ('init' in child) {
+                    modules.push({
+                        path: currentPath,
+                        module: child
+                    });
+                } else {
+                    modules = modules.concat(findPublicModules(child, currentPath));
+                }
+            }
+            return modules;
+        }
+
+        function registerInstance(domNode, flags, path, portSubscribes, portSends) {
+            var id = getId();
+
+            var instance = {
+                id: id,
+                path: path,
+                domNode: domNode,
+                flags: flags,
+                portSubscribes: portSubscribes,
+                portSends: portSends,
+                navKeyPath: null, // array of JS property names by which the Browser.Navigation.Key can be found in the model
+                lastState: null // last Elm app state (root model)
+            };
+
+            return instances[id] = instance
+        }
+
+        function isFullscreenApp() {
+            // Returns true if the Elm app will take over the entire DOM body.
+            return typeof elmSymbol("elm$browser$Browser$application") !== 'undefined'
+                || typeof elmSymbol("elm$browser$Browser$document") !== 'undefined';
+        }
+
+        function wrapDomNode(node) {
+            // When embedding an Elm app into a specific DOM node, Elm will replace the provided
+            // DOM node with the Elm app's content. When the Elm app is compiled normally, the
+            // original DOM node is reused (its attributes and content changes, but the object
+            // in memory remains the same). But when compiled using `--debug`, Elm will completely
+            // destroy the original DOM node and instead replace it with 2 brand new nodes: one
+            // for your Elm app's content and the other for the Elm debugger UI. In this case,
+            // if you held a reference to the DOM node provided for embedding, it would be orphaned
+            // after Elm module initialization.
+            //
+            // So in order to make both cases consistent and isolate us from changes in how Elm
+            // does this, we will insert a dummy node to wrap the node for embedding and hold
+            // a reference to the dummy node.
+            //
+            // We will also put a tag on the dummy node so that the Elm developer knows who went
+            // behind their back and rudely put stuff in their DOM.
+            var dummyNode = document.createElement("div");
+            dummyNode.setAttribute("data-elm-hot", "true");
+            dummyNode.style.height = "inherit";
+            var parentNode = node.parentNode;
+            parentNode.replaceChild(dummyNode, node);
+            dummyNode.appendChild(node);
+            return dummyNode;
+        }
+
+        function wrapPublicModule(path, module) {
+            var originalInit = module.init;
+            if (originalInit) {
+                module.init = function (args) {
+                    var elm;
+                    var portSubscribes = {};
+                    var portSends = {};
+                    var domNode = null;
+                    var flags = null;
+                    if (typeof args !== 'undefined') {
+                        // normal case
+                        domNode = args['node'] && !isFullscreenApp()
+                            ? wrapDomNode(args['node'])
+                            : document.body;
+                        flags = args['flags'];
+                    } else {
+                        // rare case: Elm allows init to be called without any arguments at all
+                        domNode = document.body;
+                        flags = undefined
+                    }
+                    initializingInstance = registerInstance(domNode, flags, path, portSubscribes, portSends);
+                    elm = originalInit(args);
+                    wrapPorts(elm, portSubscribes, portSends);
+                    initializingInstance = null;
+                    return elm;
+                };
+            } else {
+                console.error("Could not find a public module to wrap at path " + path)
+            }
+        }
+
+        function swap(Elm, instance) {
+            log('[elm-hot] Hot-swapping module: ' + instance.path);
+
+            swappingInstance = instance;
+
+            // remove from the DOM everything that had been created by the old Elm app
+            var containerNode = instance.domNode;
+            while (containerNode.lastChild) {
+                containerNode.removeChild(containerNode.lastChild);
+            }
+
+            var m = getAt(instance.path.split('.'), Elm);
+            var elm;
+            if (m) {
+                // prepare to initialize the new Elm module
+                var args = {flags: instance.flags};
+                if (containerNode === document.body) {
+                    // fullscreen case: no additional args needed
+                } else {
+                    // embed case: provide a new node for Elm to use
+                    var nodeForEmbed = document.createElement("div");
+                    containerNode.appendChild(nodeForEmbed);
+                    args['node'] = nodeForEmbed;
+                }
+
+                elm = m.init(args);
+
+                Object.keys(instance.portSubscribes).forEach(function (portName) {
+                    if (portName in elm.ports && 'subscribe' in elm.ports[portName]) {
+                        var handlers = instance.portSubscribes[portName];
+                        if (!handlers.length) {
+                            return;
+                        }
+                        log('[elm-hot] Reconnect ' + handlers.length + ' handler(s) to port \''
+                            + portName + '\' (' + instance.path + ').');
+                        handlers.forEach(function (handler) {
+                            elm.ports[portName].subscribe(handler);
+                        });
+                    } else {
+                        delete instance.portSubscribes[portName];
+                        log('[elm-hot] Port was removed: ' + portName);
+                    }
+                });
+
+                Object.keys(instance.portSends).forEach(function (portName) {
+                    if (portName in elm.ports && 'send' in elm.ports[portName]) {
+                        log('[elm-hot] Replace old port send with the new send');
+                        instance.portSends[portName] = elm.ports[portName].send;
+                    } else {
+                        delete instance.portSends[portName];
+                        log('[elm-hot] Port was removed: ' + portName);
+                    }
+                });
+            } else {
+                log('[elm-hot] Module was removed: ' + instance.path);
+            }
+
+            swappingInstance = null;
+        }
+
+        function wrapPorts(elm, portSubscribes, portSends) {
+            var portNames = Object.keys(elm.ports || {});
+            //hook ports
+            if (portNames.length) {
+                // hook outgoing ports
+                portNames
+                    .filter(function (name) {
+                        return 'subscribe' in elm.ports[name];
+                    })
+                    .forEach(function (portName) {
+                        var port = elm.ports[portName];
+                        var subscribe = port.subscribe;
+                        var unsubscribe = port.unsubscribe;
+                        elm.ports[portName] = Object.assign(port, {
+                            subscribe: function (handler) {
+                                log('[elm-hot] ports.' + portName + '.subscribe called.');
+                                if (!portSubscribes[portName]) {
+                                    portSubscribes[portName] = [handler];
+                                } else {
+                                    //TODO handle subscribing to single handler more than once?
+                                    portSubscribes[portName].push(handler);
+                                }
+                                return subscribe.call(port, handler);
+                            },
+                            unsubscribe: function (handler) {
+                                log('[elm-hot] ports.' + portName + '.unsubscribe called.');
+                                var list = portSubscribes[portName];
+                                if (list && list.indexOf(handler) !== -1) {
+                                    list.splice(list.lastIndexOf(handler), 1);
+                                } else {
+                                    console.warn('[elm-hot] ports.' + portName + '.unsubscribe: handler not subscribed');
+                                }
+                                return unsubscribe.call(port, handler);
+                            }
+                        });
+                    });
+
+                // hook incoming ports
+                portNames
+                    .filter(function (name) {
+                        return 'send' in elm.ports[name];
+                    })
+                    .forEach(function (portName) {
+                        var port = elm.ports[portName];
+                        portSends[portName] = port.send;
+                        elm.ports[portName] = Object.assign(port, {
+                            send: function (val) {
+                                return portSends[portName].call(port, val);
+                            }
+                        });
+                    });
+            }
+            return portSubscribes;
+        }
+
+        /*
+        Breadth-first search for a `Browser.Navigation.Key` in the user's app model.
+        Returns the key and keypath or null if not found.
+        */
+        function findNavKey(rootModel) {
+            var queue = [];
+            if (isDebuggerModel(rootModel)) {
+                /*
+                 Extract the user's app model from the Elm Debugger's model. The Elm debugger
+                 can hold multiple references to the user's model (e.g. in its "history"). So
+                 we must be careful to only search within the "state" part of the Debugger.
+                */
+                queue.push({value: rootModel['state'], keypath: ['state']});
+            } else {
+                queue.push({value: rootModel, keypath: []});
+            }
+
+            while (queue.length !== 0) {
+                var item = queue.shift();
+
+                // The nav key is identified by a runtime tag added by the elm-hot injector.
+                if (item.value.hasOwnProperty("elm-hot-nav-key")) {
+                    // found it!
+                    return item;
+                }
+
+                if (typeof item.value !== "object") {
+                    continue;
+                }
+
+                for (var propName in item.value) {
+                    if (!item.value.hasOwnProperty(propName)) continue;
+                    var newKeypath = item.keypath.slice();
+                    newKeypath.push(propName);
+                    queue.push({value: item.value[propName], keypath: newKeypath})
+                }
+            }
+
+            return null;
+        }
+
+
+        function isDebuggerModel(model) {
+            return model && model.hasOwnProperty("expando") && model.hasOwnProperty("state");
+        }
+
+        function getAt(keyPath, obj) {
+            return keyPath.reduce(function (xs, x) {
+                return (xs && xs[x]) ? xs[x] : null
+            }, obj)
+        }
+
+        function removeNavKeyListeners(navKey) {
+            window.removeEventListener('popstate', navKey.value);
+            window.navigator.userAgent.indexOf('Trident') < 0 || window.removeEventListener('hashchange', navKey.value);
+        }
+
+        // hook program creation
+        var initialize = _Platform_initialize;
+        _Platform_initialize = function (flagDecoder, args, init, update, subscriptions, stepperBuilder) {
+            var instance = initializingInstance || swappingInstance;
+            var tryFirstRender = !!swappingInstance;
+
+            var hookedInit = function (args) {
+                var initialStateTuple = init(args);
+                if (swappingInstance) {
+                    var oldModel = swappingInstance.lastState;
+                    var newModel = initialStateTuple.a;
+
+                    if (typeof elmSymbol("elm$browser$Browser$application") !== 'undefined') {
+                        // attempt to find the Browser.Navigation.Key in the newly-constructed model
+                        // and bring it along with the rest of the old data.
+                        var newKeyLoc = findNavKey(newModel);
+                        var error = null;
+                        if (newKeyLoc === null) {
+                            error = "could not find Browser.Navigation.Key in the new app model";
+                        } else if (instance.navKeyPath === null) {
+                            error = "could not find Browser.Navigation.Key in the old app model.";
+                        } else if (newKeyLoc.keypath.toString() !== instance.navKeyPath.toString()) {
+                            error = "the location of the Browser.Navigation.Key in the model has changed.";
+                        } else {
+                            var oldNavKey = getAt(instance.navKeyPath, oldModel);
+                            if (oldNavKey === null) {
+                                error = "keypath " + instance.navKeyPath + " is invalid. Please report a bug."
+                            } else {
+                                // remove event listeners attached to the old nav key
+                                removeNavKeyListeners(oldNavKey);
+
+                                // insert the new nav key into the old model in the exact same location
+                                var parentKeyPath = newKeyLoc.keypath.slice(0, -1);
+                                var lastSegment = newKeyLoc.keypath.slice(-1)[0];
+                                var oldParent = getAt(parentKeyPath, oldModel);
+                                oldParent[lastSegment] = newKeyLoc.value;
+                            }
+                        }
+
+                        if (error !== null) {
+                            console.error("[elm-hot] Hot-swapping " + instance.path + " not possible: " + error);
+                            oldModel = newModel;
+                        }
+                    }
+
+                    // the heart of the app state hot-swap
+                    initialStateTuple.a = oldModel;
+
+                    // ignore any Cmds returned by the init during hot-swap
+                    initialStateTuple.b = elmSymbol("elm$core$Platform$Cmd$none");
+                } else {
+                    // capture the initial state for later
+                    initializingInstance.lastState = initialStateTuple.a;
+
+                    // capture Browser.application's navigation key for later
+                    if (typeof elmSymbol("elm$browser$Browser$application") !== 'undefined') {
+                        var navKeyLoc = findNavKey(initializingInstance.lastState);
+                        if (!navKeyLoc) {
+                            console.error("[elm-hot] Hot-swapping disabled for " + instance.path
+                                + ": could not find Browser.Navigation.Key in your model.");
+                            instance.navKeyPath = null;
+                        } else {
+                            instance.navKeyPath = navKeyLoc.keypath;
+                        }
+                    }
+                }
+
+                return initialStateTuple
+            };
+
+            var hookedStepperBuilder = function (sendToApp, model) {
+                var result;
+                // first render may fail if shape of model changed too much
+                if (tryFirstRender) {
+                    tryFirstRender = false;
+                    try {
+                        result = stepperBuilder(sendToApp, model)
+                    } catch (e) {
+                        throw new Error('[elm-hot] Hot-swapping ' + instance.path +
+                            ' is not possible, please reload page. Error: ' + e.message)
+                    }
+                } else {
+                    result = stepperBuilder(sendToApp, model)
+                }
+
+                return function (nextModel, isSync) {
+                    if (instance) {
+                        // capture the state after every step so that later we can restore from it during a hot-swap
+                        instance.lastState = nextModel
+                    }
+                    return result(nextModel, isSync)
+                }
+            };
+
+            return initialize(flagDecoder, args, hookedInit, update, subscriptions, hookedStepperBuilder)
+        };
+
+        // hook process creation
+        var originalBinding = _Scheduler_binding;
+        _Scheduler_binding = function (originalCallback) {
+            return originalBinding(function () {
+                // start the scheduled process, which may return a cancellation function.
+                var cancel = originalCallback.apply(this, arguments);
+                if (cancel) {
+                    cancellers.push(cancel);
+                    return function () {
+                        cancellers.splice(cancellers.indexOf(cancel), 1);
+                        return cancel();
+                    };
+                }
+                return cancel;
+            });
+        };
+
+        scope['_elm_hot_loader_init'] = function (Elm) {
+            // swap instances
+            var removedInstances = [];
+            for (var id in instances) {
+                var instance = instances[id];
+                if (instance.domNode.parentNode) {
+                    swap(Elm, instance);
+                } else {
+                    removedInstances.push(id);
+                }
+            }
+
+            removedInstances.forEach(function (id) {
+                delete instance[id];
+            });
+
+            // wrap all public modules
+            var publicModules = findPublicModules(Elm);
+            publicModules.forEach(function (m) {
+                wrapPublicModule(m.path, m.module);
+            });
+        }
+    })();
+
+    scope['_elm_hot_loader_init'](scope['Elm']);
+}
+//////////////////// HMR END ////////////////////
+
+
+}(this));

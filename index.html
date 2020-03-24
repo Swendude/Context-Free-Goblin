@@ -1,19 +1,37 @@
 <!DOCTYPE HTML>
 <html>
+
 <head>
-  <meta charset="UTF-8">
-  <title>Context Free Goblin</title>
-  <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;900&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
-  <style>body { padding: 0; margin: 0; }</style>
-  <script src="main.js"></script>
+	<meta charset="UTF-8">
+	<title>Context Free Goblin</title>
+	<link
+		href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;900&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap"
+		rel="stylesheet">
+	<style>
+		body {
+			padding: 0;
+			margin: 0;
+		}
+
+		#cont {
+			background-color: #fff;
+			background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='4' viewBox='0 0 4 4'%3E%3Cpath fill='%23a19c60' fill-opacity='0.4' d='M1 3h1v1H1V3zm2-2h1v1H3V1z'%3E%3C/path%3E%3C/svg%3E");
+			*/
+		}
+	</style>
+	<script src="main.js"></script>
 </head>
+
 <body>
-	<div id="elm"></div>
+	<div id="cont">
+		<div id="elm"></div>
+	</div>
 	<script>
-	var app = Elm.Main.init({
-	  node: document.getElementById('elm'),
-	  flags : { height: window.innerHeight, width: window.innerWidth}
-	});
+		var app = Elm.Main.init({
+			node: document.getElementById('elm'),
+			flags: { height: window.innerHeight, width: window.innerWidth }
+		});
 	</script>
 </body>
+
 </html>

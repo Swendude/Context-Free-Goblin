@@ -202,7 +202,7 @@ view model =
                             800
 
                         Element.Desktop ->
-                            1000
+                            750
 
                         Element.BigDesktop ->
                             1450
@@ -214,23 +214,19 @@ view model =
         [ Font.family
             [ Font.typeface "Libre Baskerville"
             ]
-        , Background.image """url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='4' viewBox='0 0 4 4'%3E%3Cpath fill='%239C92AC' fill-opacity='0.4' d='M1 3h1v1H1V3zm2-2h1v1H3V1z'%3E%3C/path%3E%3C/svg%3E");"""
+        , width fill
         ]
     <|
-        Element.column [ width <| Element.px columnWidth, height fill, centerX ]
-            [ el
-                [ Font.center
-                , Font.heavy
-                -- , Font.color white
-                , width fill
-                , padding 28
-                , Font.size 24
-                -- , Background.color black
-                ]
-                (Element.text "Context Free Goblin")
+        Element.column
+            [ width <| Element.px columnWidth
+            , height fill
+            , centerX
+            , Border.shadow { offset = ( 0, 4 ), size = 5, blur = 10, color = lgrey }
+            ]
+            [ titleView
             , grammarView model.grammar model.hovered
             , Element.row
-                [ Background.color black
+                [ Background.color white
                 , height <| fillPortion 1
                 , width fill
                 , spacing 5
@@ -274,67 +270,55 @@ view model =
             ]
 
 
-percentageOf : Int -> Int -> Int
-percentageOf per val =
-    val
-
-
-blue =
-    Element.rgb 0.1 0.51 1
-
-
-lblue =
-    Element.rgba 0.1 0.51 1 0.7
-
-
-red =
-    Element.rgba255 208 0 0 1
-
-
-yellow =
-    Element.rgba255 255 186 8 1
-
-
-black =
-    Element.rgba255 49 62 80 1
-
-
-dblack =
-    Element.rgba255 45 45 45 1
-
-
-grey =
-    Element.rgba255 129 141 146 1
-
-
-lgrey =
-    Element.rgba255 237 237 237 1
-
-
-brown =
-    Element.rgba255 165 117 72 1
-
-
-white =
-    Element.rgba255 255 255 255 1
-
-
-mgrey =
-    Element.rgba255 185 186 184 1
+titleView : Element Msg
+titleView =
+    Element.row [ width fill, Background.color white ]
+        [ el
+            [ Element.paddingXY 15 10
+            , Element.alignLeft
+            , Font.bold
+            , Font.size 24
+            ]
+          <|
+            Element.text "Context Free Goblin"
+        , el
+            [ Element.paddingXY 0 10
+            , Background.color white
+            , Element.alignLeft
+            , Font.light
+            , Font.size 10
+            ]
+          <|
+            Element.text "A tool for building and sharing random text generators"
+        ]
 
 
 inputRows : Model -> List (Element Msg)
 inputRows model =
-    [ Input.text [ Element.alignTop, width <| fillPortion 1, Border.rounded 0, Border.width 0 ]
+    [ Input.text
+        [ Element.alignTop
+        , width <| fillPortion 2
+        , Border.rounded 3
+        , Border.width 1
+        ]
         { onChange = NTermChange
         , label =
             Input.labelBelow [] <|
-                Element.paragraph [ Font.color white, Font.size 12 ] <|
+                Element.paragraph [ Font.color black, Font.size 10 ] <|
                     [ Element.text "Put a symbol here, there should always be a START symbol" ]
-        , placeholder = Just <| Input.placeholder [] (Element.text "START")
+        , placeholder =
+            Just <|
+                Input.placeholder
+                    []
+                    (Element.text "START")
         , text = model.ntValue
         }
-    , Input.text [ Element.alignTop, width <| fillPortion 3, Border.rounded 0, Border.width 0 ]
+    , Input.text
+        [ Element.alignTop
+        , width <| fillPortion 3
+        , Border.rounded 3
+        , Border.width 1
+        ]
         { onChange = ProdChange
         , label =
             Input.labelBelow [] <|
@@ -413,27 +397,31 @@ grammarView gram hovered =
             grammarRecords gram
     in
     el
-        [ Background.color mgrey
+        [ Background.color white
         , width fill
-        , height <| Element.maximum 500 <| fillPortion 5
-        , Element.clipY
-        , Element.scrollbarY
+        , height <| Element.maximum 500 <| Element.shrink
+        , Element.clipX
+        , Element.scrollbarX
         ]
     <|
         Element.indexedTable
-            [ Element.spacingXY 0 5
-            , width fill
+            [ width fill
             ]
             { data = ruleRecords
             , columns =
-                [ { header = renderHeader "SYMBOL"
-                  , width = Element.fillPortion 1
+                [ { header = renderHeader "Symbol"
+                  , width = Element.maximum 100 <| Element.fillPortion 1
                   , view = \i rule -> renderSymbolCol hovered i rule.symbol
                   }
-                , { header = renderHeader "RULES"
+                , { header = renderHeader "Rules"
                   , width = Element.fillPortion 5
                   , view =
                         \i rule -> renderProductionsCol hovered i rule.productions
+                  }
+                , { header = renderHeader "Actions"
+                  , width = Element.fillPortion 1
+                  , view =
+                        \i rule -> Element.text "hoi"
                   }
                 ]
             }
@@ -503,31 +491,32 @@ renderHeader label =
         , height fill
         , width Element.shrink
         , Font.color white
+        , Font.size 12
         , padding 10
         ]
     <|
         Element.paragraph
             [ centerX
             , centerY
-            , Font.center
+            , Font.alignLeft
             , Font.light
             ]
             [ Element.text label ]
 
 
+rowColor : Int -> Element.Color
+rowColor ix =
+    if modBy 2 ix == 0 then
+        white
+
+    else
+        lgrey
+
+
 renderProductionsCol : Maybe String -> Int -> List Production -> Element Msg
 renderProductionsCol hovered i prods =
-    let
-        rowcolor =
-            Background.color <|
-                if modBy 2 i == 0 then
-                    mgrey
-
-                else
-                    lgrey
-    in
     Element.wrappedRow
-        [ rowcolor
+        [ Background.color <| rowColor i
         , Element.spacingXY 5 5
         , padding 10
         ]
@@ -538,40 +527,108 @@ renderProductionsCol hovered i prods =
 renderSymbolCol : Maybe String -> Int -> String -> Element Msg
 renderSymbolCol hovered i sym =
     let
-        rowcolor =
+        defaultBorder =
+            height fill
+
+        underlined =
             case hovered of
                 Nothing ->
-                    Background.color <|
-                        if modBy 2 i == 0 then
-                            mgrey
-
-                        else
-                            lgrey
+                    defaultBorder
 
                 Just hoveredSym ->
-                    if sym == hoveredSym then
-                        Background.color grey
+                    if hoveredSym == sym then
+                        Font.underline
 
                     else
-                        Background.color <|
-                            if modBy 2 i == 0 then
-                                mgrey
-
-                            else
-                                lgrey
+                        defaultBorder
     in
     el
-        [ rowcolor
+        [ Background.color <| rowColor i
         , height fill
-        , width Element.shrink
         , Events.onMouseEnter (SymbolHover sym)
         , Events.onMouseLeave ExitHover
+        , underlined
         ]
     <|
         Element.paragraph
-            [ centerX
+            [ Font.bold
             , centerY
-            , Font.center
-            , Font.bold
+            , Font.extraLight
+            , Element.paddingXY 10 0
+
+            -- , Element.explain Debug.todo
+            , height fill
             ]
-            [ Element.text sym ]
+        <|
+            List.map (\chars -> Element.text <| String.join "" chars) <|
+                splitN 3 <|
+                    String.split "" sym
+
+
+splitN : Int -> List a -> List (List a)
+splitN i list =
+    case List.take i list of
+        [] ->
+            []
+
+        listHead ->
+            listHead :: splitN i (List.drop i list)
+
+
+
+-- renderActionCol : Maybe St
+
+
+blue : Element.Color
+blue =
+    Element.rgb 0.1 0.51 1
+
+
+lblue : Element.Color
+lblue =
+    Element.rgba 0.1 0.51 1 0.7
+
+
+red : Element.Color
+red =
+    Element.rgba255 208 0 0 1
+
+
+yellow : Element.Color
+yellow =
+    Element.rgba255 255 186 8 1
+
+
+black : Element.Color
+black =
+    Element.rgba255 49 62 80 1
+
+
+dblack : Element.Color
+dblack =
+    Element.rgba255 45 45 45 1
+
+
+grey : Element.Color
+grey =
+    Element.rgba255 129 141 146 1
+
+
+lgrey : Element.Color
+lgrey =
+    Element.rgba255 237 237 237 1
+
+
+brown : Element.Color
+brown =
+    Element.rgba255 165 117 72 1
+
+
+white : Element.Color
+white =
+    Element.rgba255 255 255 255 1
+
+
+mgrey : Element.Color
+mgrey =
+    Element.rgba255 185 186 184 1
