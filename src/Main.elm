@@ -232,13 +232,15 @@ view model =
             ]
         , width fill
         , height fill
+        , Background.color dblack
         ]
     <|
         Element.column
             [ width <| Element.px columnWidth
             , height fill
             , centerX
-            , Border.shadow { offset = ( 0, 0 ), size = 0, blur = 10, color = dblack }
+
+            -- , Border.shadow { offset = ( 0, 0 ), size = 0, blur = 10, color = dblack }
             ]
             [ titleView
             , grammarView model.grammar model.hovered
@@ -265,25 +267,24 @@ view model =
 
 titleView : Element Msg
 titleView =
-    Element.column [ width fill, Background.color white ]
+    Element.column [ width fill ]
         [ el
-            [ Element.padding 10
+            [ Element.paddingXY 5 10
             , Font.bold
             , Font.size 24
-            , Font.center
             , width fill
+            , Font.color goblinGreen
             ]
           <|
             Element.text "Context Free Goblin"
         , el
-            [ Element.paddingEach { top = 0, left = 0, right = 0, bottom = 13 }
-            , Background.color white
+            [ Element.paddingEach { top = 0, left = 5, right = 0, bottom = 13 }
             , width fill
             ]
           <|
             Element.paragraph
                 [ Font.size 11
-                , Font.center
+                , Font.color white
                 ]
                 [ Element.text "A tool for building and sharing random text generators." ]
 
@@ -408,11 +409,11 @@ inputView model =
                     if model.showHelp then
                         Input.labelBelow [] <|
                             Element.paragraph [ Font.color white, Font.size 10 ] <|
-                                [ Element.text "Put some text here, use # to mark symbols." ]
+                                [ Element.text "Put some text here, use {} to mark symbols." ]
 
                     else
-                        Input.labelHidden "Put some text here, use # to delimit symbols"
-                , placeholder = Just <| Input.placeholder [] (Element.text "You see a #monster#")
+                        Input.labelHidden "Put some text here, use {} to delimit symbols"
+                , placeholder = Just <| Input.placeholder [] (Element.text "You see a {monster}")
                 , text = model.prodValue
                 }
         , el
@@ -451,7 +452,8 @@ outputView model =
             , centerX
             , Element.clipX
             , Element.scrollbarX
-            , Background.color white
+            , Background.color lgrey
+            , Border.rounded 5
             ]
           <|
             Element.paragraph [ centerY, Font.center, padding 10 ]
@@ -464,97 +466,20 @@ outputView model =
             Input.button
                 [ Background.color dblack
                 , padding 7
-                , Border.color white
+                , Border.color goblinGreen
                 , Border.width 1
                 , Element.mouseDown
                     [ Background.color goblinGreen ]
-                , Font.color white
+                , Element.mouseOver
+                    [ Background.color goblinGreen
+                    , Border.color dblack
+                    , Font.color dblack
+                    ]
+                , Font.color goblinGreen
                 , Font.center
                 ]
                 { onPress = Just Generate, label = Element.text "GENERATE" }
         ]
-
-
-inputRows : Model -> List (Element Msg)
-inputRows model =
-    [ Input.text
-        [ Element.alignTop
-        , width <| fillPortion 2
-        , Border.rounded 3
-        , Border.width 1
-        ]
-        { onChange = NTermChange
-        , label =
-            Input.labelBelow [] <|
-                Element.paragraph [ Font.color black, Font.size 10 ] <|
-                    [ Element.text "Put a symbol here, there should always be a START symbol" ]
-        , placeholder =
-            Just <|
-                Input.placeholder
-                    []
-                    (Element.text "START")
-        , text = model.ntValue
-        }
-    , Input.text
-        [ Element.alignTop
-        , width <| fillPortion 3
-        , Border.rounded 3
-        , Border.width 1
-        ]
-        { onChange = ProdChange
-        , label =
-            Input.labelBelow [] <|
-                Element.paragraph [ Font.color white, Font.size 12 ] <|
-                    [ Element.text "Put some text here, use # to delimit symbols" ]
-        , placeholder = Just <| Input.placeholder [] (Element.text "You see a #monster#")
-        , text = model.prodValue
-        }
-    , Input.button
-        [ Element.alignTop
-        , width <| fillPortion 1
-        , Background.color blue
-        , padding 10
-        , Border.rounded 5
-        , Border.solid
-        , Element.mouseOver
-            [ Background.color red ]
-        , Element.mouseDown
-            [ Background.color grey ]
-        , Font.color white
-        , Font.center
-        ]
-        { onPress = Just Save, label = Element.text "+ Add Rule" }
-    , Input.button
-        [ Element.alignTop
-        , width <| fillPortion 1
-        , Background.color blue
-        , padding 10
-        , Border.rounded 5
-        , Border.solid
-        , Element.mouseOver
-            [ Background.color red ]
-        , Element.mouseDown
-            [ Background.color grey ]
-        , Font.color white
-        , Font.center
-        ]
-        { onPress = Just Generate, label = Element.text "Generate > " }
-    , Input.button
-        [ Element.alignTop
-        , width <| fillPortion 1
-        , Background.color red
-        , padding 10
-        , Border.rounded 5
-        , Border.solid
-        , Element.mouseOver
-            [ Background.color black ]
-        , Element.mouseDown
-            [ Background.color grey ]
-        , Font.color white
-        , Font.center
-        ]
-        { onPress = Just ClearGrammar, label = Element.text "Clear X " }
-    ]
 
 
 
@@ -592,6 +517,86 @@ grammarRow i identifier objects =
         ]
 
 
+headerRow : Element Msg
+headerRow =
+    Element.row
+        [ width fill
+        , Background.color dblack
+        ]
+        [ el
+            [ width <| fillPortion 1
+            , height fill
+            , Element.clipX
+            ]
+          <|
+            el
+                [ Background.color dblack
+                , height fill
+                , width fill
+                , Font.color white
+                , Font.size 16
+                , padding 15
+                ]
+            <|
+                Element.paragraph
+                    [ centerX
+                    , centerY
+                    , Font.center
+                    , Font.light
+                    ]
+                    [ Element.text "Symbol" ]
+        , el
+            [ width <| fillPortion 3
+            , height fill
+            ]
+          <|
+            el
+                [ Background.color dblack
+                , height fill
+                , width fill
+                , Font.color white
+                , Font.size 16
+                , padding 15
+                ]
+            <|
+                Element.paragraph
+                    [ centerX
+                    , centerY
+                    , Font.alignLeft
+                    , Font.light
+                    ]
+                    [ Element.text "Rules" ]
+        , el
+            [ width <| fillPortion 2
+            , height fill
+            , Element.alignRight
+            ]
+          <|
+            Input.button
+                [ Element.alignRight
+                , Background.color dblack
+                , padding 7
+                , Border.color white
+                , Border.width 1
+                , Element.mouseDown
+                    [ Background.color goblinGreen ]
+                , Font.color white
+                ]
+                { onPress = Just ClearGrammar, label = Element.text "X Clear all" }
+
+        -- Element.paragraph
+        --     [ padding 5
+        --     , Font.color white
+        --     , Border.color white
+        --     , Border.width 1
+        --     , Font.center
+        --     , width Element.shrink
+        --     ]
+        -- <|
+        --     [  ]
+        ]
+
+
 grammarView : Grammar -> Maybe String -> Element Msg
 grammarView gram hovered =
     let
@@ -606,7 +611,7 @@ grammarView gram hovered =
         , Element.clipX
         ]
     <|
-        grammarRow 0 (renderHeader "Symbol") (renderHeader "Rules")
+        headerRow
             :: List.indexedMap
                 (\i gr -> grammarRow i (renderSymbolCol hovered gr.symbol) (renderProductionsCol hovered gr.productions))
                 ruleRecords
@@ -631,6 +636,7 @@ renderProdPart hovered part =
                     , Font.bold
                     , Events.onMouseEnter (SymbolHover production)
                     , Events.onMouseLeave ExitHover
+                    , Font.color goblinGreen
                     , Font.family
                         [ Font.typeface "Cutive Mono"
                         ]
@@ -670,33 +676,13 @@ renderProduction hovered prod =
         List.map (renderProdPart hovered) prod
 
 
-renderHeader : String -> Element Msg
-renderHeader label =
-    el
-        [ Background.color dblack
-        , height fill
-        , width fill
-        , Font.color white
-        , Font.size 12
-        , padding 15
-        ]
-    <|
-        Element.paragraph
-            [ centerX
-            , centerY
-            , Font.alignLeft
-            , Font.light
-            ]
-            [ Element.text label ]
-
-
 rowColor : Int -> Element.Color
 rowColor ix =
     if modBy 2 ix == 0 then
-        white
+        lgrey
 
     else
-        lgrey
+        mgrey
 
 
 renderProductionsCol : Maybe String -> List Production -> Element Msg
@@ -760,29 +746,9 @@ renderSymbolCol hovered sym =
 -- String.split "" sym
 
 
-blue : Element.Color
-blue =
-    Element.rgb 0.1 0.51 1
-
-
-lblue : Element.Color
-lblue =
-    Element.rgba 0.1 0.51 1 0.7
-
-
-red : Element.Color
-red =
-    Element.rgba255 208 0 0 1
-
-
-yellow : Element.Color
-yellow =
-    Element.rgba255 255 186 8 1
-
-
 black : Element.Color
 black =
-    Element.rgba255 49 62 80 1
+    Element.rgba255 0 0 0 1
 
 
 dblack : Element.Color
@@ -797,12 +763,12 @@ grey =
 
 lgrey : Element.Color
 lgrey =
-    Element.rgba255 237 237 237 1
+    Element.rgba255 238 238 238 1
 
 
-brown : Element.Color
-brown =
-    Element.rgba255 165 117 72 1
+mgrey : Element.Color
+mgrey =
+    Element.rgba255 212 212 212 1
 
 
 white : Element.Color
@@ -810,11 +776,7 @@ white =
     Element.rgba255 255 255 255 1
 
 
-mgrey : Element.Color
-mgrey =
-    Element.rgba255 185 186 184 1
-
-
 goblinGreen : Element.Color
 goblinGreen =
-    Element.rgba255 128 173 160 1
+    -- Element.rgba255 0 250 154 1
+    Element.rgba255 0 216 133 1

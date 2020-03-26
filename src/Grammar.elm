@@ -123,7 +123,7 @@ productionHelper parts =
 
 tokenParser : Parser ProdPart
 tokenParser =
-    chompUntilEndOr "#"
+    chompUntilEndOr "{"
         |> getChompedString
         |> andThen
             (\part ->
@@ -137,9 +137,9 @@ tokenParser =
 
 symbolParser : Parser ProdPart
 symbolParser =
-    Parser.token "#"
-        |. chompUntil "#"
-        |. Parser.token "#"
+    Parser.token "{"
+        |. chompUntil "}"
+        |. Parser.token "}"
         |> getChompedString
         |> andThen
             (\part ->

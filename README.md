@@ -7,7 +7,8 @@ Toy project, developed using elm reactor.
 - Validate ruleset correctness [X]
 - Save grammars to cloud []
 - Error reporting []
-
+- Remove Rules []
+- Clear Grammar
 
 # Whislist
 - Actual Parser [x]
