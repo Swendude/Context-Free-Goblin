@@ -1,6 +1,8 @@
-module Grammar exposing (GeneratorError(..), Grammar(..), ProdPart(..), Production, RuleError(..), addProduction, addRule, empty, generateSentence, getSymbols, isSymbol, parseProduction, pickRule, prodPartToString, prodToString, productionHelper, productionParser, replaceSymbols, resolveProdPart, symbolParser, tokenParser)
+module Grammar exposing (GeneratorError(..), Grammar(..), ProdPart(..), Production, RuleError(..), addProduction, addRule, empty, generateSentence, getRule, getSymbols, isSymbol, parseProduction, pickRule, prodPartToString, prodToString, productionHelper, productionParser, removeRule, replaceSymbols, resolveProdPart, symbolParser, tokenParser)
 
 import Dict exposing (Dict)
+import Dict.Extra exposing (removeWhen)
+import List.Extra exposing (getAt, removeAt)
 import Parser exposing (..)
 import Random exposing (initialSeed, step)
 import Random.List exposing (shuffle)
@@ -37,7 +39,7 @@ prodPartToString : ProdPart -> String
 prodPartToString pp =
     case pp of
         Symbol s ->
-            "#" ++ s ++ "#"
+            "{" ++ s ++ "}"
 
         Token s ->
             s
@@ -66,6 +68,21 @@ addRule gram sym rProduction =
 
                 Err error ->
                     Err error
+
+
+cleanGrammar : Grammar -> Grammar
+cleanGrammar (Grammar rules) =
+    Grammar <| Dict.Extra.removeWhen (\_ prods -> List.isEmpty prods) rules
+
+
+removeRule : Grammar -> String -> Int -> Grammar
+removeRule (Grammar rules) sym ix =
+    cleanGrammar <| Grammar <| Dict.update sym (Maybe.map (removeAt ix)) rules
+
+
+getRule : Grammar -> String -> Int -> Maybe Production
+getRule (Grammar rules) sym ix =
+    Dict.get sym rules |> Maybe.andThen (getAt ix)
 
 
 getSymbols : Grammar -> List String

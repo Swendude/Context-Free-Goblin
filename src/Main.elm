@@ -33,10 +33,11 @@ type alias Model =
     , error : Maybe (List DeadEnd)
     , output : String
     , seed : Int
-    , hovered : Maybe String
+    , symbolHovered : Maybe String
     , screen : Element.Device
     , showHelp : Bool
     , symbolFocused : Bool
+    , productionHovered : Maybe ( String, Int )
     }
 
 
@@ -50,7 +51,8 @@ init screenSize =
       , error = Nothing
       , output = "Click 'generate' to generate some text!"
       , seed = 42
-      , hovered = Nothing
+      , symbolHovered = Nothing
+      , productionHovered = Nothing
       , showHelp = True
       , symbolFocused = False
       }
@@ -103,11 +105,15 @@ type Msg
     | ClearGrammar
     | GotDefaultGrammar (Result (GqlHttp.Error (Maybe SavedGrammar)) (Maybe SavedGrammar))
     | SymbolHover String
-    | ExitHover
+    | ExitSymbolHover
     | ScreenResize Int Int
     | SymbolFocus
     | SymbolLoseFocus
     | SymbolSelected String
+    | ProductionHover ( String, Int )
+    | ExitProductionHover
+    | CopyProduction ( String, Int )
+    | DeleteProduction ( String, Int )
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -145,6 +151,19 @@ update msg model =
         ClearGrammar ->
             ( { model | grammar = Grammar.empty, ntValue = "START" }, Cmd.none )
 
+        CopyProduction ( sym, ix ) ->
+            ( { model
+                | prodValue =
+                    Maybe.withDefault model.ntValue <|
+                        Maybe.map Grammar.prodToString <|
+                            Grammar.getRule model.grammar sym ix
+              }
+            , Cmd.none
+            )
+
+        DeleteProduction ( sym, ix ) ->
+            ( { model | grammar = Grammar.removeRule model.grammar sym ix }, Cmd.none )
+
         GotDefaultGrammar res ->
             case res of
                 Ok grammarString ->
@@ -174,10 +193,10 @@ update msg model =
                                     Debug.log (Debug.toString err) ( model, Cmd.none )
 
         SymbolHover sym ->
-            ( { model | hovered = Just sym }, Cmd.none )
+            ( { model | symbolHovered = Just sym }, Cmd.none )
 
-        ExitHover ->
-            ( { model | hovered = Nothing }, Cmd.none )
+        ExitSymbolHover ->
+            ( { model | symbolHovered = Nothing }, Cmd.none )
 
         ScreenResize w h ->
             ( { model | screen = Element.classifyDevice { width = w, height = h } }, Cmd.none )
@@ -190,6 +209,12 @@ update msg model =
 
         SymbolSelected sym ->
             ( { model | ntValue = sym }, Cmd.none )
+
+        ProductionHover ( sym, ix ) ->
+            ( { model | productionHovered = Just ( sym, ix ) }, Cmd.none )
+
+        ExitProductionHover ->
+            ( { model | productionHovered = Nothing }, Cmd.none )
 
 
 
@@ -243,7 +268,7 @@ view model =
             -- , Border.shadow { offset = ( 0, 0 ), size = 0, blur = 10, color = dblack }
             ]
             [ titleView
-            , grammarView model.grammar model.hovered
+            , grammarView model.grammar model.symbolHovered model.productionHovered
             , inputView model
             , outputView model
             , el
@@ -273,7 +298,7 @@ titleView =
             , Font.bold
             , Font.size 24
             , width fill
-            , Font.color goblinGreen
+            , Font.color white
             ]
           <|
             Element.text "Context Free Goblin"
@@ -284,12 +309,9 @@ titleView =
           <|
             Element.paragraph
                 [ Font.size 11
-                , Font.color white
+                , Font.color goblinGreen
                 ]
                 [ Element.text "A tool for building and sharing random text generators." ]
-
-        -- , el [ width (fillPortion 4) ]
-        --     Element.none
         ]
 
 
@@ -300,8 +322,8 @@ textInputStyle =
     ]
 
 
-dropdown : Model -> Element Msg
-dropdown model =
+symbolInputDropdown : Model -> Element Msg
+symbolInputDropdown model =
     let
         row : String -> Element Msg
         row =
@@ -316,7 +338,7 @@ dropdown model =
                         ]
                     , Events.onMouseDown (SymbolSelected sym)
                     , Events.onMouseEnter (SymbolHover sym)
-                    , Events.onMouseLeave ExitHover
+                    , Events.onMouseLeave ExitSymbolHover
                     ]
                 <|
                     Element.paragraph
@@ -346,7 +368,7 @@ inputView model =
         belowSymbolInput =
             if model.symbolFocused then
                 Element.below <|
-                    dropdown model
+                    symbolInputDropdown model
 
             else
                 Element.below Element.none
@@ -497,23 +519,70 @@ grammarRecords (Grammar rules) =
     Dict.toList rules |> List.map (\( sym, prods ) -> GrammarRecord sym prods)
 
 
-grammarRow : Int -> Element Msg -> Element Msg -> Element Msg
-grammarRow i identifier objects =
+hoveredSymbolStyle : List (Element.Attribute Msg)
+hoveredSymbolStyle =
+    [ Font.underline
+    , Background.color goblinGreen
+    , Font.color dblack
+    ]
+
+
+grammarRow : Int -> Maybe String -> Maybe ( String, Int ) -> GrammarRecord -> Element Msg
+grammarRow i hoveredSymbol hoveredProduction production =
+    let
+        hoveredRowStyle =
+            case hoveredSymbol of
+                Nothing ->
+                    [ Background.color <| rowColor i ]
+
+                Just hoveredSym ->
+                    if hoveredSym == production.symbol then
+                        [ Background.color goblinGreen ]
+
+                    else
+                        [ Background.color <| rowColor i ]
+    in
     Element.row
-        [ width fill
-        , Background.color <| rowColor i
-        ]
+        (width fill
+            :: hoveredRowStyle
+        )
+    <|
         [ el
             [ width <| fillPortion 1
             , height fill
             , Element.clipX
             ]
-            identifier
+          <|
+            el
+                [ width fill
+                , height fill
+                , Events.onMouseEnter (SymbolHover production.symbol)
+                , Events.onMouseLeave ExitSymbolHover
+                ]
+            <|
+                Element.paragraph
+                    [ width fill
+                    , centerY
+                    , Font.size 14
+                    , Font.center
+                    , Element.paddingXY 5 0
+                    , Font.family
+                        [ Font.typeface "Cutive Mono"
+                        ]
+                    , Element.pointer
+                    ]
+                    [ Element.text production.symbol ]
         , el
             [ width <| fillPortion 5
             , height fill
             ]
-            objects
+          <|
+            Element.wrappedRow
+                [ Element.spacingXY 5 5
+                , padding 10
+                ]
+            <|
+                List.indexedMap (renderProduction production.symbol hoveredSymbol hoveredProduction) production.productions
         ]
 
 
@@ -597,8 +666,8 @@ headerRow =
         ]
 
 
-grammarView : Grammar -> Maybe String -> Element Msg
-grammarView gram hovered =
+grammarView : Grammar -> Maybe String -> Maybe ( String, Int ) -> Element Msg
+grammarView gram symbolHovered productionHovered =
     let
         ruleRecords =
             grammarRecords gram
@@ -613,7 +682,7 @@ grammarView gram hovered =
     <|
         headerRow
             :: List.indexedMap
-                (\i gr -> grammarRow i (renderSymbolCol hovered gr.symbol) (renderProductionsCol hovered gr.productions))
+                (\i gr -> grammarRow i symbolHovered productionHovered gr)
                 ruleRecords
 
 
@@ -635,7 +704,7 @@ renderProdPart hovered part =
                     [ partPadding
                     , Font.bold
                     , Events.onMouseEnter (SymbolHover production)
-                    , Events.onMouseLeave ExitHover
+                    , Events.onMouseLeave ExitSymbolHover
                     , Font.color goblinGreen
                     , Font.family
                         [ Font.typeface "Cutive Mono"
@@ -664,16 +733,81 @@ renderProdPart hovered part =
             el [ partPadding, Font.light ] (Element.text production)
 
 
-renderProduction : Maybe String -> Production -> Element Msg
-renderProduction hovered prod =
-    Element.row
-        [ Element.paddingXY 10 5
+productionDropDown : ( String, Int ) -> Element Msg
+productionDropDown ( sym, ix ) =
+    Element.column
+        [ Element.alignRight
+        , Font.center
         , Background.color dblack
-        , Font.color white
-        , Font.size 14
+        , Border.widthEach { top = 0, left = 1, right = 1, bottom = 1 }
+        , Border.color white
+        , spacing 5
         ]
+        [ el
+            [ Element.mouseOver
+                [ Background.color goblinGreen
+                ]
+            , width fill
+            , height fill
+            , padding 5
+            , Events.onMouseDown (DeleteProduction ( sym, ix ))
+            ]
+          <|
+            Element.text "Remove"
+        , el
+            [ Element.mouseOver
+                [ Background.color goblinGreen
+                ]
+            , width fill
+            , padding 5
+            , height fill
+            , Events.onMouseDown (CopyProduction ( sym, ix ))
+            ]
+          <|
+            Element.text "Copy"
+        ]
+
+
+productionStyle : String -> Int -> Maybe ( String, Int ) -> List (Element.Attribute Msg)
+productionStyle sym ix hoveredProduction =
+    let
+        default =
+            [ Element.paddingXY 10 5
+            , Background.color dblack
+            , Font.color white
+            , Font.size 14
+            , Events.onMouseEnter <| ProductionHover ( sym, ix )
+            , Events.onMouseLeave ExitProductionHover
+            ]
+
+        hovered =
+            [ Element.paddingXY 10 5
+            , Background.color dblack
+            , Font.color white
+            , Font.size 14
+            , Events.onMouseEnter <| ProductionHover ( sym, ix )
+            , Events.onMouseLeave ExitProductionHover
+            , Element.below <| productionDropDown ( sym, ix )
+            ]
+    in
+    case hoveredProduction of
+        Nothing ->
+            default
+
+        Just ( sym_, ix_ ) ->
+            if (sym == sym_) && (ix == ix_) then
+                hovered
+
+            else
+                default
+
+
+renderProduction : String -> Maybe String -> Maybe ( String, Int ) -> Int -> Production -> Element Msg
+renderProduction symbol symbolHovered productionHovered ix prod =
+    Element.row
+        (productionStyle symbol ix productionHovered)
     <|
-        List.map (renderProdPart hovered) prod
+        List.map (renderProdPart symbolHovered) prod
 
 
 rowColor : Int -> Element.Color
@@ -683,62 +817,6 @@ rowColor ix =
 
     else
         mgrey
-
-
-renderProductionsCol : Maybe String -> List Production -> Element Msg
-renderProductionsCol hovered prods =
-    Element.wrappedRow
-        [ Element.spacingXY 5 5
-        , padding 10
-        ]
-    <|
-        List.map (renderProduction hovered) prods
-
-
-hoveredSymbolStyle : List (Element.Attribute Msg)
-hoveredSymbolStyle =
-    [ Font.underline
-    , Background.color goblinGreen
-    , Font.color dblack
-    ]
-
-
-renderSymbolCol : Maybe String -> String -> Element Msg
-renderSymbolCol hovered sym =
-    let
-        underlined =
-            case hovered of
-                Nothing ->
-                    []
-
-                Just hoveredSym ->
-                    if hoveredSym == sym then
-                        hoveredSymbolStyle
-
-                    else
-                        []
-    in
-    el
-        ([ width fill
-         , height fill
-         , Events.onMouseEnter (SymbolHover sym)
-         , Events.onMouseLeave ExitHover
-         ]
-            ++ underlined
-        )
-    <|
-        Element.paragraph
-            [ width fill
-            , centerY
-            , Font.size 14
-            , Font.center
-            , Element.paddingXY 5 0
-            , Font.family
-                [ Font.typeface "Cutive Mono"
-                ]
-            , Element.pointer
-            ]
-            [ Element.text sym ]
 
 
 
