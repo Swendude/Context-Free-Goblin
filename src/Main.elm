@@ -227,15 +227,7 @@ view model =
         columnWidth =
             case model.screen.orientation of
                 Portrait ->
-                    case Debug.log "Screen class" model.screen.class of
-                        Element.Phone ->
-                            fill
-
-                        Element.Desktop ->
-                            Element.px 800
-
-                        _ ->
-                            Element.px 800
+                    fill
 
                 Landscape ->
                     case Debug.log "Screen class" model.screen.class of
@@ -465,7 +457,8 @@ outputView model =
         [ width fill
         , Background.color dblack
         , Element.paddingXY 10 10
-        , height fill
+
+        -- , height fill
         , spacing 20
         ]
         [ el
@@ -675,7 +668,7 @@ grammarView gram symbolHovered productionHovered =
     Element.column
         [ Background.color lgrey
         , width fill
-        , height <| Element.px 380
+        , height <| Element.minimum 380 <| Element.shrink
         , Element.scrollbarY
         , Element.clipX
         ]

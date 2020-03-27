@@ -15936,10 +15936,14 @@ var $author$project$Main$headerRow = A2(
 					onPress: $elm$core$Maybe$Just($author$project$Main$ClearGrammar)
 				}))
 		]));
-var $mdgriffith$elm_ui$Internal$Model$Px = function (a) {
-	return {$: 'Px', a: a};
-};
-var $mdgriffith$elm_ui$Element$px = $mdgriffith$elm_ui$Internal$Model$Px;
+var $mdgriffith$elm_ui$Internal$Model$Min = F2(
+	function (a, b) {
+		return {$: 'Min', a: a, b: b};
+	});
+var $mdgriffith$elm_ui$Element$minimum = F2(
+	function (i, l) {
+		return A2($mdgriffith$elm_ui$Internal$Model$Min, i, l);
+	});
 var $mdgriffith$elm_ui$Element$scrollbarY = A2($mdgriffith$elm_ui$Internal$Model$Class, $mdgriffith$elm_ui$Internal$Flag$overflow, $mdgriffith$elm_ui$Internal$Style$classes.scrollbarsY);
 var $author$project$Main$grammarView = F3(
 	function (gram, symbolHovered, productionHovered) {
@@ -15951,7 +15955,7 @@ var $author$project$Main$grammarView = F3(
 					$mdgriffith$elm_ui$Element$Background$color($author$project$Main$lgrey),
 					$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill),
 					$mdgriffith$elm_ui$Element$height(
-					$mdgriffith$elm_ui$Element$px(380)),
+					A2($mdgriffith$elm_ui$Element$minimum, 380, $mdgriffith$elm_ui$Element$shrink)),
 					$mdgriffith$elm_ui$Element$scrollbarY,
 					$mdgriffith$elm_ui$Element$clipX
 				]),
@@ -17236,6 +17240,10 @@ var $mdgriffith$elm_ui$Element$layoutWith = F3(
 var $mdgriffith$elm_ui$Element$layout = $mdgriffith$elm_ui$Element$layoutWith(
 	{options: _List_Nil});
 var $author$project$Main$Generate = {$: 'Generate'};
+var $mdgriffith$elm_ui$Internal$Model$Px = function (a) {
+	return {$: 'Px', a: a};
+};
+var $mdgriffith$elm_ui$Element$px = $mdgriffith$elm_ui$Internal$Model$Px;
 var $author$project$Main$outputView = function (model) {
 	return A2(
 		$mdgriffith$elm_ui$Element$column,
@@ -17244,7 +17252,6 @@ var $author$project$Main$outputView = function (model) {
 				$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill),
 				$mdgriffith$elm_ui$Element$Background$color($author$project$Main$dblack),
 				A2($mdgriffith$elm_ui$Element$paddingXY, 10, 10),
-				$mdgriffith$elm_ui$Element$height($mdgriffith$elm_ui$Element$fill),
 				$mdgriffith$elm_ui$Element$spacing(20)
 			]),
 		_List_fromArray(
@@ -17350,18 +17357,10 @@ var $author$project$Main$view = function (model) {
 	var columnWidth = function () {
 		var _v0 = model.screen.orientation;
 		if (_v0.$ === 'Portrait') {
+			return $mdgriffith$elm_ui$Element$fill;
+		} else {
 			var _v1 = A2($elm$core$Debug$log, 'Screen class', model.screen._class);
 			switch (_v1.$) {
-				case 'Phone':
-					return $mdgriffith$elm_ui$Element$fill;
-				case 'Desktop':
-					return $mdgriffith$elm_ui$Element$px(800);
-				default:
-					return $mdgriffith$elm_ui$Element$px(800);
-			}
-		} else {
-			var _v2 = A2($elm$core$Debug$log, 'Screen class', model.screen._class);
-			switch (_v2.$) {
 				case 'Phone':
 					return $mdgriffith$elm_ui$Element$fill;
 				case 'Desktop':
