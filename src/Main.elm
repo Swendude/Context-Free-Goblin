@@ -229,27 +229,27 @@ view model =
                 Portrait ->
                     case Debug.log "Screen class" model.screen.class of
                         Element.Phone ->
-                            600
+                            fill
 
                         Element.Desktop ->
-                            1300
+                            Element.px 800
 
                         _ ->
-                            800
+                            Element.px 800
 
                 Landscape ->
                     case Debug.log "Screen class" model.screen.class of
                         Element.Phone ->
-                            800
+                            fill
 
                         Element.Desktop ->
-                            950
+                            Element.px 1024
 
                         Element.BigDesktop ->
-                            1450
+                            Element.px 1140
 
                         _ ->
-                            800
+                            Element.px 1024
     in
     Element.layout
         [ Font.family
@@ -261,7 +261,7 @@ view model =
         ]
     <|
         Element.column
-            [ width <| Element.px columnWidth
+            [ width columnWidth
             , height fill
             , centerX
 

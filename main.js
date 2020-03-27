@@ -17353,23 +17353,23 @@ var $author$project$Main$view = function (model) {
 			var _v1 = A2($elm$core$Debug$log, 'Screen class', model.screen._class);
 			switch (_v1.$) {
 				case 'Phone':
-					return 600;
+					return $mdgriffith$elm_ui$Element$fill;
 				case 'Desktop':
-					return 1300;
+					return $mdgriffith$elm_ui$Element$px(800);
 				default:
-					return 800;
+					return $mdgriffith$elm_ui$Element$px(800);
 			}
 		} else {
 			var _v2 = A2($elm$core$Debug$log, 'Screen class', model.screen._class);
 			switch (_v2.$) {
 				case 'Phone':
-					return 800;
+					return $mdgriffith$elm_ui$Element$fill;
 				case 'Desktop':
-					return 950;
+					return $mdgriffith$elm_ui$Element$px(1024);
 				case 'BigDesktop':
-					return 1450;
+					return $mdgriffith$elm_ui$Element$px(1140);
 				default:
-					return 800;
+					return $mdgriffith$elm_ui$Element$px(1024);
 			}
 		}
 	}();
@@ -17390,8 +17390,7 @@ var $author$project$Main$view = function (model) {
 			$mdgriffith$elm_ui$Element$column,
 			_List_fromArray(
 				[
-					$mdgriffith$elm_ui$Element$width(
-					$mdgriffith$elm_ui$Element$px(columnWidth)),
+					$mdgriffith$elm_ui$Element$width(columnWidth),
 					$mdgriffith$elm_ui$Element$height($mdgriffith$elm_ui$Element$fill),
 					$mdgriffith$elm_ui$Element$centerX
 				]),
