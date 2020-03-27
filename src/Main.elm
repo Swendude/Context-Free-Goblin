@@ -227,10 +227,15 @@ view model =
         columnWidth =
             case model.screen.orientation of
                 Portrait ->
-                    fill
+                    case model.screen.class of
+                        Element.Phone ->
+                            Element.px 325
+
+                        _ ->
+                            fill
 
                 Landscape ->
-                    case Debug.log "Screen class" model.screen.class of
+                    case model.screen.class of
                         Element.Phone ->
                             fill
 
@@ -248,23 +253,25 @@ view model =
             [ Font.typeface "Libre Baskerville"
             ]
         , width fill
-        , height fill
         , Background.color dblack
         ]
     <|
         Element.column
             [ width columnWidth
-            , height fill
+
+            -- , height fill
             , centerX
 
-            -- , Border.shadow { offset = ( 0, 0 ), size = 0, blur = 10, color = dblack }
+            -- , Element.explain Debug.todo
             ]
             [ titleView
             , grammarView model.grammar model.symbolHovered model.productionHovered
             , inputView model
             , outputView model
             , el
-                [ width fill
+                [ height Element.shrink
+                , Element.alignTop
+                , width fill
                 , padding 10
                 , Font.color white
                 , Font.center
@@ -369,7 +376,8 @@ inputView model =
         [ width fill
         , Background.color dblack
         , Element.paddingXY 10 10
-        , height fill
+
+        -- , height fill
         ]
         [ el [ width <| fillPortion 3, Element.alignTop ] <|
             Input.text
@@ -457,18 +465,15 @@ outputView model =
         [ width fill
         , Background.color dblack
         , Element.paddingXY 10 10
-
-        -- , height fill
         , spacing 20
+        , Element.alignTop
         ]
         [ el
             [ width (Element.px 800)
-            , height fill
             , centerX
             , Element.clipX
             , Element.scrollbarX
             , Background.color lgrey
-            , Border.rounded 5
             ]
           <|
             Element.paragraph [ centerY, Font.center, padding 10 ]

@@ -9404,6 +9404,8 @@ var $mdgriffith$elm_ui$Internal$Model$AlignY = function (a) {
 };
 var $mdgriffith$elm_ui$Internal$Model$Bottom = {$: 'Bottom'};
 var $mdgriffith$elm_ui$Element$alignBottom = $mdgriffith$elm_ui$Internal$Model$AlignY($mdgriffith$elm_ui$Internal$Model$Bottom);
+var $mdgriffith$elm_ui$Internal$Model$Top = {$: 'Top'};
+var $mdgriffith$elm_ui$Element$alignTop = $mdgriffith$elm_ui$Internal$Model$AlignY($mdgriffith$elm_ui$Internal$Model$Top);
 var $mdgriffith$elm_ui$Internal$Model$Class = F2(
 	function (a, b) {
 		return {$: 'Class', a: a, b: b};
@@ -15979,8 +15981,6 @@ var $author$project$Main$ProdChange = function (a) {
 var $author$project$Main$Save = {$: 'Save'};
 var $author$project$Main$SymbolFocus = {$: 'SymbolFocus'};
 var $author$project$Main$SymbolLoseFocus = {$: 'SymbolLoseFocus'};
-var $mdgriffith$elm_ui$Internal$Model$Top = {$: 'Top'};
-var $mdgriffith$elm_ui$Element$alignTop = $mdgriffith$elm_ui$Internal$Model$AlignY($mdgriffith$elm_ui$Internal$Model$Top);
 var $mdgriffith$elm_ui$Element$Input$Below = {$: 'Below'};
 var $mdgriffith$elm_ui$Element$Input$Label = F3(
 	function (a, b, c) {
@@ -16900,8 +16900,7 @@ var $author$project$Main$inputView = function (model) {
 			[
 				$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill),
 				$mdgriffith$elm_ui$Element$Background$color($author$project$Main$dblack),
-				A2($mdgriffith$elm_ui$Element$paddingXY, 10, 10),
-				$mdgriffith$elm_ui$Element$height($mdgriffith$elm_ui$Element$fill)
+				A2($mdgriffith$elm_ui$Element$paddingXY, 10, 10)
 			]),
 		_List_fromArray(
 			[
@@ -17252,7 +17251,8 @@ var $author$project$Main$outputView = function (model) {
 				$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill),
 				$mdgriffith$elm_ui$Element$Background$color($author$project$Main$dblack),
 				A2($mdgriffith$elm_ui$Element$paddingXY, 10, 10),
-				$mdgriffith$elm_ui$Element$spacing(20)
+				$mdgriffith$elm_ui$Element$spacing(20),
+				$mdgriffith$elm_ui$Element$alignTop
 			]),
 		_List_fromArray(
 			[
@@ -17262,12 +17262,10 @@ var $author$project$Main$outputView = function (model) {
 					[
 						$mdgriffith$elm_ui$Element$width(
 						$mdgriffith$elm_ui$Element$px(800)),
-						$mdgriffith$elm_ui$Element$height($mdgriffith$elm_ui$Element$fill),
 						$mdgriffith$elm_ui$Element$centerX,
 						$mdgriffith$elm_ui$Element$clipX,
 						$mdgriffith$elm_ui$Element$scrollbarX,
-						$mdgriffith$elm_ui$Element$Background$color($author$project$Main$lgrey),
-						$mdgriffith$elm_ui$Element$Border$rounded(5)
+						$mdgriffith$elm_ui$Element$Background$color($author$project$Main$lgrey)
 					]),
 				A2(
 					$mdgriffith$elm_ui$Element$paragraph,
@@ -17357,10 +17355,15 @@ var $author$project$Main$view = function (model) {
 	var columnWidth = function () {
 		var _v0 = model.screen.orientation;
 		if (_v0.$ === 'Portrait') {
-			return $mdgriffith$elm_ui$Element$fill;
+			var _v1 = model.screen._class;
+			if (_v1.$ === 'Phone') {
+				return $mdgriffith$elm_ui$Element$px(325);
+			} else {
+				return $mdgriffith$elm_ui$Element$fill;
+			}
 		} else {
-			var _v1 = A2($elm$core$Debug$log, 'Screen class', model.screen._class);
-			switch (_v1.$) {
+			var _v2 = model.screen._class;
+			switch (_v2.$) {
 				case 'Phone':
 					return $mdgriffith$elm_ui$Element$fill;
 				case 'Desktop':
@@ -17382,7 +17385,6 @@ var $author$project$Main$view = function (model) {
 						$mdgriffith$elm_ui$Element$Font$typeface('Libre Baskerville')
 					])),
 				$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill),
-				$mdgriffith$elm_ui$Element$height($mdgriffith$elm_ui$Element$fill),
 				$mdgriffith$elm_ui$Element$Background$color($author$project$Main$dblack)
 			]),
 		A2(
@@ -17390,7 +17392,6 @@ var $author$project$Main$view = function (model) {
 			_List_fromArray(
 				[
 					$mdgriffith$elm_ui$Element$width(columnWidth),
-					$mdgriffith$elm_ui$Element$height($mdgriffith$elm_ui$Element$fill),
 					$mdgriffith$elm_ui$Element$centerX
 				]),
 			_List_fromArray(
@@ -17403,6 +17404,8 @@ var $author$project$Main$view = function (model) {
 					$mdgriffith$elm_ui$Element$el,
 					_List_fromArray(
 						[
+							$mdgriffith$elm_ui$Element$height($mdgriffith$elm_ui$Element$shrink),
+							$mdgriffith$elm_ui$Element$alignTop,
 							$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill),
 							$mdgriffith$elm_ui$Element$padding(10),
 							$mdgriffith$elm_ui$Element$Font$color($author$project$Main$white),

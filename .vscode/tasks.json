@@ -4,19 +4,35 @@
     "version": "2.0.0",
     "tasks": [
         {
-                "label": "Run elm-test",
-                "type": "shell",
-                "group": "test",
-                "presentation": {
-                    "echo": true,
-                    "reveal": "always",
-                    "focus": false,
-                    "panel": "dedicated",
-                    "showReuseMessage": false,
-                    "clear": true
-                },
-                "command": "elm-test",
-                "args": []
+            "label": "Run elm-test",
+            "type": "shell",
+            "group": "test",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "dedicated",
+                "showReuseMessage": false,
+                "clear": true
+            },
+            "command": "elm-test",
+            "args": []
+        },
+        {
+            "label": "Run elm make",
+            "type": "shell",
+            "group": "build",
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "dedicated",
+                "showReuseMessage": false,
+                "clear": true
+            },
+            "command": "elm make src/Main.elm --optimize --output=main.js",
+            "args": [],
+            "problemMatcher": []
         }
     ]
 }
