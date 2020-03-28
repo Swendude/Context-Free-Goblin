@@ -11,6 +11,9 @@ import Element.Border as Border
 import Element.Events as Events
 import Element.Font as Font
 import Element.Input as Input
+import File exposing (File)
+import File.Download as Download
+import File.Select as Select
 import Grammar exposing (..)
 import Grammar.Object.Grammars as Grammars
 import Grammar.Query as Query
@@ -24,6 +27,7 @@ import Json.Decode as JD
 import Json.Encode as JE
 import Parser exposing (DeadEnd, run)
 import Random
+import Task
 
 
 type alias Model =
@@ -114,6 +118,10 @@ type Msg
     | ExitProductionHover
     | CopyProduction ( String, Int )
     | DeleteProduction ( String, Int )
+    | ClickedSave
+    | ClickedLoad
+    | JsonSelected File
+    | JsonLoaded String
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -211,10 +219,32 @@ update msg model =
             ( { model | ntValue = sym }, Cmd.none )
 
         ProductionHover ( sym, ix ) ->
-            ( { model | productionHovered = Just ( sym, ix ) }, Cmd.none )
+            case model.symbolHovered of
+                Just _ ->
+                    ( model, Cmd.none )
+
+                Nothing ->
+                    ( { model | productionHovered = Just ( sym, ix ) }, Cmd.none )
 
         ExitProductionHover ->
             ( { model | productionHovered = Nothing }, Cmd.none )
+
+        ClickedSave ->
+            ( model, Download.string "grammar.json" "application/json" <| JE.encode 4 (grammarEncoder model.grammar) )
+
+        ClickedLoad ->
+            ( model, Select.file [ "application/json" ] JsonSelected )
+
+        JsonSelected file ->
+            ( model, Task.perform JsonLoaded (File.toString file) )
+
+        JsonLoaded grammar ->
+            case JD.decodeString grammarDecoder grammar of
+                Ok gram ->
+                    ( { model | grammar = gram }, Cmd.none )
+
+                Err _ ->
+                    ( model, Cmd.none )
 
 
 
@@ -258,11 +288,7 @@ view model =
     <|
         Element.column
             [ width columnWidth
-
-            -- , height fill
             , centerX
-
-            -- , Element.explain Debug.todo
             ]
             [ titleView
             , grammarView model.grammar model.symbolHovered model.productionHovered
@@ -464,12 +490,12 @@ outputView model =
     Element.column
         [ width fill
         , Background.color dblack
-        , Element.paddingXY 10 10
-        , spacing 20
+        , Element.paddingXY 0 10
+        , spacing 15
         , Element.alignTop
         ]
         [ el
-            [ width (Element.px 800)
+            [ width fill
             , centerX
             , Element.clipX
             , Element.scrollbarX
@@ -478,15 +504,33 @@ outputView model =
           <|
             Element.paragraph [ centerY, Font.center, padding 10 ]
                 [ Element.text model.output ]
-        , el
+        , Input.button
+            [ centerX
+            , Background.color dblack
+            , padding 7
+            , Border.color goblinGreen
+            , Border.width 1
+            , Element.mouseDown
+                [ Background.color goblinGreen ]
+            , Element.mouseOver
+                [ Background.color goblinGreen
+                , Border.color dblack
+                , Font.color dblack
+                ]
+            , Font.color goblinGreen
+            , Font.center
+            ]
+            { onPress = Just Generate, label = Element.text "GENERATE" }
+        , Element.row
             [ centerY
             , centerX
+            , spacing 10
             ]
           <|
-            Input.button
+            [ Input.button
                 [ Background.color dblack
-                , padding 7
-                , Border.color goblinGreen
+                , padding 3
+                , Border.color white
                 , Border.width 1
                 , Element.mouseDown
                     [ Background.color goblinGreen ]
@@ -495,10 +539,29 @@ outputView model =
                     , Border.color dblack
                     , Font.color dblack
                     ]
-                , Font.color goblinGreen
+                , Font.size 13
+                , Font.color white
                 , Font.center
                 ]
-                { onPress = Just Generate, label = Element.text "GENERATE" }
+                { onPress = Just ClickedSave, label = Element.text "save" }
+            , Input.button
+                [ Background.color dblack
+                , padding 3
+                , Border.color white
+                , Border.width 1
+                , Element.mouseDown
+                    [ Background.color goblinGreen ]
+                , Element.mouseOver
+                    [ Background.color goblinGreen
+                    , Border.color dblack
+                    , Font.color dblack
+                    ]
+                , Font.size 13
+                , Font.color white
+                , Font.center
+                ]
+                { onPress = Just ClickedLoad, label = Element.text "load" }
+            ]
         ]
 
 
@@ -736,8 +799,8 @@ productionDropDown ( sym, ix ) =
     Element.column
         [ Element.alignRight
         , Font.center
+        , Font.size 12
         , Background.color dblack
-        , Border.widthEach { top = 0, left = 1, right = 1, bottom = 1 }
         , Border.color white
         , spacing 5
         ]
@@ -745,6 +808,7 @@ productionDropDown ( sym, ix ) =
             [ Element.mouseOver
                 [ Background.color goblinGreen
                 ]
+            , Element.pointer
             , width fill
             , height fill
             , padding 5
@@ -756,6 +820,7 @@ productionDropDown ( sym, ix ) =
             [ Element.mouseOver
                 [ Background.color goblinGreen
                 ]
+            , Element.pointer
             , width fill
             , padding 5
             , height fill
