@@ -1,7 +1,12 @@
-module ExampleGrammars exposing (deepGrammarRules, deepGrammarSentences, deterministicGrammarRules, jsonGrammarRules, normalGrammarRules, normalGrammarSentences, possibleAnimals, recursiveInvalidGrammarRules, testJSONGrammar)
+module ExampleGrammars exposing (deepGrammarRules, deepGrammarSentences, defaultGrammar, deterministicGrammarRules, jsonGrammarRules, normalGrammarRules, normalGrammarSentences, possibleAnimals, recursiveInvalidGrammarRules, testJSONGrammar)
 
 import Dict exposing (Dict)
 import Grammar exposing (..)
+
+
+defaultGrammar : Grammar
+defaultGrammar =
+    Grammar (Dict.fromList [ ( "START", [ [ Token "You see a ", Symbol "goblin-with-activity" ] ] ), ( "activity", [ [ Token "laughs" ], [ Token "flies" ], [ Token "points it's stick" ] ] ), ( "goblin-prop", [ [ Token "smelly" ], [ Token "lonely" ], [ Token "drunken" ], [ Token "funny" ] ] ), ( "goblin-with-activity", [ [ Symbol "goblin-prop", Token " goblin. It ", Symbol "activity", Token "." ] ] ) ])
 
 
 testJSONGrammar : String

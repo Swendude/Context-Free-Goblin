@@ -11,6 +11,7 @@ import Element.Border as Border
 import Element.Events as Events
 import Element.Font as Font
 import Element.Input as Input
+import ExampleGrammars as EG
 import File exposing (File)
 import File.Download as Download
 import File.Select as Select
@@ -49,8 +50,7 @@ init : { width : Int, height : Int } -> ( Model, Cmd Msg )
 init screenSize =
     ( { ntValue = ""
       , prodValue = ""
-      , grammar =
-            Grammar Dict.empty
+      , grammar = EG.defaultGrammar 
       , screen = Element.classifyDevice screenSize
       , error = Nothing
       , output = "Click 'generate' to generate some text!"
@@ -60,7 +60,7 @@ init screenSize =
       , showHelp = True
       , symbolFocused = False
       }
-    , requestDefaultGrammar
+    , Cmd.none
     )
 
 
