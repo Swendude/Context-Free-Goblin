@@ -50,7 +50,7 @@ init : { width : Int, height : Int } -> ( Model, Cmd Msg )
 init screenSize =
     ( { ntValue = ""
       , prodValue = ""
-      , grammar = EG.defaultGrammar 
+      , grammar = EG.defaultGrammar
       , screen = Element.classifyDevice screenSize
       , error = Nothing
       , output = "Click 'generate' to generate some text!"
@@ -270,7 +270,7 @@ view model =
                             fill
 
                         Element.Desktop ->
-                            Element.px 1024
+                            Element.px 1140
 
                         Element.BigDesktop ->
                             Element.px 1140
@@ -280,15 +280,16 @@ view model =
     in
     Element.layout
         [ Font.family
-            [ Font.typeface "Libre Baskerville"
+            [ Font.sansSerif
             ]
         , width fill
-        , Background.color dblack
+        , Background.color dblue
         ]
     <|
         Element.column
             [ width columnWidth
             , centerX
+            , Element.paddingEach { top = 80, left = 0, right = 0, bottom = 0 }
             ]
             [ titleView
             , grammarView model.grammar model.symbolHovered model.productionHovered
@@ -317,23 +318,26 @@ view model =
 
 titleView : Element Msg
 titleView =
-    Element.column [ width fill ]
+    Element.column [ width fill, centerX ]
         [ el
-            [ Element.paddingXY 5 10
+            [ Element.paddingEach { top = 10, left = 0, right = 0, bottom = 10 }
             , Font.bold
-            , Font.size 24
+            , Font.size 32
             , width fill
+            , Font.center
             , Font.color white
+            , centerX
             ]
           <|
             Element.text "Context Free Goblin"
         , el
-            [ Element.paddingEach { top = 0, left = 5, right = 0, bottom = 13 }
+            [ Element.paddingEach { top = 10, left = 5, right = 0, bottom = 45 }
             , width fill
+            , Font.center
             ]
           <|
             Element.paragraph
-                [ Font.size 11
+                [ Font.size 16
                 , Font.color goblinGreen
                 ]
                 [ Element.text "A tool for building and sharing random text generators." ]
@@ -419,13 +423,14 @@ inputView model =
                 { onChange = NTermChange
                 , label =
                     if model.showHelp then
-                        Input.labelBelow [] <|
+                        Input.labelBelow [ Element.paddingXY 0 10 ] <|
                             Element.paragraph
-                                [ Font.color white
-                                , Font.size 10
+                                [ Font.color helpWhite
+                                , Font.size 13
                                 , Font.family
-                                    [ Font.typeface "Libre Baskerville"
+                                    [ Font.sansSerif
                                     ]
+                                , Element.spacing 10
                                 ]
                             <|
                                 [ Element.text "Put a symbol here, there should always be a START symbol" ]
@@ -446,17 +451,18 @@ inputView model =
             ]
           <|
             Input.text
-                (textInputStyle
-                    ++ [ Font.family
-                            [ Font.typeface "Libre Baskerville"
-                            ]
-                       ]
-                )
+                textInputStyle
                 { onChange = ProdChange
                 , label =
                     if model.showHelp then
-                        Input.labelBelow [] <|
-                            Element.paragraph [ Font.color white, Font.size 10 ] <|
+                        Input.labelBelow [ Element.paddingXY 0 10 ] <|
+                            Element.paragraph
+                                [ Font.color helpWhite
+                                , Font.size 13
+                                , Font.family [ Font.sansSerif ]
+                                , Element.spacing 10
+                                ]
+                            <|
                                 [ Element.text "Put some text here, use {} to mark symbols." ]
 
                     else
@@ -490,26 +496,32 @@ outputView model =
     Element.column
         [ width fill
         , Background.color dblack
-        , Element.paddingXY 0 10
-        , spacing 15
+        , spacing 30
         , Element.alignTop
+        , Element.padding 30
         ]
         [ el
             [ width fill
             , centerX
             , Element.clipX
             , Element.scrollbarX
-            , Background.color lgrey
+            , Background.color lDark
+            , Border.rounded 5
             ]
           <|
-            Element.paragraph [ centerY, Font.center, padding 10 ]
+            Element.paragraph
+                [ centerY
+                , Font.center
+                , padding 10
+                , Font.color white
+                , Font.size 28
+                ]
                 [ Element.text model.output ]
         , Input.button
             [ centerX
-            , Background.color dblack
-            , padding 7
-            , Border.color goblinGreen
-            , Border.width 1
+            , Background.color goblinGreen
+            , Border.rounded 5
+            , Element.paddingEach { top = 10, bottom = 8, left = 65, right = 65 }
             , Element.mouseDown
                 [ Background.color goblinGreen ]
             , Element.mouseOver
@@ -517,10 +529,19 @@ outputView model =
                 , Border.color dblack
                 , Font.color dblack
                 ]
-            , Font.color goblinGreen
+            , Font.color white
             , Font.center
             ]
             { onPress = Just Generate, label = Element.text "GENERATE" }
+        , Element.el
+            [ width fill
+            , centerX
+            , Font.center
+            , Font.color helpWhite
+            , Font.size 12
+            ]
+          <|
+            Element.text "- OR -"
         , Element.row
             [ centerY
             , centerX
@@ -529,8 +550,9 @@ outputView model =
           <|
             [ Input.button
                 [ Background.color dblack
-                , padding 3
-                , Border.color white
+                , Element.paddingEach { top = 8, bottom = 6, left = 15, right = 15 }
+                , Border.color goblinGreen
+                , Border.rounded 5
                 , Border.width 1
                 , Element.mouseDown
                     [ Background.color goblinGreen ]
@@ -539,15 +561,16 @@ outputView model =
                     , Border.color dblack
                     , Font.color dblack
                     ]
-                , Font.size 13
-                , Font.color white
+                , Font.size 20
+                , Font.color goblinGreen
                 , Font.center
                 ]
                 { onPress = Just ClickedSave, label = Element.text "save" }
             , Input.button
                 [ Background.color dblack
-                , padding 3
-                , Border.color white
+                , Element.paddingEach { top = 8, bottom = 6, left = 15, right = 15 }
+                , Border.color goblinGreen
+                , Border.rounded 5
                 , Border.width 1
                 , Element.mouseDown
                     [ Background.color goblinGreen ]
@@ -556,8 +579,8 @@ outputView model =
                     , Border.color dblack
                     , Font.color dblack
                     ]
-                , Font.size 13
-                , Font.color white
+                , Font.size 20
+                , Font.color goblinGreen
                 , Font.center
                 ]
                 { onPress = Just ClickedLoad, label = Element.text "load" }
@@ -652,6 +675,7 @@ headerRow =
     Element.row
         [ width fill
         , Background.color dblack
+        , Element.paddingEach { bottom = 3, top = 3, left = 0, right = 10 }
         ]
         [ el
             [ width <| fillPortion 1
@@ -674,7 +698,7 @@ headerRow =
                     , Font.center
                     , Font.light
                     ]
-                    [ Element.text "Symbol" ]
+                    [ Element.text "SYMBOL" ]
         , el
             [ width <| fillPortion 3
             , height fill
@@ -695,7 +719,7 @@ headerRow =
                     , Font.alignLeft
                     , Font.light
                     ]
-                    [ Element.text "Rules" ]
+                    [ Element.text "RULES" ]
         , el
             [ width <| fillPortion 2
             , height fill
@@ -705,14 +729,16 @@ headerRow =
             Input.button
                 [ Element.alignRight
                 , Background.color dblack
-                , padding 7
+                , Element.paddingEach { bottom = 5, left = 7, right = 7, top = 8 }
                 , Border.color white
                 , Border.width 1
+                , Element.centerY
                 , Element.mouseDown
                     [ Background.color goblinGreen ]
                 , Font.color white
+                , Font.size 16
                 ]
-                { onPress = Just ClearGrammar, label = Element.text "X Clear all" }
+                { onPress = Just ClearGrammar, label = Element.text "X CLEAR ALL" }
 
         -- Element.paragraph
         --     [ padding 5
@@ -837,6 +863,7 @@ productionStyle sym ix hoveredProduction =
         default =
             [ Element.paddingXY 10 5
             , Background.color dblack
+            , Border.rounded 5
             , Font.color white
             , Font.size 14
             , Events.onMouseEnter <| ProductionHover ( sym, ix )
@@ -917,7 +944,22 @@ white =
     Element.rgba255 255 255 255 1
 
 
+helpWhite : Element.Color
+helpWhite =
+    Element.rgba255 255 255 255 0.7
+
+
 goblinGreen : Element.Color
 goblinGreen =
     -- Element.rgba255 0 250 154 1
     Element.rgba255 0 216 133 1
+
+
+lDark : Element.Color
+lDark =
+    Element.rgba255 41 41 41 1
+
+
+dblue : Element.Color
+dblue =
+    Element.rgba255 1 22 40 1

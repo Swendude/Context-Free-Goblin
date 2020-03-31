@@ -13695,6 +13695,7 @@ var $mdgriffith$elm_ui$Element$rgba255 = F4(
 		return A4($mdgriffith$elm_ui$Internal$Model$Rgba, red / 255, green / 255, blue / 255, a);
 	});
 var $author$project$Main$dblack = A4($mdgriffith$elm_ui$Element$rgba255, 45, 45, 45, 1);
+var $author$project$Main$dblue = A4($mdgriffith$elm_ui$Element$rgba255, 1, 22, 40, 1);
 var $mdgriffith$elm_ui$Element$el = F2(
 	function (attrs, child) {
 		return A4(
@@ -14158,6 +14159,17 @@ var $author$project$Main$productionDropDown = function (_v0) {
 				$mdgriffith$elm_ui$Element$text('Copy'))
 			]));
 };
+var $mdgriffith$elm_ui$Internal$Flag$borderRound = $mdgriffith$elm_ui$Internal$Flag$flag(17);
+var $mdgriffith$elm_ui$Element$Border$rounded = function (radius) {
+	return A2(
+		$mdgriffith$elm_ui$Internal$Model$StyleClass,
+		$mdgriffith$elm_ui$Internal$Flag$borderRound,
+		A3(
+			$mdgriffith$elm_ui$Internal$Model$Single,
+			'br-' + $elm$core$String$fromInt(radius),
+			'border-radius',
+			$elm$core$String$fromInt(radius) + 'px'));
+};
 var $author$project$Main$productionStyle = F3(
 	function (sym, ix, hoveredProduction) {
 		var hovered = _List_fromArray(
@@ -14178,6 +14190,7 @@ var $author$project$Main$productionStyle = F3(
 			[
 				A2($mdgriffith$elm_ui$Element$paddingXY, 10, 5),
 				$mdgriffith$elm_ui$Element$Background$color($author$project$Main$dblack),
+				$mdgriffith$elm_ui$Element$Border$rounded(5),
 				$mdgriffith$elm_ui$Element$Font$color($author$project$Main$white),
 				$mdgriffith$elm_ui$Element$Font$size(14),
 				$mdgriffith$elm_ui$Element$Events$onMouseEnter(
@@ -14742,7 +14755,9 @@ var $author$project$Main$headerRow = A2(
 	_List_fromArray(
 		[
 			$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill),
-			$mdgriffith$elm_ui$Element$Background$color($author$project$Main$dblack)
+			$mdgriffith$elm_ui$Element$Background$color($author$project$Main$dblack),
+			$mdgriffith$elm_ui$Element$paddingEach(
+			{bottom: 3, left: 0, right: 10, top: 3})
 		]),
 	_List_fromArray(
 		[
@@ -14772,7 +14787,7 @@ var $author$project$Main$headerRow = A2(
 						[$mdgriffith$elm_ui$Element$centerX, $mdgriffith$elm_ui$Element$centerY, $mdgriffith$elm_ui$Element$Font$center, $mdgriffith$elm_ui$Element$Font$light]),
 					_List_fromArray(
 						[
-							$mdgriffith$elm_ui$Element$text('Symbol')
+							$mdgriffith$elm_ui$Element$text('SYMBOL')
 						])))),
 			A2(
 			$mdgriffith$elm_ui$Element$el,
@@ -14799,7 +14814,7 @@ var $author$project$Main$headerRow = A2(
 						[$mdgriffith$elm_ui$Element$centerX, $mdgriffith$elm_ui$Element$centerY, $mdgriffith$elm_ui$Element$Font$alignLeft, $mdgriffith$elm_ui$Element$Font$light]),
 					_List_fromArray(
 						[
-							$mdgriffith$elm_ui$Element$text('Rules')
+							$mdgriffith$elm_ui$Element$text('RULES')
 						])))),
 			A2(
 			$mdgriffith$elm_ui$Element$el,
@@ -14816,18 +14831,21 @@ var $author$project$Main$headerRow = A2(
 					[
 						$mdgriffith$elm_ui$Element$alignRight,
 						$mdgriffith$elm_ui$Element$Background$color($author$project$Main$dblack),
-						$mdgriffith$elm_ui$Element$padding(7),
+						$mdgriffith$elm_ui$Element$paddingEach(
+						{bottom: 5, left: 7, right: 7, top: 8}),
 						$mdgriffith$elm_ui$Element$Border$color($author$project$Main$white),
 						$mdgriffith$elm_ui$Element$Border$width(1),
+						$mdgriffith$elm_ui$Element$centerY,
 						$mdgriffith$elm_ui$Element$mouseDown(
 						_List_fromArray(
 							[
 								$mdgriffith$elm_ui$Element$Background$color($author$project$Main$goblinGreen)
 							])),
-						$mdgriffith$elm_ui$Element$Font$color($author$project$Main$white)
+						$mdgriffith$elm_ui$Element$Font$color($author$project$Main$white),
+						$mdgriffith$elm_ui$Element$Font$size(16)
 					]),
 				{
-					label: $mdgriffith$elm_ui$Element$text('X Clear all'),
+					label: $mdgriffith$elm_ui$Element$text('X CLEAR ALL'),
 					onPress: $elm$core$Maybe$Just($author$project$Main$ClearGrammar)
 				}))
 		]));
@@ -14874,6 +14892,7 @@ var $author$project$Main$ProdChange = function (a) {
 var $author$project$Main$Save = {$: 'Save'};
 var $author$project$Main$SymbolFocus = {$: 'SymbolFocus'};
 var $author$project$Main$SymbolLoseFocus = {$: 'SymbolLoseFocus'};
+var $author$project$Main$helpWhite = A4($mdgriffith$elm_ui$Element$rgba255, 255, 255, 255, 0.7);
 var $mdgriffith$elm_ui$Element$Input$Below = {$: 'Below'};
 var $mdgriffith$elm_ui$Element$Input$Label = F3(
 	function (a, b, c) {
@@ -14904,6 +14923,8 @@ var $mdgriffith$elm_ui$Element$Input$Placeholder = F2(
 		return {$: 'Placeholder', a: a, b: b};
 	});
 var $mdgriffith$elm_ui$Element$Input$placeholder = $mdgriffith$elm_ui$Element$Input$Placeholder;
+var $mdgriffith$elm_ui$Internal$Model$SansSerif = {$: 'SansSerif'};
+var $mdgriffith$elm_ui$Element$Font$sansSerif = $mdgriffith$elm_ui$Internal$Model$SansSerif;
 var $author$project$Main$SymbolSelected = function (a) {
 	return {$: 'SymbolSelected', a: a};
 };
@@ -15092,17 +15113,6 @@ var $mdgriffith$elm_ui$Element$rgb = F3(
 	});
 var $mdgriffith$elm_ui$Element$Input$darkGrey = A3($mdgriffith$elm_ui$Element$rgb, 186 / 255, 189 / 255, 182 / 255);
 var $mdgriffith$elm_ui$Element$Input$defaultTextPadding = A2($mdgriffith$elm_ui$Element$paddingXY, 12, 12);
-var $mdgriffith$elm_ui$Internal$Flag$borderRound = $mdgriffith$elm_ui$Internal$Flag$flag(17);
-var $mdgriffith$elm_ui$Element$Border$rounded = function (radius) {
-	return A2(
-		$mdgriffith$elm_ui$Internal$Model$StyleClass,
-		$mdgriffith$elm_ui$Internal$Flag$borderRound,
-		A3(
-			$mdgriffith$elm_ui$Internal$Model$Single,
-			'br-' + $elm$core$String$fromInt(radius),
-			'border-radius',
-			$elm$core$String$fromInt(radius) + 'px'));
-};
 var $mdgriffith$elm_ui$Element$Input$white = A3($mdgriffith$elm_ui$Element$rgb, 1, 1, 1);
 var $mdgriffith$elm_ui$Element$Input$defaultTextBoxStyle = _List_fromArray(
 	[
@@ -15823,18 +15833,20 @@ var $author$project$Main$inputView = function (model) {
 					{
 						label: model.showHelp ? A2(
 							$mdgriffith$elm_ui$Element$Input$labelBelow,
-							_List_Nil,
+							_List_fromArray(
+								[
+									A2($mdgriffith$elm_ui$Element$paddingXY, 0, 10)
+								]),
 							A2(
 								$mdgriffith$elm_ui$Element$paragraph,
 								_List_fromArray(
 									[
-										$mdgriffith$elm_ui$Element$Font$color($author$project$Main$white),
-										$mdgriffith$elm_ui$Element$Font$size(10),
+										$mdgriffith$elm_ui$Element$Font$color($author$project$Main$helpWhite),
+										$mdgriffith$elm_ui$Element$Font$size(13),
 										$mdgriffith$elm_ui$Element$Font$family(
 										_List_fromArray(
-											[
-												$mdgriffith$elm_ui$Element$Font$typeface('Libre Baskerville')
-											]))
+											[$mdgriffith$elm_ui$Element$Font$sansSerif])),
+										$mdgriffith$elm_ui$Element$spacing(10)
 									]),
 								_List_fromArray(
 									[
@@ -15860,26 +15872,24 @@ var $author$project$Main$inputView = function (model) {
 					]),
 				A2(
 					$mdgriffith$elm_ui$Element$Input$text,
-					_Utils_ap(
-						$author$project$Main$textInputStyle,
-						_List_fromArray(
-							[
-								$mdgriffith$elm_ui$Element$Font$family(
-								_List_fromArray(
-									[
-										$mdgriffith$elm_ui$Element$Font$typeface('Libre Baskerville')
-									]))
-							])),
+					$author$project$Main$textInputStyle,
 					{
 						label: model.showHelp ? A2(
 							$mdgriffith$elm_ui$Element$Input$labelBelow,
-							_List_Nil,
+							_List_fromArray(
+								[
+									A2($mdgriffith$elm_ui$Element$paddingXY, 0, 10)
+								]),
 							A2(
 								$mdgriffith$elm_ui$Element$paragraph,
 								_List_fromArray(
 									[
-										$mdgriffith$elm_ui$Element$Font$color($author$project$Main$white),
-										$mdgriffith$elm_ui$Element$Font$size(10)
+										$mdgriffith$elm_ui$Element$Font$color($author$project$Main$helpWhite),
+										$mdgriffith$elm_ui$Element$Font$size(13),
+										$mdgriffith$elm_ui$Element$Font$family(
+										_List_fromArray(
+											[$mdgriffith$elm_ui$Element$Font$sansSerif])),
+										$mdgriffith$elm_ui$Element$spacing(10)
 									]),
 								_List_fromArray(
 									[
@@ -16070,7 +16080,6 @@ var $mdgriffith$elm_ui$Internal$Model$renderRoot = F3(
 					_List_fromArray(
 						[child]))));
 	});
-var $mdgriffith$elm_ui$Internal$Model$SansSerif = {$: 'SansSerif'};
 var $mdgriffith$elm_ui$Internal$Model$rootStyle = function () {
 	var families = _List_fromArray(
 		[
@@ -16134,6 +16143,7 @@ var $mdgriffith$elm_ui$Element$layout = $mdgriffith$elm_ui$Element$layoutWith(
 var $author$project$Main$ClickedLoad = {$: 'ClickedLoad'};
 var $author$project$Main$ClickedSave = {$: 'ClickedSave'};
 var $author$project$Main$Generate = {$: 'Generate'};
+var $author$project$Main$lDark = A4($mdgriffith$elm_ui$Element$rgba255, 41, 41, 41, 1);
 var $author$project$Main$outputView = function (model) {
 	return A2(
 		$mdgriffith$elm_ui$Element$column,
@@ -16141,9 +16151,9 @@ var $author$project$Main$outputView = function (model) {
 			[
 				$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill),
 				$mdgriffith$elm_ui$Element$Background$color($author$project$Main$dblack),
-				A2($mdgriffith$elm_ui$Element$paddingXY, 0, 10),
-				$mdgriffith$elm_ui$Element$spacing(15),
-				$mdgriffith$elm_ui$Element$alignTop
+				$mdgriffith$elm_ui$Element$spacing(30),
+				$mdgriffith$elm_ui$Element$alignTop,
+				$mdgriffith$elm_ui$Element$padding(30)
 			]),
 		_List_fromArray(
 			[
@@ -16155,7 +16165,8 @@ var $author$project$Main$outputView = function (model) {
 						$mdgriffith$elm_ui$Element$centerX,
 						$mdgriffith$elm_ui$Element$clipX,
 						$mdgriffith$elm_ui$Element$scrollbarX,
-						$mdgriffith$elm_ui$Element$Background$color($author$project$Main$lgrey)
+						$mdgriffith$elm_ui$Element$Background$color($author$project$Main$lDark),
+						$mdgriffith$elm_ui$Element$Border$rounded(5)
 					]),
 				A2(
 					$mdgriffith$elm_ui$Element$paragraph,
@@ -16163,7 +16174,9 @@ var $author$project$Main$outputView = function (model) {
 						[
 							$mdgriffith$elm_ui$Element$centerY,
 							$mdgriffith$elm_ui$Element$Font$center,
-							$mdgriffith$elm_ui$Element$padding(10)
+							$mdgriffith$elm_ui$Element$padding(10),
+							$mdgriffith$elm_ui$Element$Font$color($author$project$Main$white),
+							$mdgriffith$elm_ui$Element$Font$size(28)
 						]),
 					_List_fromArray(
 						[
@@ -16174,10 +16187,10 @@ var $author$project$Main$outputView = function (model) {
 				_List_fromArray(
 					[
 						$mdgriffith$elm_ui$Element$centerX,
-						$mdgriffith$elm_ui$Element$Background$color($author$project$Main$dblack),
-						$mdgriffith$elm_ui$Element$padding(7),
-						$mdgriffith$elm_ui$Element$Border$color($author$project$Main$goblinGreen),
-						$mdgriffith$elm_ui$Element$Border$width(1),
+						$mdgriffith$elm_ui$Element$Background$color($author$project$Main$goblinGreen),
+						$mdgriffith$elm_ui$Element$Border$rounded(5),
+						$mdgriffith$elm_ui$Element$paddingEach(
+						{bottom: 8, left: 65, right: 65, top: 10}),
 						$mdgriffith$elm_ui$Element$mouseDown(
 						_List_fromArray(
 							[
@@ -16190,13 +16203,24 @@ var $author$project$Main$outputView = function (model) {
 								$mdgriffith$elm_ui$Element$Border$color($author$project$Main$dblack),
 								$mdgriffith$elm_ui$Element$Font$color($author$project$Main$dblack)
 							])),
-						$mdgriffith$elm_ui$Element$Font$color($author$project$Main$goblinGreen),
+						$mdgriffith$elm_ui$Element$Font$color($author$project$Main$white),
 						$mdgriffith$elm_ui$Element$Font$center
 					]),
 				{
 					label: $mdgriffith$elm_ui$Element$text('GENERATE'),
 					onPress: $elm$core$Maybe$Just($author$project$Main$Generate)
 				}),
+				A2(
+				$mdgriffith$elm_ui$Element$el,
+				_List_fromArray(
+					[
+						$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill),
+						$mdgriffith$elm_ui$Element$centerX,
+						$mdgriffith$elm_ui$Element$Font$center,
+						$mdgriffith$elm_ui$Element$Font$color($author$project$Main$helpWhite),
+						$mdgriffith$elm_ui$Element$Font$size(12)
+					]),
+				$mdgriffith$elm_ui$Element$text('- OR -')),
 				A2(
 				$mdgriffith$elm_ui$Element$row,
 				_List_fromArray(
@@ -16212,8 +16236,10 @@ var $author$project$Main$outputView = function (model) {
 						_List_fromArray(
 							[
 								$mdgriffith$elm_ui$Element$Background$color($author$project$Main$dblack),
-								$mdgriffith$elm_ui$Element$padding(3),
-								$mdgriffith$elm_ui$Element$Border$color($author$project$Main$white),
+								$mdgriffith$elm_ui$Element$paddingEach(
+								{bottom: 6, left: 15, right: 15, top: 8}),
+								$mdgriffith$elm_ui$Element$Border$color($author$project$Main$goblinGreen),
+								$mdgriffith$elm_ui$Element$Border$rounded(5),
 								$mdgriffith$elm_ui$Element$Border$width(1),
 								$mdgriffith$elm_ui$Element$mouseDown(
 								_List_fromArray(
@@ -16227,8 +16253,8 @@ var $author$project$Main$outputView = function (model) {
 										$mdgriffith$elm_ui$Element$Border$color($author$project$Main$dblack),
 										$mdgriffith$elm_ui$Element$Font$color($author$project$Main$dblack)
 									])),
-								$mdgriffith$elm_ui$Element$Font$size(13),
-								$mdgriffith$elm_ui$Element$Font$color($author$project$Main$white),
+								$mdgriffith$elm_ui$Element$Font$size(20),
+								$mdgriffith$elm_ui$Element$Font$color($author$project$Main$goblinGreen),
 								$mdgriffith$elm_ui$Element$Font$center
 							]),
 						{
@@ -16240,8 +16266,10 @@ var $author$project$Main$outputView = function (model) {
 						_List_fromArray(
 							[
 								$mdgriffith$elm_ui$Element$Background$color($author$project$Main$dblack),
-								$mdgriffith$elm_ui$Element$padding(3),
-								$mdgriffith$elm_ui$Element$Border$color($author$project$Main$white),
+								$mdgriffith$elm_ui$Element$paddingEach(
+								{bottom: 6, left: 15, right: 15, top: 8}),
+								$mdgriffith$elm_ui$Element$Border$color($author$project$Main$goblinGreen),
+								$mdgriffith$elm_ui$Element$Border$rounded(5),
 								$mdgriffith$elm_ui$Element$Border$width(1),
 								$mdgriffith$elm_ui$Element$mouseDown(
 								_List_fromArray(
@@ -16255,8 +16283,8 @@ var $author$project$Main$outputView = function (model) {
 										$mdgriffith$elm_ui$Element$Border$color($author$project$Main$dblack),
 										$mdgriffith$elm_ui$Element$Font$color($author$project$Main$dblack)
 									])),
-								$mdgriffith$elm_ui$Element$Font$size(13),
-								$mdgriffith$elm_ui$Element$Font$color($author$project$Main$white),
+								$mdgriffith$elm_ui$Element$Font$size(20),
+								$mdgriffith$elm_ui$Element$Font$color($author$project$Main$goblinGreen),
 								$mdgriffith$elm_ui$Element$Font$center
 							]),
 						{
@@ -16274,7 +16302,8 @@ var $author$project$Main$titleView = A2(
 	$mdgriffith$elm_ui$Element$column,
 	_List_fromArray(
 		[
-			$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill)
+			$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill),
+			$mdgriffith$elm_ui$Element$centerX
 		]),
 	_List_fromArray(
 		[
@@ -16282,11 +16311,14 @@ var $author$project$Main$titleView = A2(
 			$mdgriffith$elm_ui$Element$el,
 			_List_fromArray(
 				[
-					A2($mdgriffith$elm_ui$Element$paddingXY, 5, 10),
+					$mdgriffith$elm_ui$Element$paddingEach(
+					{bottom: 10, left: 0, right: 0, top: 10}),
 					$mdgriffith$elm_ui$Element$Font$bold,
-					$mdgriffith$elm_ui$Element$Font$size(24),
+					$mdgriffith$elm_ui$Element$Font$size(32),
 					$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill),
-					$mdgriffith$elm_ui$Element$Font$color($author$project$Main$white)
+					$mdgriffith$elm_ui$Element$Font$center,
+					$mdgriffith$elm_ui$Element$Font$color($author$project$Main$white),
+					$mdgriffith$elm_ui$Element$centerX
 				]),
 			$mdgriffith$elm_ui$Element$text('Context Free Goblin')),
 			A2(
@@ -16294,14 +16326,15 @@ var $author$project$Main$titleView = A2(
 			_List_fromArray(
 				[
 					$mdgriffith$elm_ui$Element$paddingEach(
-					{bottom: 13, left: 5, right: 0, top: 0}),
-					$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill)
+					{bottom: 45, left: 5, right: 0, top: 10}),
+					$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill),
+					$mdgriffith$elm_ui$Element$Font$center
 				]),
 			A2(
 				$mdgriffith$elm_ui$Element$paragraph,
 				_List_fromArray(
 					[
-						$mdgriffith$elm_ui$Element$Font$size(11),
+						$mdgriffith$elm_ui$Element$Font$size(16),
 						$mdgriffith$elm_ui$Element$Font$color($author$project$Main$goblinGreen)
 					]),
 				_List_fromArray(
@@ -16325,7 +16358,7 @@ var $author$project$Main$view = function (model) {
 				case 'Phone':
 					return $mdgriffith$elm_ui$Element$fill;
 				case 'Desktop':
-					return $mdgriffith$elm_ui$Element$px(1024);
+					return $mdgriffith$elm_ui$Element$px(1140);
 				case 'BigDesktop':
 					return $mdgriffith$elm_ui$Element$px(1140);
 				default:
@@ -16339,18 +16372,18 @@ var $author$project$Main$view = function (model) {
 			[
 				$mdgriffith$elm_ui$Element$Font$family(
 				_List_fromArray(
-					[
-						$mdgriffith$elm_ui$Element$Font$typeface('Libre Baskerville')
-					])),
+					[$mdgriffith$elm_ui$Element$Font$sansSerif])),
 				$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill),
-				$mdgriffith$elm_ui$Element$Background$color($author$project$Main$dblack)
+				$mdgriffith$elm_ui$Element$Background$color($author$project$Main$dblue)
 			]),
 		A2(
 			$mdgriffith$elm_ui$Element$column,
 			_List_fromArray(
 				[
 					$mdgriffith$elm_ui$Element$width(columnWidth),
-					$mdgriffith$elm_ui$Element$centerX
+					$mdgriffith$elm_ui$Element$centerX,
+					$mdgriffith$elm_ui$Element$paddingEach(
+					{bottom: 0, left: 0, right: 0, top: 80})
 				]),
 			_List_fromArray(
 				[
